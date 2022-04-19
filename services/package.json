@@ -1,0 +1,51 @@
+{
+    "name": "dapp",
+    "version": "0.1.0",
+    "description": "",
+    "keywords": [],
+    "scripts": {
+        "build": "webpack",
+        "start": "webpack serve"
+    },
+    "devDependencies": {
+        "@dfinity/agent": "0.10.2",
+        "@dfinity/auth-client": "^0.10.2",
+        "@dfinity/authentication": "^0.10.2",
+        "@dfinity/candid": "0.10.2",
+        "@dfinity/identity": "^0.10.2",
+        "@dfinity/principal": "0.10.2",
+        "assert": "2.0.0",
+        "buffer": "6.0.3",
+        "css-loader": "^5.2.7",
+        "events": "3.3.0",
+        "file-loader": "^6.2.0",
+        "html-webpack-plugin": "5.3.1",
+        "process": "0.11.10",
+        "sass-loader": "^7.3.1",
+        "stream-browserify": "3.0.0",
+        "style-loader": "^3.1.0",
+        "url-loader": "^0.5.8",
+        "util": "0.12.3",
+        "vue-loader": "^15.9.5",
+        "vue-template-compiler": "^2.6.12",
+        "webpack": "5.24.4",
+        "webpack-cli": "4.5.0",
+        "webpack-dev-server": "^3.11.2"
+    },
+    "dependencies": {
+        "axios": "^0.21.4",
+        "bootstrap": "^5.1.0",
+        "core-js": "^3.16.1",
+        "element-ui": "^2.15.5",
+        "node-fetch": "^2.6.1",
+        "register-service-worker": "^1.7.2",
+        "sass": "^1.44.0",
+        "v-clipboard": "^2.2.3",
+        "vue": "^2.6.14",
+        "vue-feather-icons": "^5.1.0",
+        "vue-i18n": "^8.25.0",
+        "vue-router": "^3.5.2",
+        "vuex": "^3.4.0",
+        "vux": "^2.10.1"
+    }
+}

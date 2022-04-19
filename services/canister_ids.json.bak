@@ -1,0 +1,17 @@
+{
+  "dapp": {
+    "ic": "hcs2d-taaaa-aaaai-qahuq-cai"
+  },
+  "dapp_assets": {
+    "ic": "hlrr7-fiaaa-aaaai-qahva-cai"
+  },
+  "log_service": {
+    "ic": "hmqxl-iqaaa-aaaai-qahvq-cai"
+  },
+  "email_subscription": {
+    "ic": "ecjvk-oyaaa-aaaah-aapcq-cai"
+  },
+  "photo_service": {
+    "ic": "hzxgg-jyaaa-aaaai-qahwa-cai"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "canisters": {
+    
+    "platform": {
+      "main": "src/platform/Main.mo",
+      "type": "motoko"
+    },
+    "community": {
+      "main": "src/community/Main.mo",
+      "type": "motoko"
+    },
+    "log_service": {
+      "main": "src/log_service/Logger.mo",
+      "type": "motoko"
+    },
+    "photo_service": {
+      "main": "src/photo_service/Main.mo",
+      "type": "motoko"
+    }
+  },
+  "defaults": {
+    "build": {
+      "packtool": "vessel sources"
+    }
+  },
+
+  "networks": {
+    "ic": {
+      "providers": [
+        "https://gw.dfinity.network"
+      ],
+      "type": "persistent"
+    },
+    "local": {
+      "bind": "127.0.0.1:8000",
+      "type": "ephemeral"
+    }
+  },
+  "version": 1
+}

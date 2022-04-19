@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "noImplicitAny": false,
+    "jsx": "preserve",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "lib": ["esnext", "dom"],
+    "useDefineForClassFields": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "types": ["vite/client"],
+    "paths": {
+      "@/*": ["src/*"],
+      "@admin/*": ["../admin3/src/*"],
+      "canisters/platform": ["../services/.dfx/local/canisters/platform"],
+      "canisters/photo_service": [
+        "../services/.dfx/local/canisters/photo_service"
+      ],
+      "canisters/community": [
+        "../services/.dfx/local/canisters/community"
+      ],
+      "canisters/log_service": ["../services/.dfx/local/canisters/log_service"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "types/*.d.ts"
+  ],
+  "exclude": ["node_modules", ".vscode"]
+}

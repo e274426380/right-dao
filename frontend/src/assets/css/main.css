@@ -1,0 +1,82 @@
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  font-family: Roboto, Helvetica, Tahoma, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "微软雅黑", "WenQuanYi Micro Hei", sans-serif;
+  background-color: white;
+  color: black;
+}
+
+/* 单个特征 */
+.font-weight-bold {
+  font-weight: bold;
+}
+/* 点击效果 */
+.clickable {
+  cursor: pointer;
+}
+/* 单行显示 带省略 */
+.single-line {
+    display: block;
+    word-break: keep-all;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* 导航栏耦合样式 */
+/* 导航栏固定，凡是包含导航栏的页面，最外围应当有这个属性 */
+/* .include-fixed-top-navigator {
+    padding-top: 80px;
+}
+@media screen and (max-width: 992px) {
+    .include-fixed-top-navigator {
+        padding-top: 0;
+    }
+} */
+
+/* 页面适配 */
+.container {
+  padding-left: 0;
+  padding-right: 0;
+}
+@media (min-width: 1400px) {
+  .container-xxl,
+  .container-xl,
+  .container-lg,
+  .container-md,
+  .container-sm,
+  .container {
+    max-width: 1200px; /* 我们设计风格 要用 1200 宽度 */
+  }
+}
+
+.el-icon.el-backtop__icon {
+    color: #0fb8e0;
+}
+
+.i-message {
+    background-color: #3E0A55 !important;
+    font-size: 48px !important;
+    color: white !important;
+}
+
+.i-message .el-message__content {
+    font-size: 24px !important;
+    margin-left: 19px;
+}
+
+@media screen and (max-width: 440px) {
+    .i-message {
+        font-size: 30px !important;
+    }
+
+    .i-message .el-message__content {
+        font-size: 20px !important;
+    }
+}
