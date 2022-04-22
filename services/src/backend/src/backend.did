@@ -1,0 +1,37 @@
+type UserRegisterCommand = record {
+    email: text;
+    name: text;
+    memo: opt text;
+};
+
+type RegisterResult = variant {
+    registered : record { owner : principal; };
+    user_already_exists;
+    user_already_disabled : record { owner: principal };
+    internal_error;
+};
+
+type UserProfile = record {
+    id : nat64;
+    owner : principal;
+    email : text;
+    name : text;
+    memo : opt text;
+    status : UserStatus;
+    created_at : nat64;
+};
+
+type UserStatus = variant {
+    Enable;
+    Disable;
+};
+
+service : {
+ 
+    "greet": (text) -> (text) query;
+
+    "register_user": (UserRegisterCommand) -> (RegisterResult);
+
+    "get_user" : (text) -> (opt UserProfile);
+    "get_self" : () -> (opt UserProfile);
+}
