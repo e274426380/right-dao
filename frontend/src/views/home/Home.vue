@@ -1,13 +1,14 @@
 <template>
     <div class="home-container">
-        123
+        <Navigator/>
     </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
+import Navigator from '@/components/navigator/Navigator.vue';
 
-const light = ref(false);
+const light = ref(true);
 
 const onScroll = () => {
     // 当前滚动位置
@@ -27,12 +28,6 @@ onMounted(() => {
     color: black;
     width: 100%;
     height: 100%;
-    .dummy {
-        background-color: #2a064bff;
-        width: 100%;
-        height: 136px;
-        display: none;
-    }
     .homeNav {
         position: relative;
         z-index: 1200;

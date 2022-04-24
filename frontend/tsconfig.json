@@ -16,15 +16,7 @@
     "types": ["vite/client"],
     "paths": {
       "@/*": ["src/*"],
-      "@admin/*": ["../admin3/src/*"],
-      "canisters/platform": ["../services/.dfx/local/canisters/platform"],
-      "canisters/photo_service": [
-        "../services/.dfx/local/canisters/photo_service"
-      ],
-      "canisters/community": [
-        "../services/.dfx/local/canisters/community"
-      ],
-      "canisters/log_service": ["../services/.dfx/local/canisters/log_service"]
+      "canisters/backend": ["../services/.dfx/local/canisters/backend"]
     }
   },
   "include": [

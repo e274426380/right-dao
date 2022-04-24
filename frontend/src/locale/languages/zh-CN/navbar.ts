@@ -6,6 +6,5 @@ export default {
         explore: '探索',
         about: '关于我们',
     },
-
-    enterApp: '进入应用',
+    login: '登录',
 };

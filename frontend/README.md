@@ -1,14 +1,12 @@
-# icpleague-frontend
-
-ICP League frontend
-
+# Right DAO
 ## 运行说明
 
 后端代码位置 ../server
-后端代码 2 种运行方式，本地执行 和 生产环境
+后端代码 2 种运行方式，本地环境 和 生产环境
 
-1. 本地执行 在 server 目录下执行 dfx start，若第一次执行未部署代码或者代码有更新应当再执行 dfx deploy
-2. 生产环境 就是部署在 ic 线上网络的后端代码
+1. 本地环境 在 server 目录下执行 dfx start，再执行 dfx deploy，每次存在代码更新需要再次dfx deploy。
+将deploy获得的.dfx文件夹拷贝到frontend目录中，即可获得接口。
+2. 生产环境 部署在 IC 网络的代码。
 
 前端代码 2 种运行方式，dev 执行 和 部署方式
 

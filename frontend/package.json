@@ -1,5 +1,5 @@
 {
-    "name": "icpleague-frontend",
+    "name": "right-dao",
     "version": "1.0.0",
     "scripts": {
         "dev": "vite --mode=development",

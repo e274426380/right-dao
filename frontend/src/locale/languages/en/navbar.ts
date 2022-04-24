@@ -6,6 +6,5 @@ export default {
         explore: 'Explore',
         about: 'About Us',
     },
-
-    enterApp: 'Enter App',
+    login: 'Login',
 };
