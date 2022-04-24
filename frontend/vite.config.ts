@@ -184,7 +184,6 @@ function getCanisterIds(viteEnv: ViteEnv) {
     };
 
     const positions = viteEnv.VITE_CANISTER_IDS ? viteEnv.VITE_CANISTER_IDS.split(',') : [];
-
     const canisterIds = {};
     try {
         for (const position of positions) {
@@ -205,7 +204,6 @@ function getCanisterIds(viteEnv: ViteEnv) {
     } catch (e) {
         console.error('read canister ids failed. the path is', positions);
     }
-
     return canisterIds;
 }
 

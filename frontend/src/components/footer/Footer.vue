@@ -1,13 +1,11 @@
 <template>
     <div class="footer-container">
         <FollowUs class="follow-us" />
-        <Additions class="additions" />
         <Copyright class="copyright" />
     </div>
 </template>
 <script lang="ts" setup>
 import FollowUs from './FollowUs.vue';
-import Additions from './Additions.vue';
 import Copyright from './Copyright.vue';
 </script>
 <style lang="scss">
