@@ -1,14 +1,23 @@
 type UserRegisterCommand = record {
     email: text;
     name: text;
-    memo: opt text;
+    memo: text;
 };
 
-type RegisterResult = variant {
-    registered : record { owner : principal; };
-    user_already_exists;
-    user_already_disabled : record { owner: principal };
-    internal_error;
+type RegisterUserResult = variant {
+    Ok: text;
+    Err: UserError;
+};
+
+type UserResult = variant {
+    Ok: UserProfile;
+    Err: UserError;
+};
+
+type UserError = variant {
+    UserNotFound;
+    UserAlreadyExists;
+    UserAlreadyDisable;
 };
 
 type UserProfile = record {
@@ -16,7 +25,11 @@ type UserProfile = record {
     owner : principal;
     email : text;
     name : text;
-    memo : opt text;
+    avatar_id: nat64;
+    avatar_uri: text;
+    biography: text;
+    interests: vec text;
+    memo : text;
     status : UserStatus;
     created_at : nat64;
 };
@@ -26,12 +39,69 @@ type UserStatus = variant {
     Disable;
 };
 
+type UserEditCommand = record {
+    email: text;
+    name: text;
+    avatar_id: nat64;
+    avatar_uri: text;
+    biography: text;
+    interests: vec text;
+    memo: text;
+    status: UserStatus;
+};
+
+type BoolUserResult = variant {
+    Ok: bool;
+    Err: UserError;
+};
+
+type PostCreateCommand = record {
+
+};
+
+type PostEditCommand = record {
+
+};
+
+type PostCommentCommand = record {
+
+};
+
+type PostPageQuery = record {
+
+};
+
+type PostTerminateCommand = record {
+
+};
+
+type PostingResult = record {
+
+};
+
+type BoolPostResult = record {
+
+};
+
+type PostPage = record {
+
+};
+
 service : {
  
     "greet": (text) -> (text) query;
 
-    "register_user": (UserRegisterCommand) -> (RegisterResult);
+    "register_user": (UserRegisterCommand) -> (RegisterUserResult);
+    "edit_user" : (UserEditCommand) -> (BoolUserResult);
+    "enable_user" : (principal) -> (BoolUserResult);
+    "disable_user" : (principal) -> (BoolUserResult);
+    "get_user" : (text) -> (BoolUserResult);
+    "get_self" : () -> (UserResult);
 
-    "get_user" : (text) -> (opt UserProfile);
-    "get_self" : () -> (opt UserProfile);
+    "posting" : (PostCreateCommand) -> (PostingResult);
+    "edit_post" : (PostEditCommand) -> (BoolPostResult);
+    "comment_post" : (PostCommentCommand) -> (BoolPostResult);
+    "page_posts" : (PostPageQuery) -> (PostPage);
+    "terminate_post" : (PostTerminateCommand) -> (BoolPostResult);
+
 }
