@@ -1,6 +1,6 @@
 import { clearCacheData, getCache, TTL } from '@/common/cache';
 import { getCurrentPrincipal, getBackend } from './canister_pool';
-import {ApiResult} from "@/api/types";
+import {ApiResult, ApiUserInfo} from "@/api/types";
 
 // 注册用户接口，将当前登录用户 id 登记在后端 应当有缓存 不需要返回值
 export async function registerUser(principalId: string): Promise<ApiResult<string>> {
@@ -12,7 +12,7 @@ export async function registerUser(principalId: string): Promise<ApiResult<strin
             const r = await getBackend().register_user({
                 email:"",
                 name:"",
-                memo:[""]
+                memo:""
             });
             if (r.err && r.err.userAlreadyExists != undefined) {
                 // 拦截已经注册的情况 就当请求成功了
@@ -27,7 +27,7 @@ export async function registerUser(principalId: string): Promise<ApiResult<strin
 }
 
 // 获取当前登录用户信息 导航条使用
-export async function getUserInfo(): Promise<ApiResult<ApiUserInfo[]>> {
+export async function getUserInfo(): Promise<ApiResult<ApiUserInfo>> {
     return await getCache({
         key: 'USER_INFO_' + getCurrentPrincipal().toUpperCase(),
         execute: () => getBackend().get_self(),

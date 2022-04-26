@@ -6,5 +6,9 @@ export default {
         explore: 'Explore',
         about: 'About Us',
     },
+    user: {
+        profile: 'Personal Center'
+    },
     login: 'Login',
+    logout: 'LogOut'
 };

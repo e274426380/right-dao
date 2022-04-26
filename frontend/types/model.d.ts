@@ -1,4 +1,5 @@
 export declare interface ViteEnv {
+    VITE_TITLE:string;
     VITE_NETWORK: 'ic' | 'local';
     VITE_LOCAL_DFX: string; // 本地网络的话需要配置 dfx.json 文件位置
     VITE_CANISTER_IDS: string; // 这个应该是个数组，但是配置文件中不好读取数组，用逗号分隔

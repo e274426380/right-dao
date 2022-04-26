@@ -64,7 +64,8 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="login">
+                    <!-- Login -->
+                    <div class="login" v-if="!signedIn && clientReady">
                         <div
                             :class="{ zhCn: t(currentLanguage) === '简体中文' }"
                             @click="onLogin"
@@ -74,6 +75,24 @@
                             </div>
                             <img src="@/assets/images/navigator/right-arrow.png" />
                         </div>
+                    </div>
+                    <!-- username -->
+                    <div class="user" v-if="signedIn">
+                        <el-dropdown :hide-timeout="80">
+                            <span class="username">
+                                {{ showedUsername }}
+                            </span>
+                            <template #dropdown>
+                                <el-dropdown-menu class="profile">
+                                    <el-dropdown-item>{{
+                                        $t('navbar.user.profile')
+                                        }}</el-dropdown-item>
+                                    <el-dropdown-item @click="onLogOut">{{
+                                        $t('navbar.logout')
+                                        }}</el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
                     </div>
                 </div>
                 <div class="language">
@@ -106,7 +125,7 @@
 <script lang="ts" setup>
     import { ref, watch, computed, onMounted, defineProps } from 'vue';
     import { languages, SupportedLocale, t } from '@/locale';
-    import { ElBacktop, ElMessage } from 'element-plus/es';
+    import { ElBacktop, ElMessage, ElDropdown, ElDropdownItem, ElDropdownMenu } from 'element-plus/es';
     import {
         getUserInfo,
         registerUser,
@@ -125,15 +144,17 @@
     import {initAuth, signIn, signOut} from "@/api/auth";
     import {clearCurrentIdentity, setCurrentIdentity} from "@/api/canister_pool";
     import {UserInfoElement} from "@/types/user";
+    import {showUsername} from "@/common/utils";
+    import {Principal} from "@dfinity/principal/lib/cjs";
     const store = useStore();
     const router = useRouter();
     const props = defineProps({
         // II 认证成功 即 注册成功的回调
-        signedInCallback: {
+        loginInCallback: {
             type: Function,
             required: false,
         },
-        signedOutCallback: {
+        loginOutCallback: {
             type: Function,
             required: false,
         },
@@ -213,6 +234,13 @@
         // document.addEventListener('scroll', onScroll);
     });
 
+    const showedUsername = computed<string>(() => {
+        if (!signedIn.value) return ''; // 没有登录返回空，按道理显示登录按钮不会调用本方法的
+        let name = '';
+        if (userInfo.value.name) name = userInfo.value.name;
+        return showUsername(name, principal.value);
+    });
+
     const comingSoon = () =>
         // 路径不全的 就当做还未完成
         ElMessage({
@@ -240,25 +268,31 @@
         getUserInfo()
             .then((info) => {
                 console.log('get user info', info);
-                if (info.ok) {
-                    let user = info.ok[0];
+                if (info.Ok) {
+                    let user = info.Ok;
+                    user.owner = user.owner.toString();
+                    console.log("Principal.fromText",Principal.fromText(user.owner));
+                    console.log("Principal.fromText",user.owner);
+                    console.log('get user info', info);
                     // 设置用户信息
                     refreshUserInfo({
-                        username: user.name,
+                        name: user.name,
                         avatarId: Number(user.avatarId),
                     });
-                } else if (info.err && info.err.unauthorized === null) {
+                } else if (info.Err && info.Err.unauthorized === null) {
                     console.info('no information for unregister user: ', info);
-                } else throw new Error(JSON.stringify(info));
+                } else {
+                    throw new Error("info not ok & info not err") ;
+                }
             })
             .catch((e) => {
                 console.error('mounted get user info failed', e);
-                onLoginOut();
+                onLogOut();
             });
     };
 
     const refreshUserInfo = (UserInfoElement: UserInfoElement) => {
-        if (UserInfoElement.username) userInfo.value.username = UserInfoElement.username;
+        if (UserInfoElement.name) userInfo.value.name = UserInfoElement.name;
         setUserInfo(UserInfoElement);
     };
 
@@ -271,23 +305,27 @@
                     clientReady.value = true;
                     if (ai.info) {
                         signedIn.value = true;
-                        // 每次成功获取到登录信息后就调用一次注册
                         const principal = ai.info.principal;
                         setCurrentIdentity(ai.info.identity, ai.info.principal);
-                        registerUser(ai.info.principal).then(() => {
-                            //TODO
-                            // 保存 principal 到用户信息状态
-                            setPrincipal(principal).then(() =>
-                                // 获取用户信息
-                                getUserInfoFromServices(),
-                            );
-                        });
+                        // 保存 principal 到用户信息状态
+                        setPrincipal(principal).then(() =>
+                            // 获取用户信息
+                            getUserInfoFromServices(),
+                        );
+                        // 每次成功获取到登录信息后就调用一次注册 TODO 感觉没啥用
+                        // registerUser(ai.info.principal).then(() => {
+                        //     // 保存 principal 到用户信息状态
+                        //     setPrincipal(principal).then(() =>
+                        //         // 获取用户信息
+                        //         getUserInfoFromServices(),
+                        //     );
+                        // });
                     }
                     // console.log("auth", auth)
                 })
                 .catch((e) => {
                     console.error('init auth failed', e);
-                    onLoginOut();
+                    onLogOut();
                 });
         }
     };
@@ -299,14 +337,14 @@
                 // 每次成功获取到登录信息后就调用一次注册
                 setCurrentIdentity(ii.identity, ii.principal);
                 registerUser(ii.principal).then((d) => {
-                    if (d.ok && typeof d.ok == 'string') {
+                    if (d.Ok && typeof d.Ok == 'string') {
                         showMessageSuccess(t('message.welcome'));
                     }
                     // 保存 principal 到状态
                     setPrincipal(ii.principal).then(() => {
                         // 尝试获取用户信息
                         getUserInfoFromServices();
-                        props.signedInCallback?.call(props.signedInCallback);
+                        props.loginInCallback?.call(props.loginInCallback);
                     });
                 });
             })
@@ -316,11 +354,11 @@
             });
     };
 
-    const onLoginOut = () => {
+    const onLogOut = () => {
         signedIn.value = false;
         clearCurrentIdentity();
         signOut(auth.client);
-        props.signedOutCallback?.call(props.signedOutCallback);
+        props.loginOutCallback?.call(props.loginOutCallback);
     };
 
     const onChangeLanguage = () => {
@@ -346,6 +384,7 @@
         background-color: transparent !important;
         color: white;
         width: 100%;
+        height: 63px; // 应当和代码里面一致
         /* font-family: RobotoRemote; */
         display: flex;
         justify-content: center;
@@ -353,7 +392,6 @@
         .navbar {
             margin: 0 auto;
             display: inline-block;
-            height: 63px; // 应当和代码里面一致
             padding: 0;
             background-color: #ffffff !important;
             box-shadow: 0px 0px 10px 10px #0fbae00e;
@@ -365,10 +403,10 @@
                     display: none;
                 }
                 > .icon {
-                    position: absolute;
-                    left: -100px;
+                    /*position: absolute;*/
+                    /*left: -100px;*/
                     /*top: 52px;*/
-                    z-index: 100;
+                    /*z-index: 100;*/
                     > div {
                         width: 132px;
                         height: 32px;
@@ -385,8 +423,9 @@
                     width: 100%;
                     display: flex;
                     flex-direction: row;
-                    justify-content: flex-end;
+                    justify-content: space-between;
                     align-items: center;
+                    margin-left: 10px;
                     > div {
                         width: auto;
                         display: inline-block;

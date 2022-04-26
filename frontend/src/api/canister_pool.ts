@@ -5,6 +5,11 @@ import {
     idlFactory as idlFactoryBackend,
     canisterId as canisterIdBackend,
 } from 'canisters/backend';
+import {
+    photo as anonymousActorPhoto,
+    idlFactory as idlFactoryPhoto,
+    canisterId as canisterIdPhoto,
+} from 'canisters/photo';
 const createActor = (canisterId: string, idlFactory: any, options: any) => {
     const agent = new HttpAgent({ ...options?.agentOptions });
 
@@ -37,6 +42,7 @@ const ACTOR_CACHE = {};
 // 未登录的情况下也要初始化个匿名的
 ACTOR_CACHE[''] = {
     backend: anonymousActorBackend,
+    photo: anonymousActorPhoto,
 };
 
 // 4. 暴露设置方法
@@ -59,6 +65,9 @@ export function setCurrentIdentity(identity: Identity, principal: string) {
         backend: createActor(canisterIdBackend as string, idlFactoryBackend, {
             agentOptions: { identity },
         }),
+        photo: createActor(canisterIdPhoto as string, idlFactoryPhoto, {
+            agentOptions: { identity },
+        }),
     };
     // console.log('set current ACTOR_CACHE', ACTOR_CACHE);
 }
@@ -79,4 +88,11 @@ export function clearCurrentIdentity() {
  */
 export const getBackend = (principal?: string) => {
     return ACTOR_CACHE[principal ?? currentPrincipal].backend;
+};
+/**
+ * A ready-to-use agent for the community canister
+ * @type {import("@dfinity/agent").ActorSubclass<import("./../../../services/.dfx/local/canisters/photo/photo.did.js")._SERVICE>}
+ */
+export const getPhoto = (principal?: string) => {
+    return ACTOR_CACHE[principal ?? currentPrincipal].photo;
 };

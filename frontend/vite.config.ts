@@ -43,7 +43,6 @@ export default defineConfig(({ command, mode }) => {
     console.log('server location ->', location); //
 
     process.env.configMode = ConfigMode[configMode];
-    process.env.blog_proxy_host = viteEnv.VITE_BLOG_PROXY_HOST;
     process.env.network = network;
     process.env.location = location;
 

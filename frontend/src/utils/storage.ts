@@ -14,7 +14,7 @@ export const getLocaleStorage = (): string => {
 export const setUserInfoStorage = (user: UserInfo): void => {
     localStorage.setItem(`USER_${user.owner.toUpperCase()}`, JSON.stringify(user));
 };
-
+// get方法注意缓存清没清
 export const getUserInfoStorage = (principal: string): UserInfo | null => {
     const info = localStorage.getItem(`USER_${principal.toUpperCase()}`);
     if (null == info) return null;

@@ -1,25 +1,14 @@
 <template>
     <div class="home-container">
         <Navigator/>
+        <Public/>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
 import Navigator from '@/components/navigator/Navigator.vue';
+import Public from './modules/Public.vue';
 
-const light = ref(true);
-
-const onScroll = () => {
-    // 当前滚动位置
-    let scrollTop =
-        window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
-    light.value = scrollTop !== 0;
-};
-
-onMounted(() => {
-    window.onscroll = onScroll;
-});
 </script>
 
 <style lang="scss">
