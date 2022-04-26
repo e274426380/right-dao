@@ -29,9 +29,9 @@ impl UserService {
         }       
     }
 
-    // pub fn get_self(&self) -> Option<UserProfile> {
-    //    self.users.get(&self.env.caller()).cloned()
-    // }
+    pub fn is_owner(&self, caller: Principal) -> bool {
+       matches!(self.users.get(&caller), Some(u) if u.owner == caller)
+    }
 
     pub fn get_user(&self, principal: Principal) -> Option<UserProfile> {
         self.users.get(&principal).cloned()    

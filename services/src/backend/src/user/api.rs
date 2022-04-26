@@ -1,6 +1,6 @@
 
 use ic_cdk_macros::{query, update};
-use candid::{Principal, types::ic_types::principal};
+use candid::Principal;
 
 use super::{
     domain::*,
@@ -8,6 +8,8 @@ use super::{
 };
 
 use crate::CONTEXT;
+use crate::guard::user_owner_guard;
+
 
 #[update] 
 fn register_user(cmd: UserRegisterCommand) -> Result<String, UserError> {
@@ -26,7 +28,7 @@ fn register_user(cmd: UserRegisterCommand) -> Result<String, UserError> {
     })
 }
 
-#[update]
+#[update(guard = "user_owner_guard")]
 fn edit_user(cmd: UserEditCommand) -> Result<bool, UserError> {
     CONTEXT.with(|c| {
         let mut ctx = c.borrow_mut();

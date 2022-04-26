@@ -49,8 +49,12 @@ fn pre_upgrade() {
             .iter()
             .map(|(_k, v)| (v.clone())));
 
+        let posts = Vec::from_iter(context.post_service.posts
+            .iter()
+            .map(|(_k, v)| (v.clone())));
+
         let payload: DaoDataStarage = DaoDataStarage {
-            id, users
+            id, users, posts
         };
         
         storage::stable_save((payload,))

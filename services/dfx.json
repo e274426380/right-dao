@@ -10,6 +10,10 @@
         "ic-cdk-optimizer target/wasm32-unknown-unknown/release/backend.wasm -o target/wasm32-unknown-unknown/release/backend_opt.wasm"
       ],
       "candid": "src/backend/src/backend.did"
+    },
+    "photo": {
+      "main": "src/photo/Main.mo",
+      "type": "motoko"
     }
   },
   "defaults": {

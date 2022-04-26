@@ -56,7 +56,22 @@ type BoolUserResult = variant {
 };
 
 type PostCreateCommand = record {
+    title: text;
+    content: RichText;
+    category: Category;
+    photos: vec nat64;
+    participants: vec text;
+    end_time: opt nat64;
+};
 
+type RichText = record {
+    content: text;
+    format: text;
+};
+
+type Category = variant {
+    Tech;
+    Law;
 };
 
 type PostEditCommand = record {
@@ -75,8 +90,14 @@ type PostTerminateCommand = record {
 
 };
 
-type PostingResult = record {
+type CreatePostResult = record {
+    Ok: nat64;
+    Err: PostError;
+};
 
+type PostError = variant {
+    PostAlreadyExists;
+    PostNotFound;
 };
 
 type BoolPostResult = record {
@@ -98,7 +119,7 @@ service : {
     "get_user" : (text) -> (BoolUserResult);
     "get_self" : () -> (UserResult);
 
-    "posting" : (PostCreateCommand) -> (PostingResult);
+    "create_post" : (PostCreateCommand) -> (CreatePostResult);
     "edit_post" : (PostEditCommand) -> (BoolPostResult);
     "comment_post" : (PostCommentCommand) -> (BoolPostResult);
     "page_posts" : (PostPageQuery) -> (PostPage);
