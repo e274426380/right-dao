@@ -6,4 +6,5 @@ use candid::{CandidType, Deserialize};
 pub enum PostError {
     PostAlreadyExists,
     PostNotFound,
+    PostAlreadyCompleted,
 }
