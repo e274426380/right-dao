@@ -23,6 +23,8 @@ pub struct PostProfile {
     pub photos: Vec<u64>,
     pub participants: Vec<String>,
     pub end_time: Option<Timestamp>,
+    pub likes_count: u64,
+    pub ask_for_money: Currency,
     pub status: PostStatus,
     pub created_at: Timestamp,
     pub updated_at: Timestamp,
@@ -40,6 +42,8 @@ impl PostProfile {
             photos,
             participants,
             end_time,
+            likes_count: 0,
+            ask_for_money: Currency::default(),
             status,
             created_at,
             updated_at: created_at,
@@ -66,6 +70,31 @@ pub enum PostStatus {
     Enable,
     Completed,
     Terminated,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, CandidType, Deserialize)]
+pub struct Currency {
+    pub amount: u64,
+    pub unit: CurrencyUnit,
+    pub decimals: u8,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, CandidType, Deserialize)]
+pub enum CurrencyUnit {
+    USDT,
+    ICP,
+    BTC,
+    ETH,
+}
+
+impl Default for Currency {
+    fn default() -> Self {
+        Self {
+            amount: 0,
+            unit: CurrencyUnit::ICP,
+            decimals: 8,
+        }
+    }
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize)]
