@@ -62,12 +62,12 @@ impl PostService {
         self.posts.get(&cmd.id).cloned()
     }
 
-    pub fn page_posts(&self, query: PostPageQuery) -> PostPage {
+    pub fn page_posts(&self, query_args: PostPageQuery) -> PostPage {
         let data: Vec<PostProfile> = self.posts
             .iter()
-            .filter(|(_, q)| q.title.contains(&query.query) || q.content.content.contains(&query.query))
-            .skip(query.page_num * query.page_size)
-            .take(query.page_size)
+            .filter(|(_, q)| query_args.querystring.is_empty() || (q.title.contains(&query_args.querystring) || q.content.content.contains(&query_args.querystring)))
+            .skip(query_args.page_num * query_args.page_size)
+            .take(query_args.page_size)
             .map(|(_, q)| q.clone())
             .collect();
 
@@ -75,8 +75,8 @@ impl PostService {
         
         PostPage {
             data,
-            page_size: query.page_size,
-            page_num: query.page_num,
+            page_size: query_args.page_size,
+            page_num: query_args.page_num,
             total_count,
         }
     }

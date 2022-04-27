@@ -64,6 +64,8 @@ type PostProfile = record {
     photos: vec nat64;
     participants: vec text;
     end_time: opt nat64;
+    likes_count : nat64;
+    ask_for_money : Currency;
     status: PostStatus;
     created_at: nat64;
     updated_at: nat64;
@@ -88,22 +90,17 @@ type Category = variant {
     Law;
 };
 
-
-type PostPageQuery = record {
-    page_num: nat8;
-    page_size: nat8;
+type Currency = record {
+    amount : nat64;
+    unit: CurrencyUnit;
+    decimals : nat8;
 };
 
-
-type PostEditCommand = record {
-    id: nat64;
-    title: text;
-    content: RichText;
-    category: Category;
-    photos: vec nat64;
-    participants: vec text;
-    end_time: opt nat64;
-    status: PostStatus;
+type CurrencyUnit = variant {
+    USDT;
+    ICP;
+    BTC;
+    ETH;
 };
 
 type PostStatus = variant {
@@ -118,6 +115,24 @@ type PostComment = record {
     content: RichText;
     author: principal;
     created_at: nat64;
+};
+
+type PostPageQuery = record {
+    page_num: nat64;
+    page_size: nat64;
+    querystring: text;
+};
+
+
+type PostEditCommand = record {
+    id: nat64;
+    title: text;
+    content: RichText;
+    category: Category;
+    photos: vec nat64;
+    participants: vec text;
+    end_time: opt nat64;
+    status: PostStatus;
 };
 
 type PostCommentCommand = record {
@@ -152,6 +167,11 @@ type PostPage = record {
    total_count: nat64
 };
 
+type PostPageResult = variant {
+    Ok: PostPage;
+    Err: PostError;
+};
+
 type PostResult = variant {
     Ok: PostProfile;
     Err: PostError;
@@ -173,8 +193,10 @@ service : {
     "terminate_post" : (PostIdCommand) -> (BoolPostResult);
     "complete_post" : (PostIdCommand) -> (BoolPostResult);
     "delete_post" : (PostIdCommand) -> (BoolPostResult);
-    "get_post" : (PostIdCommand) -> (BoolPostResult);
-    "page_posts" : (PostPageQuery) -> (PostPage);
+    "get_post" : (PostIdCommand) -> (PostResult);
+    "page_posts" : (PostPageQuery) -> (PostPageResult);
     
     "comment_post" : (PostCommentCommand) -> (BoolPostResult);
+    "likes_post" : (PostIdCommand) -> (BoolPostResult);
+
 }

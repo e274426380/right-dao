@@ -157,7 +157,7 @@ pub struct PostPage {
 pub struct PostPageQuery {
     pub page_size: usize,
     pub page_num: usize,
-    pub query: String,
+    pub querystring: String,
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize)]
