@@ -2,12 +2,14 @@
     <div class="home-container">
         <Navigator/>
         <Public/>
+        <PostList/>
     </div>
 </template>
 
 <script lang="ts" setup>
 import Navigator from '@/components/navigator/Navigator.vue';
 import Public from './modules/Public.vue';
+import PostList from './modules/PostList.vue';
 
 </script>
 

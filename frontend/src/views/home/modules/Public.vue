@@ -1,6 +1,6 @@
 <template>
     <div class="public-container">
-        <div class="content">
+        <div class="container">
             我们的愿景
         </div>
     </div>
