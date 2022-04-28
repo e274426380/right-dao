@@ -29,15 +29,14 @@ impl PostService {
         }   
     }  
 
-    pub fn edit_post(&mut self, cmd: PostEditCommand, caller: Principal) -> Option<bool> {
+    pub fn edit_post(&mut self, cmd: PostEditCommand) -> Option<bool> {
         self.posts.get_mut(&cmd.id).map(|profile| {
-            assert!(caller == profile.author);
             cmd.merge_profile(profile);
         }).map(|_| true)
     }
 
-    pub fn terminate_post(&mut self, cmd: PostIdCommand) -> Option<bool> {
-        if let Some(profile) = self.posts.get_mut(&cmd.id) {
+    pub fn terminate_post(&mut self, id: PostId) -> Option<bool> {
+        if let Some(profile) = self.posts.get_mut(&id) {
             profile.status = PostStatus::Terminated;
             Some(true)
         } else {
@@ -45,8 +44,8 @@ impl PostService {
         }
     }
 
-    pub fn complete_post(&mut self, cmd: PostIdCommand) -> Option<bool> {
-        if let Some(profile) = self.posts.get_mut(&cmd.id) {
+    pub fn complete_post(&mut self, id: PostId) -> Option<bool> {
+        if let Some(profile) = self.posts.get_mut(&id) {
             profile.status = PostStatus::Completed;
             Some(true)
         } else {
@@ -54,15 +53,15 @@ impl PostService {
         }
     }
 
-    pub fn delete_post(&mut self, cmd: PostIdCommand) -> Option<bool> {
-        self.posts.remove(&cmd.id).map(|_| true)
+    pub fn delete_post(&mut self, id: PostId) -> Option<bool> {
+        self.posts.remove(&id).map(|_| true)
     }
     
-    pub fn get_post(&self, cmd: PostIdCommand) -> Option<PostProfile> {
-        self.posts.get(&cmd.id).cloned()
+    pub fn get_post(&self, id: PostId) -> Option<PostProfile> {
+        self.posts.get(&id).cloned()
     }
 
-    pub fn page_posts(&self, query_args: PostPageQuery) -> PostPage {
+    pub fn page_posts(&self, query_args: &PostPageQuery) -> PostPage {
         let data: Vec<PostProfile> = self.posts
             .iter()
             .filter(|(_, q)| query_args.querystring.is_empty() || (q.title.contains(&query_args.querystring) || q.content.content.contains(&query_args.querystring)))

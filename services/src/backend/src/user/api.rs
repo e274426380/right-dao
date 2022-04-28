@@ -33,29 +33,28 @@ fn edit_user(cmd: UserEditCommand) -> Result<bool, UserError> {
     CONTEXT.with(|c| {
         let mut ctx = c.borrow_mut();
         let principal = ctx.env.caller();
-        ctx.user_service.edit_user(cmd, principal).ok_or(UserError::UserNotFound)
+        ctx.user_service.edit_user(cmd, &principal).ok_or(UserError::UserNotFound)
     })
 }
 
 #[update]
 fn enable_user(principal: Principal) -> Result<bool, UserError> {
     CONTEXT.with(|c| {
-        c.borrow_mut().user_service.enable_user(principal).ok_or(UserError::UserNotFound)
+        c.borrow_mut().user_service.enable_user(&principal).ok_or(UserError::UserNotFound)
     })
 }
 
 #[update]
 fn disable_user(principal: Principal) -> Result<bool, UserError> {
     CONTEXT.with(|c| {
-        c.borrow_mut().user_service.disable_user(principal).ok_or(UserError::UserNotFound)
+        c.borrow_mut().user_service.disable_user(&principal).ok_or(UserError::UserNotFound)
     })
 }
 
 #[query]
-fn get_user(principal: String) -> Result<UserProfile, UserError> {
-    Principal::from_text(principal).ok().and_then(|p| 
-        CONTEXT.with(|c| c.borrow().user_service.get_user(p))
-    ).ok_or(UserError::UserNotFound)
+fn get_user(principal: Principal) -> Result<UserProfile, UserError> {
+    
+    CONTEXT.with(|c| c.borrow().user_service.get_user(&principal)).ok_or(UserError::UserNotFound)
 }
 
 #[query]
@@ -63,6 +62,6 @@ fn get_self() -> Result<UserProfile, UserError> {
     CONTEXT.with(|c| {
         let context = c.borrow();
         let caller = context.env.caller();
-        context.user_service.get_user(caller).ok_or(UserError::UserNotFound)  
+        context.user_service.get_user(&caller).ok_or(UserError::UserNotFound)  
     })
 }
