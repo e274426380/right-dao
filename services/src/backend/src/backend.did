@@ -185,7 +185,7 @@ service : {
     "edit_user" : (UserEditCommand) -> (BoolUserResult);
     "enable_user" : (principal) -> (BoolUserResult);
     "disable_user" : (principal) -> (BoolUserResult);
-    "get_user" : (principal) -> (BoolUserResult);
+    "get_user" : (principal) -> (UserResult);
     "get_self" : () -> (UserResult);
 
     "create_post" : (PostCreateCommand) -> (CreatePostResult);
