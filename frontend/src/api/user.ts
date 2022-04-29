@@ -1,6 +1,7 @@
 import { clearCacheData, getCache, TTL } from '@/common/cache';
 import { getCurrentPrincipal, getBackend } from './canister_pool';
 import {ApiResult, ApiUserInfo} from "@/api/types";
+import {Principal} from "@dfinity/principal/lib/cjs";
 
 // 注册用户接口，将当前登录用户 id 登记在后端 应当有缓存 不需要返回值
 export async function registerUser(principalId: string): Promise<ApiResult<string>> {
@@ -35,4 +36,20 @@ export async function getUserInfo(): Promise<ApiResult<ApiUserInfo>> {
         // ttl: 60 * 60, // 目前开发阶段先设置短的时间
         isLocal: true, // 需要本地存储
     });
+}
+
+// 获取目标用户信息
+export async function getTargetUser(principal: string): Promise<ApiResult<ApiUserInfo>> {
+    return await getCache({
+        key: 'USER_INFO_' + getCurrentPrincipal().toUpperCase(),
+        //TODO 记得改成方法参数
+        execute: () => getBackend().get_user(Principal.fromText("2vxsx-fae")),
+        ttl: TTL.minute10,
+        isLocal: true, // 需要本地存储
+    });
+}
+
+// 更新用户自己的信息
+export async function editUserSelf(user:ApiUserInfo): Promise<ApiResult<boolean>> {
+    return getBackend().edit_user(user);
 }

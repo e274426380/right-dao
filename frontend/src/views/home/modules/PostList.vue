@@ -16,7 +16,7 @@
             </el-row>
             <div class="post-list">
                 <el-row>
-                    <el-col>
+                    <el-col :span="18" :offset="3">
                         <el-card class="post-card" v-for="i in 4">
                             <el-row justify="space-between">
                                 <el-col :span="16" class="card-info">
@@ -60,9 +60,6 @@
                                 </div>
                                 <div>
                                     回复 99
-                                    <el-button>
-                                        点赞
-                                    </el-button>
                                 </div>
                             </div>
                         </el-card>

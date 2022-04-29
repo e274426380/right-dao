@@ -7,7 +7,6 @@ body {
   padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   font-family: Roboto, Helvetica, Tahoma, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "微软雅黑", "WenQuanYi Micro Hei", sans-serif;
   background-color: white;
   color: black;
@@ -52,8 +51,13 @@ body {
   .container-md,
   .container-sm,
   .container {
-    max-width: 1200px; /* 我们设计风格 要用 1200 宽度 */
+    max-width: 1200px; /* 网站设计风格 用 1200 宽度 */
   }
+}
+/*垂直居中*/
+.flex-y-center{
+    display: flex;
+    align-items: center;
 }
 
 .el-icon.el-backtop__icon {

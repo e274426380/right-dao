@@ -6,6 +6,7 @@ export type ApiError = {
     unauthorized: null; // 未注册情况下，调用接口
     emailAddressAlreadyExists: null; // 邮箱已经注册
     emailAddressNotValid: null; // 邮箱格式不正确
+    UserNotFound: null; // 找不到目标用户
 };
 
 // 后端的返回结果
@@ -38,9 +39,9 @@ export type ApiUserInfo = {
     name: string;
     memo: string;
     status: string;
-    createdAt: bigint;
-    avatarUri: string; //头像网址，暂时没用
-    avatarId: bigint; //头像id，暂时没用
+    created_at: bigint;
+    avatar_uri: string; //头像网址，暂时没用
+    avatar_id: bigint; //头像id，暂时没用
     biography: string; //类似于个人签名
     interests:string[]; //兴趣，类似于标签
 };

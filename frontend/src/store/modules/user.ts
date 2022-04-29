@@ -30,13 +30,11 @@ const getUserInfoByState = function (state: UserState): UserInfo {
     if (state.user && state.user.owner == state.principal) return state.user;
     // 缓存中没有，就读取
     let readUser = getUserInfoStorage(state.principal);
-    console.log("readUser",readUser);
     if (!readUser) {
         readUser = new UserInfo(); // 如果没有就新建一个空的
         readUser.owner = state.principal;
         setUserInfoStorage(readUser);
     }
-    console.log("readUser1",readUser);
     state.user = readUser;
     return readUser;
 };

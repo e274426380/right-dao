@@ -84,7 +84,7 @@
                             </span>
                             <template #dropdown>
                                 <el-dropdown-menu class="profile">
-                                    <el-dropdown-item>{{
+                                    <el-dropdown-item @click="toProfile">{{
                                         $t('navbar.user.profile')
                                         }}</el-dropdown-item>
                                     <el-dropdown-item @click="onLogOut">{{
@@ -145,7 +145,6 @@
     import {clearCurrentIdentity, setCurrentIdentity} from "@/api/canister_pool";
     import {UserInfoElement} from "@/types/user";
     import {showUsername} from "@/common/utils";
-    import {Principal} from "@dfinity/principal/lib/cjs";
     const store = useStore();
     const router = useRouter();
     const props = defineProps({
@@ -196,7 +195,7 @@
     // 导航设置
     const pageIndex = ref(0);
     const pages = ref<{ text: string; action: string }[]>([
-        { text: 'navbar.tabs.media', action: '/media' },
+        { text: 'navbar.tabs.home', action: '/' },
     ]);
 
     // 多语言设置
@@ -271,13 +270,10 @@
                 if (info.Ok) {
                     let user = info.Ok;
                     user.owner = user.owner.toString();
-                    console.log("Principal.fromText",Principal.fromText(user.owner));
-                    console.log("Principal.fromText",user.owner);
-                    console.log('get user info', info);
                     // 设置用户信息
                     refreshUserInfo({
                         name: user.name,
-                        avatarId: Number(user.avatarId),
+                        avatarId: Number(user.avatar_id),
                     });
                 } else if (info.Err && info.Err.unauthorized === null) {
                     console.info('no information for unregister user: ', info);
@@ -295,6 +291,12 @@
         if (UserInfoElement.name) userInfo.value.name = UserInfoElement.name;
         setUserInfo(UserInfoElement);
     };
+
+    const toProfile = () => {
+        router.push({
+            path: '/person/profile/' + principal.value,
+        });
+    }
 
     const doInitAuth = () =>{
         if (!clientReady.value) {

@@ -8,7 +8,7 @@ export class UserInfo {
     memo = ''; // 用户签名
     status = ''; //用户状态
     create_at = 0; //注册时间
-    avatarId = 0; // 头像 id
+    avatar_id = 0; // 头像 id
 }
 
 export interface UserInfoElement {

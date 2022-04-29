@@ -29,6 +29,18 @@ export const parseNs2Date = (time: number): Date => {
     return new Date(time / (1000 * 1000));
 };
 
+//直接将后端时间戳转换成yyyy-mm-dd格式的字符串
+export const formatDate = (value: number): string => {
+    let date = new Date(value / (1000 * 1000))
+    let y = date.getFullYear()  //获取年份
+    let m = date.getMonth() + 1  //获取月份
+    let month = m < 10 ? "0" + m : m  //月份不满10天显示前加0
+    let d = date.getDate()  //获取日期
+    const day = d < 10 ? "0" + d : d  //日期不满10天显示前加0
+    return y + "-" + month + "-" + day
+};
+
+
 // 根据语言选择格式化日期，显示顺序是日期 月份 年份
 export const formatDateWithTotalMonth = (locale: SupportedLocale, date: Date): string => {
     let year = '';
