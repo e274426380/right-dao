@@ -39,7 +39,7 @@ export async function getUserInfo(): Promise<ApiResult<ApiUserInfo>> {
 }
 
 // 获取目标用户信息
-export async function getTargetUser(principal: string): Promise<ApiResult<ApiUserInfo>> {
+export async function getTargetUser(principal: string): Promise<ApiResult<any | ApiUserInfo>> {
     return await getCache({
         key: 'USER_INFO_' + getCurrentPrincipal().toUpperCase(),
         //TODO 记得改成方法参数
@@ -50,6 +50,6 @@ export async function getTargetUser(principal: string): Promise<ApiResult<ApiUse
 }
 
 // 更新用户自己的信息
-export async function editUserSelf(user:ApiUserInfo): Promise<ApiResult<boolean>> {
+export async function editUserSelf(user: any | ApiUserInfo): Promise<ApiResult<boolean>> {
     return getBackend().edit_user(user);
 }

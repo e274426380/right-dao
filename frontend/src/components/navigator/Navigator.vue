@@ -396,7 +396,7 @@
             display: inline-block;
             padding: 0;
             background-color: #ffffff !important;
-            box-shadow: 0px 0px 10px 10px #0fbae00e;
+            box-shadow: 0px 0px 10px 10px rgb(36 51 54 / 5%);
             .container-fluid {
                 width: 1200px;
                 position: relative;
@@ -431,6 +431,12 @@
                     > div {
                         width: auto;
                         display: inline-block;
+                    }
+                    .user{
+                        line-height: 14px;
+                        .username{
+                            font-size: 18px;
+                        }
                     }
                     > .tabs {
                         display: flex;
