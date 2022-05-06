@@ -3,6 +3,7 @@ use ic_cdk_macros::{update, query};
 use crate::{CONTEXT, post::domain::PostStatus};
 use crate::common::guard::has_user_guard;
 
+use super::domain::{PostCommentCommand, PostEventCommand, CommentCommentCommand};
 use super::{domain::{PostCreateCommand, PostEditCommand, PostIdCommand, PostProfile, PostPageQuery, PostPage}, error::PostError};
 
 #[update(guard = "has_user_guard")] 
@@ -30,7 +31,9 @@ fn edit_post(cmd: PostEditCommand) -> Result<bool, PostError> {
         let post_id = cmd.id;
         match ctx.post_service.get_post(post_id) {
             Some(p) => {
-                assert!(p.author == caller);
+                if p.author != caller {
+                    return Err(PostError::PostUnAuthorizedOperation);
+                }
                 if p.status == PostStatus::Completed {
                     return Err(PostError::PostAlreadyCompleted);
                 }
@@ -50,7 +53,9 @@ fn terminate_post(cmd: PostIdCommand) -> Result<bool, PostError> {
         let post_id = cmd.id;
         match ctx.post_service.get_post(post_id) {
             Some(p) => {
-                assert!(p.author == caller);
+                if p.author != caller {
+                    return Err(PostError::PostUnAuthorizedOperation);
+                }
                 if p.status == PostStatus::Completed {
                     return Err(PostError::PostAlreadyCompleted);
                 }
@@ -69,7 +74,9 @@ fn complete_post(cmd: PostIdCommand) -> Result<bool, PostError> {
         let post_id = cmd.id;
         match ctx.post_service.get_post(post_id) {
             Some(p) => {
-                assert!(p.author == caller);
+                if p.author != caller {
+                    return Err(PostError::PostUnAuthorizedOperation);
+                }
                 ctx.post_service.complete_post(post_id).ok_or(PostError::PostNotFound)
             },
             None => Err(PostError::PostNotFound),
@@ -84,8 +91,10 @@ fn delete_post(cmd: PostIdCommand) -> Result<bool, PostError> {
         let caller = ctx.env.caller();
         let post_id = cmd.id;
         match ctx.post_service.get_post(post_id) {
-            Some(p) => {
-                assert!(p.author == caller);
+            Some(p) => {               
+                if p.author != caller {
+                    return Err(PostError::PostUnAuthorizedOperation);
+                }
                 if p.status == PostStatus::Completed {
                     return Err(PostError::PostAlreadyCompleted);
                 }
@@ -93,6 +102,52 @@ fn delete_post(cmd: PostIdCommand) -> Result<bool, PostError> {
             },
             None => Err(PostError::PostNotFound),
         }
+    })
+}
+
+#[update]
+fn add_post_comment(cmd: PostCommentCommand) -> Result<bool, PostError> {
+    CONTEXT.with(|c| {
+        let mut ctx = c.borrow_mut();
+        let comment_id = ctx.id;
+        let caller = ctx.env.caller();
+        let now = ctx.env.now();
+        
+        match ctx.post_service.add_post_comment(cmd, comment_id, caller, now) {
+            Ok(_) => {
+                ctx.id += 1;    // id addOne
+                Ok(true)
+            },
+            e => e,
+        }
+    })
+}
+
+#[update]
+fn add_comment_comment(cmd: CommentCommentCommand) -> Result<bool, PostError> {
+    CONTEXT.with(|c| {
+        let mut ctx = c.borrow_mut();
+        let comment_id = ctx.id;
+        let caller = ctx.env.caller();
+        let now = ctx.env.now();
+        
+        match ctx.post_service.add_comment_comment(cmd, comment_id, caller, now) {
+            Ok(_) => {
+                ctx.id += 1;    // id addOne
+                Ok(true)
+            },
+            e => e,
+        }
+    })
+}
+
+#[update]
+fn add_post_event(cmd: PostEventCommand) -> Result<bool, PostError> {
+    CONTEXT.with(|c| {
+        let mut ctx = c.borrow_mut();
+        let caller = ctx.env.caller();
+        let now = ctx.env.now();
+        ctx.post_service.add_post_event(cmd, caller, now)
     })
 }
 

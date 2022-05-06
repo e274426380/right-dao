@@ -66,6 +66,7 @@ type PostProfile = record {
     end_time: opt nat64;
     likes_count : nat64;
     ask_for_money : Currency;
+    events: vec PostEvent;
     status: PostStatus;
     created_at: nat64;
     updated_at: nat64;
@@ -112,7 +113,18 @@ type PostStatus = variant {
 type PostComment = record {
     id: nat64;
     post_id: nat64;
+    comment_id: opt nat64;
     content: RichText;
+    author: principal;
+    created_at: nat64;
+    comments: vec PostComment;
+};
+
+type PostEvent = record {
+    id: nat64;
+    post_id: nat64;
+    event_time: nat64;
+    description: text;
     author: principal;
     created_at: nat64;
 };
@@ -140,6 +152,18 @@ type PostCommentCommand = record {
     content: RichText;
 };
 
+type CommentCommentCommand = record {
+    post_id: nat64;
+    comment_id: nat64;
+    content: RichText;
+};
+
+type PostEventCommand = record {
+    post_id: nat64;
+    event_time: nat64;
+    description: text;
+};
+
 type PostIdCommand = record {
     id: nat64;
 };
@@ -153,6 +177,8 @@ type PostError = variant {
     PostAlreadyExists;
     PostNotFound;
     PostAlreadyCompleted;
+    PostUnAuthorizedOperation;
+    PostCommentNotFound;
 };
 
 type BoolPostResult = variant {
@@ -196,7 +222,9 @@ service : {
     "get_post" : (PostIdCommand) -> (PostResult);
     "page_posts" : (PostPageQuery) -> (PostPageResult);
     
-    "comment_post" : (PostCommentCommand) -> (BoolPostResult);
+    "add_post_comment" : (PostCommentCommand) -> (BoolPostResult);
+    "add_comment_comment" : (CommentCommentCommand) -> (BoolPostResult);
+    "add_post_event" : (PostEventCommand) -> (BoolPostResult);
     "likes_post" : (PostIdCommand) -> (BoolPostResult);
 
 }

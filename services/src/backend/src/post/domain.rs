@@ -1,3 +1,5 @@
+use std::collections::VecDeque;
+
 use candid::{CandidType, Deserialize, Principal};
 
 
@@ -25,6 +27,7 @@ pub struct PostProfile {
     pub end_time: Option<Timestamp>,
     pub likes_count: u64,
     pub ask_for_money: Currency,
+    pub events: VecDeque<PostEvent>,
     pub status: PostStatus,
     pub created_at: Timestamp,
     pub updated_at: Timestamp,
@@ -44,11 +47,16 @@ impl PostProfile {
             end_time,
             likes_count: 0,
             ask_for_money: Currency::default(),
+            events: VecDeque::new(),
             status,
             created_at,
             updated_at: created_at,
             comments: vec![]
         }
+    }
+
+    pub fn is_active(&self) -> bool {
+        self.status == PostStatus::Completed || self.status == PostStatus::Terminated
     }
 }
 
@@ -95,6 +103,21 @@ impl Default for Currency {
             decimals: 8,
         }
     }
+}
+
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct PostEvent {
+    post_id: u64,
+    event_time: Timestamp,
+    description: String,
+    author: Principal,
+    created_at: Timestamp,
+}
+
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub enum EventStatus {
+    Enable,
+    Disable,
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize)]
@@ -162,10 +185,21 @@ pub struct PostPageQuery {
 
 #[derive(Debug, Clone, CandidType, Deserialize)]
 pub struct PostComment {
+    pub id: u64,
     pub post_id: u64,
+    pub comment_id: Option<u64>,
     pub content: RichText,
     pub author: Principal,
+    pub status: CommentStatus,
     pub created_at: Timestamp,
+    pub updated_at: Timestamp,
+    pub comments: Vec<PostComment>,
+}
+
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub enum CommentStatus {
+    Enable,
+    Disable,
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize)]
@@ -175,10 +209,57 @@ pub struct PostCommentCommand {
 }
 
 impl PostCommentCommand {
-    pub fn build_comment(self, author: Principal, now: Timestamp) -> PostComment {
+    pub fn build_comment(self, id: u64, author: Principal, now: Timestamp) -> PostComment {
         PostComment {
+            id,
             post_id: self.post_id,
+            comment_id: None,
             content: self.content,
+            author,
+            status: CommentStatus::Enable,
+            created_at: now,
+            updated_at: now,
+            comments: vec![],
+        }
+    }
+}
+
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct CommentCommentCommand {
+    pub post_id: u64,
+    pub comment_id: u64,
+    pub content: RichText,
+}
+
+impl CommentCommentCommand {
+    pub fn build_comment(self, id: u64, author: Principal, now: Timestamp) -> PostComment {
+        PostComment {
+            id,
+            post_id: self.post_id,
+            comment_id: Some(self.comment_id),
+            content: self.content,
+            author,
+            status: CommentStatus::Enable,
+            created_at: now,
+            updated_at: now,
+            comments: vec![]
+        }
+    }
+}
+
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct PostEventCommand {
+    pub post_id: u64,
+    pub event_time: Timestamp,
+    pub description: String,
+}
+
+impl PostEventCommand {
+    pub fn build_event(self, author: Principal, now: Timestamp) -> PostEvent {
+        PostEvent { 
+            post_id: self.post_id,
+            event_time: self.event_time,
+            description: self.description, 
             author,
             created_at: now,
         }

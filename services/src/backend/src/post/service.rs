@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 
 use candid::Principal;
 
-use super::domain::{PostProfile, PostId, PostCreateCommand, Timestamp, PostStatus, PostEditCommand, PostIdCommand, PostPage, PostPageQuery, PostCommentCommand, PostComment, };
+use super::{domain::{PostProfile, PostId, PostCreateCommand, Timestamp, PostStatus, PostEditCommand, PostIdCommand, PostPage, PostPageQuery, PostCommentCommand, PostComment, PostEventCommand, CommentCommentCommand, }, error::PostError};
 
 
 #[derive(Debug, Default)]
@@ -80,16 +80,48 @@ impl PostService {
         }
     }
 
-    pub fn comment_post(&mut self, cmd: PostCommentCommand, author: Principal, now: Timestamp) -> Option<bool> {
-        self.posts.get_mut(&cmd.post_id).map(|profile| {
-            profile.comments.push(
-                PostComment {
-                    post_id: cmd.post_id,
-                    content: cmd.content,
-                    author,
-                    created_at: now,
-                }
-            );
-        }).map(|_| true)
+    /// add comment to post
+    pub fn add_post_comment(&mut self, cmd: PostCommentCommand, comment_id: u64, author: Principal, now: Timestamp) -> Result<bool, PostError> {
+        match self.posts.get_mut(&cmd.post_id) {
+            Some(p) if p.is_active() => {
+                p.comments.push(
+                    cmd.build_comment(comment_id, author, now)
+                );
+                Ok(true)
+            }
+            Some(_) => Err(PostError::PostAlreadyCompleted),
+            _ => Err(PostError::PostNotFound)
+        }
+    }
+
+    /// add comment to post's comment
+    pub fn add_comment_comment(&mut self, cmd: CommentCommentCommand, comment_id: u64, author: Principal, now: Timestamp) -> Result<bool, PostError> {
+        match self.posts.get_mut(&cmd.post_id) {
+            Some(p) if p.is_active() => {
+                let mut comment = p.comments.iter().find(|c| c.id == cmd.comment_id).cloned();
+                match &mut comment {
+                    Some(c) => {
+                        c.comments.push(cmd.build_comment(comment_id, author, now));
+                        Ok(true)
+                    }
+                    None => Err(PostError::PostCommentNotFound)
+                }              
+            }
+            Some(_) => Err(PostError::PostAlreadyCompleted),
+            _ => Err(PostError::PostNotFound)
+        }
+    }
+
+    pub fn add_post_event(&mut self, cmd: PostEventCommand, author: Principal, now: Timestamp) -> Result<bool, PostError> {
+        match self.posts.get_mut(&cmd.post_id) {
+            Some(p) if p.is_active() => {
+                p.events.push_front(
+                    cmd.build_event(author, now)
+                );
+                Ok(true)
+            }
+            Some(_) => Err(PostError::PostAlreadyCompleted),
+            _ => Err(PostError::PostNotFound)
+        }
     }
 }

@@ -7,4 +7,6 @@ pub enum PostError {
     PostAlreadyExists,
     PostNotFound,
     PostAlreadyCompleted,
+    PostUnAuthorizedOperation,
+    PostCommentNotFound,
 }
