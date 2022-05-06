@@ -10,4 +10,10 @@ pub enum UserError {
     UserAlreadyExists,
     #[error("User  is not enabled")]
     UserAlreadyDisable,
+    #[error("User name is too long")]
+    UserNameTooLong,
+    #[error("User email is invalid")]
+    UserEmailInvalid,
+    #[error("User biography is too long")]
+    UserBiographyTooLong,
 }

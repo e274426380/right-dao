@@ -18,6 +18,9 @@ type UserError = variant {
     UserNotFound;
     UserAlreadyExists;
     UserAlreadyDisable;
+    UserNameTooLong;
+    UserEmailInvalid;
+    UserBiographyTooLong;
 };
 
 type UserProfile = record {

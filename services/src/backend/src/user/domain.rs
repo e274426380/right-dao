@@ -46,6 +46,18 @@ impl UserProfile {
             created_at,
         }
     }
+
+    pub fn valid_name(&self) -> bool {
+        self.name.chars().count() <= 20
+    }
+
+    pub fn valid_email(&self) -> bool {
+        email_address::EmailAddress::is_valid(&self.email) && (self.email.chars().count() <= 50)
+    }
+
+    pub fn valid_biography(&self) -> bool {
+        self.biography.chars().count() <= 120
+    }
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize)]
