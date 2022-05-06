@@ -42,7 +42,6 @@
                                 <el-icon>
                                     <StarFilled/>
                                 </el-icon>
-                                兴趣领域：
                                 <el-tag v-for="(item,index) in user.interests">{{item}}</el-tag>
                             </div>
                             <div>
@@ -151,7 +150,6 @@
     const store = useStore();
     const router = useRouter();
     const route = useRoute();
-
     const dialogFormVisible = ref(false);
     const form = ref({
         owner: "",

@@ -11,7 +11,7 @@
                     />
                 </el-col>
                 <el-col :span="8" class="flex-right">
-                    <el-button type="primary">求助</el-button>
+                    <el-button type="primary" @click="router.push('/post/submit')">求助</el-button>
                 </el-col>
             </el-row>
             <div class="post-list">
@@ -75,6 +75,8 @@
     import {ElRow, ElCol, ElInput, ElButton, ElCard, ElTag} from 'element-plus/es';
     import {Search} from '@element-plus/icons-vue'
     import Avatar from '@/components/common/Avatar.vue';
+    import {useRoute, useRouter} from 'vue-router';
+    const router = useRouter();
 
     const search = ref("");
 
