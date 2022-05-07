@@ -15,7 +15,8 @@ export default {
             law: "Law Field"
         },
         participants:{
-            label:"Desired Participant："
+            label:"Desired Participant：",
+            placeholder:"Desired Participant"
         },
         endTime: {
             label:"End Time：",

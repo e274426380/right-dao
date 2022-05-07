@@ -5,19 +5,19 @@
             <div class="submit-title">
                 <h3 class="title">
                     {{ $t('post.help.create') }}
+                    <div class="back-button" @click="$router.back()"
+                    >{{ '<' }}{{ $t('common.back') }}
+                    </div>
                 </h3>
-                <div class="back-button" @click="$router.back()"
-                >{{ '<' }}{{ $t('common.back') }}
-                </div>
             </div>
             <el-row class="post-form">
-                <el-col :span="21" :offset="1">
-                    <el-form :model="form" hide-required-asterisk="true">
+                <el-col :span="16" :offset="4">
+                    <el-form :model="form" hide-required-asterisk>
                         <el-form-item prop="title" :label="$t('post.help.title.label')">
                             <el-input v-model="form.title"
                                       maxlength="20"
                                       show-word-limit
-                                      placeholder="求助标题"/>
+                                      :placeholder="$t('post.help.title.placeholder')"/>
                         </el-form-item>
                         <el-form-item :label="$t('post.help.content.label')">
                             <QuillEditor
@@ -31,7 +31,7 @@
                         <el-form-item :label="$t('post.help.category.label')">
                             <el-select class="i-select"
                                        popper-class="i-select-pop"
-                                       v-model="form.category"
+                                       v-model="categoryValue"
                                        :placeholder="$t('post.help.category.placeholder')"
                             >
                                 <el-option
@@ -43,20 +43,19 @@
                             </el-select>
                         </el-form-item>
                         <el-form-item :label="$t('post.help.participants.label')">
-                            <el-input v-model="form.participants"
+                            <el-input v-model="form.participants[0]"
                                       maxlength="30"
                                       show-word-limit
-                                      placeholder="期望的参与人"/>
+                                      :placeholder="$t('post.help.participants.placeholder')"/>
                         </el-form-item>
                         <el-form-item :label="$t('post.help.endTime.label')">
                             <el-config-provider :locale="elementPlusLocale">
                                 <el-date-picker
                                     v-model="form.end_time[0]"
-                                    type="date"
+                                    type="datetime"
                                     :placeholder="$t('post.help.endTime.placeholder')"
                                     popper-class="i-date-pop"
                                     :editable="false"
-                                    format="YYYY-MM-DD"
                                     value-format="x"
                                 />
                             </el-config-provider>
@@ -64,12 +63,15 @@
                     </el-form>
                 </el-col>
             </el-row>
+            <div style="text-align: center" class="form-footer">
+                <el-button type="primary" class="submit-button" @click="submit()" :loading="loading">提交</el-button>
+            </div>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-    import {ref, onMounted, computed} from 'vue';
+    import {ref, onMounted, computed, nextTick } from 'vue';
     import Navigator from '@/components/navigator/Navigator.vue';
     import {
         ElRow, ElCol, ElButton, ElSelect, ElOption, ElForm, ElFormItem, ElInput, ElMessage, ElConfigProvider,
@@ -82,11 +84,18 @@
     import en from 'element-plus/lib/locale/lang/en';
     import zhCn from 'element-plus/lib/locale/lang/zh-cn';
     import {useStore} from "vuex";
+    import {submitPost} from "@/api/post";
+    import {goBack} from "@/router/routers";
+    import {showMessageError} from "@/utils/message";
     const store = useStore();
     const router = useRouter();
     const route = useRoute();
 
-    const locale = computed<SupportedLocale>(() => {return store.state.user.locale;});
+    const locale = computed<SupportedLocale>(() => {return store.state.user.locale});
+    const currentUserPrincipal = computed<string>(() => store.state.user.principal);
+    const categoryValue=ref("");
+    const loading=ref(false);
+    const isEditorChange=ref(false);
     // 直接取出，没有额外逻辑，用 computed 变成响应式值
     const myTextEditor = ref<{ setHTML: Function; getText: Function } | null>(null);
     const form = ref({
@@ -95,16 +104,17 @@
             content:"",
             format:"html"
         },
-        category: "",
-        participants: "",//期待参与者
+        photos:[1,2],
+        category: {},
+        participants: ["","123"],//期待参与者
         end_time: [0],
     });
     const category = ref([{
         value:"Tech",
-        label:t('post.category.tech')
+        label:t('post.help.category.tech')
     },{
         value:"Law",
-        label:t('post.category.law')
+        label:t('post.help.category.law')
     }])
     const editorOption = {
         modules: {
@@ -142,17 +152,48 @@
         }
     });
 
+    onMounted(() => {
+        init()
+    });
+
+    const submit = () => {
+        loading.value = true
+        form.value.category[categoryValue.value] = null;
+        console.log("form", form.value)
+        submitPost(form.value).then(res => {
+            console.log(res);
+        }).finally(() => {
+            loading.value = false;
+        })
+    }
+
+    const init = () =>{
+        //验证是否登录
+        nextTick(() => {
+            if (!currentUserPrincipal.value) {
+                showMessageError(t('message.error.noLogin'));
+                setTimeout(() => {
+                    //等用户看清了错误提示再弹
+                    goBack(router);
+                }, 1500);
+            }
+        });
+    }
 </script>
 
 <style lang="scss">
 .post-submit-container {
     .container{
         .submit-title{
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             margin-top: 20px;
+            text-align: center;
+            .title{
+                position: relative;
+            }
             .back-button{
+                position: absolute;
+                right: 0;
+                top: 0;
                 font-size: 1.75rem;
                 &:hover{
                     cursor: pointer;
@@ -161,6 +202,13 @@
         }
         .post-form{
             margin-top: 20px;
+        }
+        .form-footer{
+            .submit-button{
+                font-size: 1.45rem;
+                min-width: 110px;
+                min-height: 35px;
+            }
         }
     }
 }

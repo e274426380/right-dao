@@ -305,6 +305,7 @@
                 .then((ai) => {
                     auth.client = ai.client;
                     clientReady.value = true;
+                    //info一般都是undefined，意义不明
                     if (ai.info) {
                         signedIn.value = true;
                         const principal = ai.info.principal;
@@ -339,6 +340,7 @@
                 // 每次成功获取到登录信息后就调用一次注册
                 setCurrentIdentity(ii.identity, ii.principal);
                 registerUser(ii.principal).then((d) => {
+                    console.log("registerUser",d)
                     if (d.Ok && typeof d.Ok == 'string') {
                         showMessageSuccess(t('message.welcome'));
                     }

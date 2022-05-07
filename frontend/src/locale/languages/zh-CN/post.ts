@@ -15,7 +15,8 @@ export default {
             law: "法律领域"
         },
         participants:{
-            label:"期望的参与人："
+            label:"期望的参与人：",
+            placeholder:"期望的参与人"
         },
         endTime: {
             label:"结束时间：",

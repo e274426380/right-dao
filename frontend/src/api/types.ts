@@ -26,10 +26,16 @@ export type ApiResultByPage<T> = {
 };
 
 export type ApiStatus = 'enable' | 'disable' | 'pending' | 'deleted';
+export type ApiPostStatus = 'Enable' | 'Completed' | 'Terminated';
 
 export type RichText = {
     content: string; // 实际内容
     format: 'text' | 'markdown' | 'html'; // 标记内容类型 有 3 种: text | html | markdown
+};
+
+export type PostCategory = {
+    Tech?: null,
+    Law?: null
 };
 
 export type ApiUserInfo = {
@@ -44,4 +50,20 @@ export type ApiUserInfo = {
     avatar_id: bigint; //头像id，暂时没用
     biography: string; //类似于个人签名
     interests:string[]; //兴趣，类似于标签
+};
+
+export type ApiPost = {
+    id: bigint; //id
+    author: Principal | string; // 作者
+    title: string;
+    content: RichText;
+    category: PostCategory;
+    photos: number[];
+    participants: string[];//期待参与的人
+    end_time: [number]; //结束时间  opt格式，类似于[1000]，数组中只有一个数据。
+    likes_count: number;
+    ask_for_money: any;
+    status: ApiPostStatus;
+    created_at: number;
+    updated_at: number;
 };

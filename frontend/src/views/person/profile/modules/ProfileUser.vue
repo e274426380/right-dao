@@ -59,7 +59,7 @@
                 :avatar-id="0"
                 :clickable="false"
                 :size="100"/>
-        <el-form :model="form" hide-required-asterisk="true">
+        <el-form :model="form" hide-required-asterisk>
             <el-form-item prop="name" :rules="[{
                 required: true,
                 message: '请输入用户名',
