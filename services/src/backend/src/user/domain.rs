@@ -105,3 +105,22 @@ impl UserEditCommand {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn empty_name_should_work() {
+        let cmd = UserRegisterCommand {
+            email: "".to_string(),
+            name: "".to_string(),
+            memo: "".to_string(),
+        };
+        let id = 10001;
+        let owner = Principal::anonymous();
+        let status = UserStatus::Enable;
+        let created_at = 100000000000000;
+        let user = cmd.build_profile(id, owner, status, created_at);
+        assert!(user.valid_name());
+    }
+}

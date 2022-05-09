@@ -21,15 +21,15 @@ impl UserService {
                     UserStatus::Enable,
                     now
                 );
-                if user.valid_name() {
+                if !user.valid_name() {
                     return Err(UserError::UserNameTooLong);
                 }
 
-                if user.valid_email() {
+                if !user.valid_email() {
                     return Err(UserError::UserEmailInvalid);
                 }
 
-                if user.valid_biography() {
+                if !user.valid_biography() {
                     return Err(UserError::UserBiographyTooLong);
                 }
 
