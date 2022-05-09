@@ -1,4 +1,8 @@
-use std::{collections::VecDeque, string::ParseError, str::FromStr};
+use std::{
+    collections::VecDeque, 
+    string::ParseError, 
+    str::FromStr
+};
 
 use candid::{CandidType, Deserialize, Principal};
 

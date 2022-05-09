@@ -1,6 +1,8 @@
 
 use candid::{CandidType, Deserialize, Principal};
 
+use super::error::UserError;
+
 pub type UserId = u64;
 pub type Timestamp = u64;
 
@@ -47,16 +49,16 @@ impl UserProfile {
         }
     }
 
-    pub fn valid_name(&self) -> bool {
-        self.name.chars().count() <= 20
+    pub fn valid_name(name: &str) -> bool {
+        name.chars().count() <= 20
     }
 
-    pub fn valid_email(&self) -> bool {
-        email_address::EmailAddress::is_valid(&self.email) && (self.email.chars().count() <= 50)
+    pub fn valid_email(email: &str) -> bool {
+        email_address::EmailAddress::is_valid(&email) && (email.chars().count() <= 50)
     }
 
-    pub fn valid_biography(&self) -> bool {
-        self.biography.chars().count() <= 120
+    pub fn valid_biography(biography: &str) -> bool {
+        biography.chars().count() <= 120
     }
 }
 
@@ -93,7 +95,19 @@ pub struct UserEditCommand {
 }
 
 impl UserEditCommand {
-    pub fn build_profile(self, profile: &mut UserProfile) {
+    pub fn build_profile(self, profile: &mut UserProfile) -> Result<bool, UserError> {
+        if !UserProfile::valid_name(&self.name) {
+            return Err(UserError::UserNameTooLong);
+        }
+
+        if !UserProfile::valid_email(&self.email) {
+            return Err(UserError::UserEmailInvalid);
+        }
+
+        if !UserProfile::valid_biography(&self.biography) {
+            return Err(UserError::UserBiographyTooLong);
+        } 
+           
         profile.email = self.email;
         profile.name = self.name;
         profile.avatar_id = self.avatar_id;
@@ -102,6 +116,8 @@ impl UserEditCommand {
         profile.interests = self.interests;
         profile.memo = self.memo;
         profile.status = self.status;
+
+        Ok(true)
     }
 }
 

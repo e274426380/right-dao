@@ -78,7 +78,7 @@ type PostProfile = record {
 type PostCreateCommand = record {
     title: text;
     content: RichText;
-    category: Category;
+    category: text;
     photos: vec nat64;
     participants: vec text;
     end_time: opt nat64;
@@ -92,6 +92,7 @@ type RichText = record {
 type Category = variant {
     Tech;
     Law;
+    Other;
 };
 
 type Currency = record {
@@ -143,7 +144,7 @@ type PostEditCommand = record {
     id: nat64;
     title: text;
     content: RichText;
-    category: Category;
+    category: text;
     photos: vec nat64;
     participants: vec text;
     end_time: opt nat64;

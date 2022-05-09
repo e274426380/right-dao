@@ -42,21 +42,7 @@ impl UserService {
     pub fn edit_user(&mut self, cmd: UserEditCommand, principal: &Principal) -> Result<bool, UserError> {
         match self.users.get_mut(principal) {
             None => Err(UserError::UserNotFound),
-            Some(user) => {
-                cmd.build_profile(user);
-                if !user.valid_name() {
-                    return Err(UserError::UserNameTooLong);
-                }
-
-                if !user.valid_email() {
-                    return Err(UserError::UserEmailInvalid);
-                }
-
-                if !user.valid_biography() {
-                    return Err(UserError::UserBiographyTooLong);
-                }             
-                Ok(true)
-            }
+            Some(user) => cmd.build_profile(user),
         }       
     }
 
