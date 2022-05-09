@@ -21,17 +21,6 @@ impl UserService {
                     UserStatus::Enable,
                     now
                 );
-                if !user.valid_name() {
-                    return Err(UserError::UserNameTooLong);
-                }
-
-                if !user.valid_email() {
-                    return Err(UserError::UserEmailInvalid);
-                }
-
-                if !user.valid_biography() {
-                    return Err(UserError::UserBiographyTooLong);
-                }
 
                 self.users.insert(
                     caller,
@@ -50,10 +39,25 @@ impl UserService {
         self.users.get(principal).cloned()    
     }
 
-    pub fn edit_user(&mut self, cmd: UserEditCommand, principal: &Principal) -> Option<bool> {
-        self.users.get_mut(principal).map(|profile| {
-            cmd.build_profile(profile);
-        }).map(|_| true)
+    pub fn edit_user(&mut self, cmd: UserEditCommand, principal: &Principal) -> Result<bool, UserError> {
+        match self.users.get_mut(principal) {
+            None => Err(UserError::UserNotFound),
+            Some(user) => {
+                cmd.build_profile(user);
+                if !user.valid_name() {
+                    return Err(UserError::UserNameTooLong);
+                }
+
+                if !user.valid_email() {
+                    return Err(UserError::UserEmailInvalid);
+                }
+
+                if !user.valid_biography() {
+                    return Err(UserError::UserBiographyTooLong);
+                }             
+                Ok(true)
+            }
+        }       
     }
 
     pub fn enable_user(&mut self, principal: &Principal) -> Option<bool> {

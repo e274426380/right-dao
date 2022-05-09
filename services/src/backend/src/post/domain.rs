@@ -1,4 +1,4 @@
-use std::collections::VecDeque;
+use std::{collections::VecDeque, string::ParseError, str::FromStr};
 
 use candid::{CandidType, Deserialize, Principal};
 
@@ -70,7 +70,19 @@ pub struct RichText {
 pub enum  Category {
     Tech,
     Law,
+    Other,
+}   
 
+impl FromStr for Category {
+    type Err = ParseError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "law" => Ok(Category::Law),
+            "tech" => Ok(Category::Tech),
+            _ => Ok(Category::Other)
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, CandidType, Deserialize)]
@@ -124,7 +136,7 @@ pub enum EventStatus {
 pub struct PostCreateCommand {
     pub title: String,
     content: RichText,
-    category: Category,
+    category: String,
     photos: Vec<u64>,
     participants: Vec<String>,
     end_time: Option<Timestamp>,
@@ -132,7 +144,7 @@ pub struct PostCreateCommand {
 
 impl PostCreateCommand {
     pub fn build_profile(self, id: u64, owner: Principal, status: PostStatus, now: Timestamp) -> PostProfile {
-        PostProfile::new(id, owner, self.title, self.content, self.category, self.photos, self.participants, self.end_time, status, now)
+        PostProfile::new(id, owner, self.title, self.content, self.category.parse::<Category>().unwrap(), self.photos, self.participants, self.end_time, status, now)
     }
 
 }
@@ -142,7 +154,7 @@ pub struct PostEditCommand {
     pub id: u64,
     title: String,
     content: RichText,
-    category: Category,
+    category: String,
     photos: Vec<u64>,
     participants: Vec<String>,
     end_time: Option<Timestamp>,
@@ -155,7 +167,7 @@ impl PostEditCommand {
 
         profile.title = self.title;
         profile.content = self.content;
-        profile.category = self.category;
+        profile.category = self.category.parse::<Category>().unwrap();
         profile.photos = self.photos;
         profile.participants = self.participants;
         profile.end_time = self.end_time;

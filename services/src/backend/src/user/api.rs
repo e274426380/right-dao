@@ -33,7 +33,7 @@ fn edit_user(cmd: UserEditCommand) -> Result<bool, UserError> {
     CONTEXT.with(|c| {
         let mut ctx = c.borrow_mut();
         let principal = ctx.env.caller();
-        ctx.user_service.edit_user(cmd, &principal).ok_or(UserError::UserNotFound)
+        ctx.user_service.edit_user(cmd, &principal)
     })
 }
 
