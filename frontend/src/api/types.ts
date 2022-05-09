@@ -7,6 +7,7 @@ export type ApiError = {
     emailAddressAlreadyExists: null; // 邮箱已经注册
     emailAddressNotValid: null; // 邮箱格式不正确
     UserNotFound: null; // 找不到目标用户
+    UserEmailInvalid: null; // 用户的邮箱格式存在问题
 };
 
 // 后端的返回结果

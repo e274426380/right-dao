@@ -212,7 +212,7 @@
                 }
                 console.log("getTargetUseruser.value", user.value)
                 console.log("form.value", form.value)
-            } else if (res.Err && res.Err.UserNotFound) {
+            } else if (res.Err && res.Err.UserNotFound !== undefined) {
                 showMessageError("找不到目标用户信息");
                 router.push('/');
             }
@@ -224,10 +224,13 @@
         //TODO 想个办法给form加个初始值
         if (form.value) {
             editUserSelf(form.value).then(res => {
-                console.log("edit", res)
+                // console.log("edit", res)
                 if (res.Ok) {
+                    initUser();
                     showMessageSuccess('信息更新成功');
                     dialogFormVisible.value = false;
+                } else if (res.Err && res.Err.UserEmailInvalid !== undefined) {
+                    showMessageError(t('message.error.profile.emailInvalid'))
                 } else {
                     console.error("edit false", res)
                 }

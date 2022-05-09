@@ -27,11 +27,14 @@
                                 :options="editorOption"
                                 @update:content="isEditorChange = true"
                             />
+                            <span class="editorCalculate" :class="{ isCalcError: isEditorErr }">
+                            {{ showEditorLength }} / {{ limitLength }}
+                        </span>
                         </el-form-item>
                         <el-form-item :label="$t('post.help.category.label')">
                             <el-select class="i-select"
                                        popper-class="i-select-pop"
-                                       v-model="categoryValue"
+                                       v-model="form.category"
                                        :placeholder="$t('post.help.category.placeholder')"
                             >
                                 <el-option
@@ -87,15 +90,19 @@
     import {submitPost} from "@/api/post";
     import {goBack} from "@/router/routers";
     import {showMessageError} from "@/utils/message";
+    import {calculatedICPIdLength} from "@/utils/images";
     const store = useStore();
     const router = useRouter();
     const route = useRoute();
 
     const locale = computed<SupportedLocale>(() => {return store.state.user.locale});
     const currentUserPrincipal = computed<string>(() => store.state.user.principal);
-    const categoryValue=ref("");
     const loading=ref(false);
+    //编辑器是否发生变化
     const isEditorChange=ref(false);
+    const isEditorErr=ref(false);
+    //限制输入长度10000个字
+    const limitLength = 10000;
     // 直接取出，没有额外逻辑，用 computed 变成响应式值
     const myTextEditor = ref<{ setHTML: Function; getText: Function } | null>(null);
     const form = ref({
@@ -105,7 +112,7 @@
             format:"html"
         },
         photos:[1,2],
-        category: {},
+        category:"",
         participants: ["","123"],//期待参与者
         end_time: [0],
     });
@@ -156,9 +163,15 @@
         init()
     });
 
+
+    const showEditorLength = computed(() => {
+        const length = calculatedICPIdLength(form.value.content.content);
+        length > limitLength ? (isEditorErr.value = true) : (isEditorErr.value = false);
+        return length;
+    });
+
     const submit = () => {
         loading.value = true
-        form.value.category[categoryValue.value] = null;
         console.log("form", form.value)
         submitPost(form.value).then(res => {
             console.log(res);
@@ -202,6 +215,13 @@
         }
         .post-form{
             margin-top: 20px;
+            .editorCalculate {
+                color: var(--el-color-info);
+                font-size: 12px;
+                position: absolute;
+                right: 13px;
+                bottom: 0px;
+            }
         }
         .form-footer{
             .submit-button{
