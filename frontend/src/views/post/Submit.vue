@@ -89,18 +89,20 @@
     import {useStore} from "vuex";
     import {submitPost} from "@/api/post";
     import {goBack} from "@/router/routers";
-    import {showMessageError} from "@/utils/message";
+    import {showMessageError, showMessageSuccess} from "@/utils/message";
     import {calculatedICPIdLength} from "@/utils/images";
     const store = useStore();
     const router = useRouter();
     const route = useRoute();
 
-    const locale = computed<SupportedLocale>(() => {return store.state.user.locale});
+    const locale = computed<SupportedLocale>(() => {
+        return store.state.user.locale
+    });
     const currentUserPrincipal = computed<string>(() => store.state.user.principal);
-    const loading=ref(false);
+    const loading = ref(false);
     //编辑器是否发生变化
-    const isEditorChange=ref(false);
-    const isEditorErr=ref(false);
+    const isEditorChange = ref(false);
+    const isEditorErr = ref(false);
     //限制输入长度10000个字
     const limitLength = 10000;
     // 直接取出，没有额外逻辑，用 computed 变成响应式值
@@ -108,12 +110,12 @@
     const form = ref({
         title: "",
         content: {
-            content:"",
-            format:"html"
+            content: "",
+            format: "html"
         },
-        photos:[1,2],
+        photos:[],
         category:"",
-        participants: ["","123"],//期待参与者
+        participants: [""],//期待参与者
         end_time: [0],
     });
     const category = ref([{
@@ -175,12 +177,17 @@
         console.log("form", form.value)
         submitPost(form.value).then(res => {
             console.log(res);
+            if (res.Ok) {
+                showMessageSuccess(t('message.post.create'));
+                router.push('/post/detail/' + Number(res.Ok));
+            }
         }).finally(() => {
             loading.value = false;
         })
     }
 
     const init = () =>{
+        console.log("currentUserPrincipal.value",currentUserPrincipal.value)
         //验证是否登录
         nextTick(() => {
             if (!currentUserPrincipal.value) {

@@ -7,6 +7,9 @@ export default {
             emailInvalid:"邮箱格式不正确，请输入正确的邮箱格式。"
         }
     },
+    post:{
+        create:"创建求助成功"
+    },
     tip: {
         comingSoon: "尽请期待"
     }

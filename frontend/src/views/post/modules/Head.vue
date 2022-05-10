@@ -4,15 +4,22 @@
             <el-row>
                 <el-col :span="16" :offset="4">
                     <div class="post-title">
-                        <h4>5 月 8 日上海新增本土「322+3625」，新增死亡 11 例，目前疫情情况如何？</h4>
+                        <h4>{{post.title}}</h4>
                         <div class="content">
-                            上海市卫健委今早（9日）通报：2022年5月8日0—24时，新增本土新冠肺炎确诊病例322例和无症状感染者3625例，
-                            其中230例确诊病例为既往无症状感染者转归，92例确诊病例和3616例无症状感染者在隔离管控中发现。
-                            新增境外输入性新冠肺炎确诊病例2例和无症状感染者1例，均在闭环管控中发现。
+                            <div v-if="post.content.format==='html'"
+                                 class="ql-editor project-detail-information"
+                                 ref="htmlInformation"
+                                 v-html="post.content.content"
+                            >
+                            </div>
+                            <div v-else>
+                                {{post.content.content}}
+                            </div>
                         </div>
+
                         <div class="footer">
                             <el-button type="primary" style="margin-right: 5px">写回答</el-button>
-                            <span style="margin: 5px;">1 条评论</span>
+                            <span style="margin: 5px;">1 条回复</span>
                             <span>收起</span>
 
                         </div>
@@ -23,7 +30,17 @@
     </div>
 </template>
 <script lang="ts" setup>
+    import {ref, onMounted, defineProps, PropType} from 'vue';
     import {ElRow, ElCol, ElButton} from 'element-plus/es';
+    import {ApiPost} from "@/api/types";
+
+    const props = defineProps({
+        post: {
+            type: Object as PropType<ApiPost>,
+            default: () => true,
+        },
+    });
+
 </script>
 <style lang="scss">
     .post-detail-head-container {
