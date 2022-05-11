@@ -148,7 +148,7 @@ type PostEditCommand = record {
     photos: vec nat64;
     participants: vec text;
     end_time: opt nat64;
-    status: PostStatus;
+    status: text;
 };
 
 type PostCommentCommand = record {
@@ -170,6 +170,12 @@ type PostEventCommand = record {
 
 type PostIdCommand = record {
     id: nat64;
+};
+
+type PostChangeStatusCommand = record {
+    id: nat64;
+    status: text;
+    description: text;
 };
 
 type CreatePostResult = variant {
@@ -220,8 +226,7 @@ service : {
 
     "create_post" : (PostCreateCommand) -> (CreatePostResult);
     "edit_post" : (PostEditCommand) -> (BoolPostResult);
-    "terminate_post" : (PostIdCommand) -> (BoolPostResult);
-    "complete_post" : (PostIdCommand) -> (BoolPostResult);
+    "change_post_status" : (PostChangeStatusCommand) -> (BoolPostResult);
     "delete_post" : (PostIdCommand) -> (BoolPostResult);
     "get_post" : (PostIdCommand) -> (PostResult);
     "page_posts" : (PostPageQuery) -> (PostPageResult);

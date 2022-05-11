@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 
 use candid::Principal;
 
-use super::{domain::{PostProfile, PostId, PostCreateCommand, Timestamp, PostStatus, PostEditCommand, PostIdCommand, PostPage, PostPageQuery, PostCommentCommand, PostComment, PostEventCommand, CommentCommentCommand, }, error::PostError};
+use super::{domain::{PostProfile, PostId, PostCreateCommand, Timestamp, PostStatus, PostEditCommand, PostIdCommand, PostPage, PostPageQuery, PostCommentCommand, PostComment, PostEventCommand, CommentCommentCommand, PostChangeStatusCommand, PostEvent, }, error::PostError};
 
 
 #[derive(Debug, Default)]
@@ -35,21 +35,21 @@ impl PostService {
         }).map(|_| true)
     }
 
-    pub fn terminate_post(&mut self, id: PostId) -> Option<bool> {
-        if let Some(profile) = self.posts.get_mut(&id) {
-            profile.status = PostStatus::Terminated;
-            Some(true)
-        } else {
-            None
-        }
-    }
+    pub fn change_post_status(&mut self, cmd: PostChangeStatusCommand, caller: Principal, now: Timestamp) -> Result<bool, PostError> {
+        if let Some(profile) = self.posts.get_mut(&cmd.id) {
+            if profile.status == PostStatus::Completed {
+                return Err(PostError::PostAlreadyCompleted);
+            }
 
-    pub fn complete_post(&mut self, id: PostId) -> Option<bool> {
-        if let Some(profile) = self.posts.get_mut(&id) {
-            profile.status = PostStatus::Completed;
-            Some(true)
+            let new_status = cmd.status.parse::<PostStatus>().unwrap();
+            let event = PostEvent::new(cmd.id, now, cmd.description, caller, now);
+            
+            profile.status = new_status;
+            profile.events.push_front(event);
+
+            Ok(true)
         } else {
-            None
+            Err(PostError::PostNotFound)
         }
     }
 

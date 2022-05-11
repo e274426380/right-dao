@@ -60,7 +60,7 @@ impl PostProfile {
     }
 
     pub fn is_active(&self) -> bool {
-        self.status == PostStatus::Completed || self.status == PostStatus::Terminated
+        self.status == PostStatus::Completed || self.status == PostStatus::Closed
     }
 }
 
@@ -93,7 +93,19 @@ impl FromStr for Category {
 pub enum PostStatus {
     Enable,
     Completed,
-    Terminated,
+    Closed,
+}
+
+impl FromStr for PostStatus {
+    type Err = ParseError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "completed" => Ok(PostStatus::Completed),
+            "closed" => Ok(PostStatus::Closed),
+            _ => Ok(PostStatus::Enable),
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, CandidType, Deserialize)]
@@ -128,6 +140,18 @@ pub struct PostEvent {
     description: String,
     author: Principal,
     created_at: Timestamp,
+}
+
+impl PostEvent {
+    pub fn new(post_id: u64, event_time: Timestamp, description: String, author: Principal, created_at: Timestamp) -> Self {
+        Self {
+            post_id,
+            event_time,
+            description, 
+            author,
+            created_at
+        }
+    }
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize)]
@@ -182,6 +206,13 @@ impl PostEditCommand {
 #[derive(Debug, Clone, CandidType, Deserialize)]
 pub struct PostIdCommand {
     pub id: u64,
+}
+
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct PostChangeStatusCommand {
+    pub id: u64,
+    pub status: String,
+    pub description: String,
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize)]

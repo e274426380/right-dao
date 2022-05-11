@@ -107,7 +107,7 @@ impl UserEditCommand {
         if !UserProfile::valid_biography(&self.biography) {
             return Err(UserError::UserBiographyTooLong);
         } 
-           
+
         profile.email = self.email;
         profile.name = self.name;
         profile.avatar_id = self.avatar_id;
@@ -137,6 +137,6 @@ mod tests {
         let status = UserStatus::Enable;
         let created_at = 100000000000000;
         let user = cmd.build_profile(id, owner, status, created_at);
-        assert!(user.valid_name());
+        assert!(UserProfile::valid_name(&user.name));
     }
 }

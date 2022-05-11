@@ -3,7 +3,7 @@ use ic_cdk_macros::{update, query};
 use crate::{CONTEXT, post::domain::PostStatus};
 use crate::common::guard::has_user_guard;
 
-use super::domain::{PostCommentCommand, PostEventCommand, CommentCommentCommand};
+use super::domain::{PostCommentCommand, PostEventCommand, CommentCommentCommand, PostChangeStatusCommand};
 use super::{domain::{PostCreateCommand, PostEditCommand, PostIdCommand, PostProfile, PostPageQuery, PostPage}, error::PostError};
 
 #[update(guard = "has_user_guard")] 
@@ -46,38 +46,19 @@ fn edit_post(cmd: PostEditCommand) -> Result<bool, PostError> {
 }
 
 #[update]
-fn terminate_post(cmd: PostIdCommand) -> Result<bool, PostError> {
+fn change_post_status(cmd: PostChangeStatusCommand) -> Result<bool, PostError> {
     CONTEXT.with(|c| {
         let mut ctx = c.borrow_mut();
         let caller = ctx.env.caller();
         let post_id = cmd.id;
+        let now = ctx.env.now();
         match ctx.post_service.get_post(post_id) {
             Some(p) => {
                 if p.author != caller {
                     return Err(PostError::PostUnAuthorizedOperation);
                 }
-                if p.status == PostStatus::Completed {
-                    return Err(PostError::PostAlreadyCompleted);
-                }
-                ctx.post_service.terminate_post(post_id).ok_or(PostError::PostNotFound)
-            },
-            None => Err(PostError::PostNotFound),
-        }
-    })
-}
-
-#[update]
-fn complete_post(cmd: PostIdCommand) -> Result<bool, PostError> {
-    CONTEXT.with(|c| {
-        let mut ctx = c.borrow_mut();
-        let caller = ctx.env.caller();
-        let post_id = cmd.id;
-        match ctx.post_service.get_post(post_id) {
-            Some(p) => {
-                if p.author != caller {
-                    return Err(PostError::PostUnAuthorizedOperation);
-                }
-                ctx.post_service.complete_post(post_id).ok_or(PostError::PostNotFound)
+                
+                ctx.post_service.change_post_status(cmd, caller, now)
             },
             None => Err(PostError::PostNotFound),
         }
