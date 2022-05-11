@@ -27,7 +27,7 @@ export type ApiResultByPage<T> = {
 };
 
 export type ApiStatus = 'enable' | 'disable' | 'pending' | 'deleted';
-export type ApiPostStatus = 'Enable' | 'Completed' | 'Terminated';
+export type ApiPostStatus = 'Enable' | 'Completed' | 'Closed';// 正常 | 完成 | 关闭
 
 export type RichText = {
     content: string; // 实际内容

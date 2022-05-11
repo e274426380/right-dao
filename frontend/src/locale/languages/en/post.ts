@@ -12,7 +12,8 @@ export default {
             label:"Help Category：",
             placeholder: "Help Category",
             tech: "Technology Field",
-            law: "Law Field"
+            law: "Law Field",
+            other: "Other Field",
         },
         participants:{
             label:"Desired Participant：",

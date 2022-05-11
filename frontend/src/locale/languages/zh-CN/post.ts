@@ -12,7 +12,8 @@ export default {
             label:"求助分类：",
             placeholder: "求助分类",
             tech: "技术领域",
-            law: "法律领域"
+            law: "法律领域",
+            other: "其他领域",
         },
         participants:{
             label:"期望的参与人：",

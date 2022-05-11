@@ -7,7 +7,10 @@
                         <template #header>
                             <div style="display:flex;justify-content: space-between">
                                 <h4>最新进展</h4>
-                                <el-button type="primary">更新时间线</el-button>
+                                <div>
+                                    <el-button type="primary">修改贴子状态</el-button>
+                                    <el-button type="primary">更新时间线</el-button>
+                                </div>
                             </div>
                         </template>
                         <el-timeline>

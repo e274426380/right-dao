@@ -90,7 +90,7 @@
     import {submitPost} from "@/api/post";
     import {goBack} from "@/router/routers";
     import {showMessageError, showMessageSuccess} from "@/utils/message";
-    import {calculatedICPIdLength} from "@/utils/images";
+    import {calculatedICPIdLength, filterImgToICPId} from "@/utils/images";
     const store = useStore();
     const router = useRouter();
     const route = useRoute();
@@ -198,6 +198,29 @@
                 }, 1500);
             }
         });
+    }
+
+    const  filterEditorImg = async (html:string) =>{
+        try {
+            //限制图片大小2M
+            const limitSize = 2;
+            //全是空格不准提交
+            if (myTextEditor.getText().trim() === '') {
+                showMessageError(t('project.create.informationNull'));
+                return null;
+            }
+            let res = await filterImgToICPId(html, limitSize, limitLength);
+            //超过限制的长度，返回错误
+            if (res.overLimitLength) {
+                loading.value = false;
+                return null;
+            } else {
+                return res;
+            }
+        } catch (e: any) {
+            console.error(e);
+            return null;
+        }
     }
 </script>
 

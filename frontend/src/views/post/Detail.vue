@@ -13,9 +13,17 @@
     import {useRoute} from 'vue-router';
     import {getPost} from "@/api/post";
     import {ApiPost} from "@/api/types";
+    import {useStore} from "vuex";
 
     const route = useRoute();
+    const store = useStore();
     const postId = route.params.id;
+    const currentUserPrincipal = computed<string>(() => store.state.user.principal);
+    // 是否是本人。关联编辑按钮的显示与否
+    const isOwner = computed<boolean>(
+        //本地环境下，author和current会有冲突。
+        () => currentUserPrincipal.value === post.value.author.toString()
+    );
     const post = ref<ApiPost>();
     const loading = ref(false);
 
@@ -24,13 +32,11 @@
     });
 
     const init = () => {
-        console.log(post.value)
         loading.value = true;
         getPost(Number(postId)).then(res => {
             console.log("getPost", res)
             if (res.Ok) {
                 post.value = res.Ok
-                console.log(post.value)
             }
         }).finally(() => {
             loading.value = false
