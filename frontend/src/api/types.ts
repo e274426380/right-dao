@@ -8,6 +8,7 @@ export type ApiError = {
     emailAddressNotValid: null; // 邮箱格式不正确
     UserNotFound: null; // 找不到目标用户
     UserEmailInvalid: null; // 用户的邮箱格式存在问题
+    PostAlreadyCompleted:null; //贴子已经完成
 };
 
 // 后端的返回结果

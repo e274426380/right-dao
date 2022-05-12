@@ -1,3 +1,5 @@
 export default {
-    back: "Back"
+    back: "Back",
+    confirm: "Confirm",
+    cancel: "Cancel"
 };

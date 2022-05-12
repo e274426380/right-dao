@@ -2,7 +2,7 @@
     <div class="post-detail-container">
         <Navigator/>
         <Head :post="post" v-if="post!==undefined"/>
-        <TimeLine />
+        <TimeLine :postId="postId"/>
     </div>
 </template>
 <script lang="ts" setup>
@@ -17,7 +17,7 @@
 
     const route = useRoute();
     const store = useStore();
-    const postId = route.params.id;
+    const postId = Number(route.params.id);
     const currentUserPrincipal = computed<string>(() => store.state.user.principal);
     // 是否是本人。关联编辑按钮的显示与否
     const isOwner = computed<boolean>(
@@ -33,7 +33,7 @@
 
     const init = () => {
         loading.value = true;
-        getPost(Number(postId)).then(res => {
+        getPost(postId).then(res => {
             console.log("getPost", res)
             if (res.Ok) {
                 post.value = res.Ok

@@ -5,6 +5,9 @@ export default {
         noLogin:"No login, please login first",
         profile:{
             emailInvalid:"The email format is not correct, please enter the correct email format."
+        },
+        post: {
+            alreadyCompleted: "Timeline cannot be after posting close time."
         }
     },
     post:{

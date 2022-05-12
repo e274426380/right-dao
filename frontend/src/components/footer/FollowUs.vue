@@ -1,15 +1,15 @@
 <template>
     <div class="follow-us-container">
-        <a class="icon-link" target="blank" href="https://t.me/ICPL_en">
+        <a class="icon-link" target="blank" href="https://t.me/">
             <i class="iconfont icon-telegram"></i>
         </a>
         <a class="icon-link" target="blank" href="https://github.com/dfinity">
             <i class="iconfont icon-github"></i>
         </a>
-        <a class="icon-link" target="blank" href="https://twitter.com/icpleague_com">
+        <a class="icon-link" target="blank" href="https://twitter.com/">
             <i class="iconfont icon-twitter"></i>
         </a>
-        <a class="icon-link" target="blank" href="https://medium.com/icp-league">
+        <a class="icon-link" target="blank" href="https://medium.com/">
             <i class="iconfont icon-medium"></i>
         </a>
     </div>

@@ -24,4 +24,14 @@ export default {
             placeholder: "请选择结束时间"
         }
     },
+    timeline: {
+        new: "最新进展",
+        add: "新增时间线",
+        time:"发生时间",
+        timePlaceholder:"请输入发生时间",
+    },
+    status:{
+        title:"修改贴子状态",
+        status:"贴子状态"
+    }
 };

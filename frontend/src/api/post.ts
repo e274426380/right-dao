@@ -11,3 +11,13 @@ export async function submitPost(post: any | ApiPost): Promise<ApiResult<boolean
 export async function getPost(id: number): Promise<ApiResult<ApiPost>> {
     return getBackend().get_post({id: id});
 }
+
+// 增加贴子的时间线
+export async function addPostTimeline(timeline: { post_id: number, event_time: number, description: string }): Promise<ApiResult<boolean>> {
+    return getBackend().add_post_event(timeline);
+}
+
+// 修改贴子状态，后台会顺便更新时间线
+export async function changePostStatus(timeline: { id: number, status: string, description: string }): Promise<ApiResult<boolean>> {
+    return getBackend().change_post_status(timeline);
+}

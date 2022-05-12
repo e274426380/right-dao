@@ -16,7 +16,7 @@
                                         <span>{{post.title}}</span>
                                     </div>
                                     <div class="info">
-                                        <span v-if="author!==undefined">{{author.name}} </span>
+                                        <span v-if="author!==undefined && author.name!==''">{{author.name}} </span>
                                         <span v-else>{{post.author.toString()}} </span>
                                         <span>{{" | "+formatDate(Number(post.created_at))}}</span>
                                     </div>
@@ -46,6 +46,7 @@
                         </div>
                         <div class="footer">
                             <el-button type="primary" style="margin-right: 5px">写回答</el-button>
+                            <el-button type="primary" style="margin-right: 5px">发起提案</el-button>
                             <span style="margin: 5px;">1 条回复</span>
                             <span>收起</span>
 
