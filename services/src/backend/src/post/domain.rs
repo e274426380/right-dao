@@ -60,7 +60,7 @@ impl PostProfile {
     }
 
     pub fn is_active(&self) -> bool {
-        self.status == PostStatus::Completed || self.status == PostStatus::Closed
+        self.status == PostStatus::Enable
     }
 }
 
