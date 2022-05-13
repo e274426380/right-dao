@@ -37,7 +37,7 @@ impl PostService {
 
     pub fn change_post_status(&mut self, cmd: PostChangeStatusCommand, caller: Principal, now: Timestamp) -> Result<bool, PostError> {
         if let Some(profile) = self.posts.get_mut(&cmd.id) {
-            if profile.status == PostStatus::Completed {
+            if !profile.is_active() {
                 return Err(PostError::PostAlreadyCompleted);
             }
 
