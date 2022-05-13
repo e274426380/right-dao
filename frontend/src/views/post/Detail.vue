@@ -2,7 +2,8 @@
     <div class="post-detail-container">
         <Navigator/>
         <Head :post="post" v-if="post!==undefined"/>
-        <TimeLine :postId="postId"/>
+        <TimeLine :postId="postId" :timeline="post.events" @addTimelineSuccess="init" v-if="post!==undefined"/>
+        <Reply  />
     </div>
 </template>
 <script lang="ts" setup>
@@ -10,6 +11,7 @@
     import Navigator from '@/components/navigator/Navigator.vue';
     import Head from './modules/Head.vue';
     import TimeLine from './modules/TimeLine.vue';
+    import Reply from './modules/Reply.vue';
     import {useRoute} from 'vue-router';
     import {getPost} from "@/api/post";
     import {ApiPost} from "@/api/types";

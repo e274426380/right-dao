@@ -18,7 +18,8 @@
                                     <div class="info">
                                         <span v-if="author!==undefined && author.name!==''">{{author.name}} </span>
                                         <span v-else>{{post.author.toString()}} </span>
-                                        <span>{{" | "+formatDate(Number(post.created_at))}}</span>
+                                        <span style="margin-left: 5px;margin-right: 5px">|</span>
+                                        <span class="createTime">{{formatDate(Number(post.created_at))}}</span>
                                     </div>
                                     <div class="need-type">
                                         希望参加者：
@@ -70,7 +71,6 @@
     const props = defineProps({
         post: {
             type: Object as PropType<ApiPost>,
-            default: () => true,
         },
     });
 
@@ -99,6 +99,12 @@
                 display: inherit;
                 .text {
                     margin-left: 20px;
+                    .info{
+                        .createTime{
+                            color: rgb(133,144,166);
+                            font-size:14px;
+                        }
+                    }
                 }
                 .title {
                     font-size: 20px;

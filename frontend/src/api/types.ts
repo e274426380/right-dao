@@ -63,9 +63,17 @@ export type ApiPost = {
     photos: number[];
     participants: string[];//期待参与的人
     end_time: [number]; //结束时间  opt格式，类似于[1000]，数组中只有一个数据。
+    events:ApiPostTimeline[];
     likes_count: number;
     ask_for_money: any;
     status: ApiPostStatus;
     created_at: number;
     updated_at: number;
 };
+
+export type ApiPostTimeline = {
+    author: Principal | string; // 作者
+    created_at: number;
+    description: string;
+    event_time: number;
+}

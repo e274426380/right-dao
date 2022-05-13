@@ -15,16 +15,20 @@
                         </template>
                         <el-timeline>
                             <el-timeline-item
-                                v-for="(activity, index) in activities"
+                                v-for="(item, index) in showList"
                                 :key="index"
                                 placement="top"
-                                :type="activity.type"
-                                :hollow="activity.hollow"
-                                :timestamp="activity.timestamp"
+                                :type="item.type"
+                                :hollow="item.hollow"
+                                :timestamp="item.time"
                             >
-                                {{ activity.content }}
+                               {{ item.description }}
                             </el-timeline-item>
                         </el-timeline>
+                        <div class="footer">
+                            <span @click="showTimeline()" v-if="!timelineShowMore">展开全部进展</span>
+                            <span @click="showTimeline()" v-else>收起全部进展</span>
+                        </div>
                     </el-card>
                 </el-col>
             </el-row>
@@ -106,7 +110,7 @@
     </el-dialog>
 </template>
 <script lang="ts" setup>
-    import {ref, onMounted, computed, defineProps, PropType} from 'vue';
+    import {ref, onMounted, computed, watch, defineProps, defineEmits, PropType} from 'vue';
     import {
         ElRow,
         ElCol,
@@ -132,6 +136,8 @@
     import {useStore} from "vuex";
     import {addPostTimeline, changePostStatus} from "@/api/post";
     import {showMessageError} from "@/utils/message";
+    import {ApiPostTimeline} from "@/api/types";
+    import {formatDate} from "@/utils/dates";
     const store = useStore();
     const locale = computed<SupportedLocale>(() => {
         return store.state.user.locale
@@ -140,11 +146,15 @@
     const props = defineProps({
         postId: {
             type: Number,
-            default: () => true,
+        },
+        timeline: {
+            type: Array as PropType<ApiPostTimeline[]>,
         },
     });
-    const timelineFormVisible = ref(false)
-    const timelineLoading = ref(false)
+    const timelineShowMore =ref(false);
+    const timelineMount = ref(3);
+    const timelineFormVisible = ref(false);
+    const timelineLoading = ref(false);
     const timelineForm = ref({
         post_id: props.postId,
         event_time: 0,
@@ -167,6 +177,7 @@
         value:"Closed",
         label: t('common.status.closed')
     }]
+    const showItem = ref({});
     const elementPlusLocale = computed(() => {
         switch (locale.value) {
             case SupportedLocale.zhCN:
@@ -176,12 +187,51 @@
         }
     });
 
+    const emit =defineEmits(['addTimelineSuccess'])
+
+    const init = () => {
+        props.timeline.map((item, index) => {
+            item.created_at = Number(item.created_at);
+            item['time'] = formatDate(Number(item.event_time));
+            if (index === 0) {
+                item['type'] = 'primary';
+                item['hollow'] = true;
+            }
+        })
+    }
+
+    const showList = computed(() => {
+        const show = props.timeline.slice(0,timelineMount.value).map((item, index) => {
+            item.created_at = Number(item.created_at);
+            item['time'] = formatDate(Number(item.event_time));
+            if (index === 0) {
+                item['type'] = 'primary';
+                item['hollow'] = true;
+            }
+            return item;
+        })
+        return show;
+    });
+
+    const showTimeline = () => {
+        //控制时间线的展开与收起，默认是收起，false状态。
+        timelineShowMore.value = !timelineShowMore.value;
+        if (timelineShowMore.value) {
+            timelineMount.value = props.timeline.length;
+        } else {
+            timelineMount.value = 3;
+        }
+    }
+
     const addTimeline = () => {
-        console.log("timelineForm",timelineForm.value)
+        console.log("timelineForm", timelineForm.value)
         timelineLoading.value = true;
-        addPostTimeline(timelineForm.value).then(res => {
+        let timeline = {...timelineForm.value};
+        timeline.event_time *= (1000 * 1000);
+        addPostTimeline(timeline).then(res => {
             console.log("res", res)
             if (res.Ok) {
+                emit('addTimelineSuccess');
                 timelineFormVisible.value = false;
             } else if (res.Err && res.Err.PostAlreadyCompleted !== undefined) {
                 showMessageError(t('message.error.post.alreadyCompleted'));
@@ -200,22 +250,17 @@
         })
     }
 
-    const activities = [
-        {
-            content: 'Event start',
-            timestamp: '2018-04-15',
-            type:'primary',
-            hollow:true
+    onMounted(() => {
+        init()
+    });
+
+    watch(
+        () => props.timeline,
+        () => {
+            init()
         },
-        {
-            content: 'Approved',
-            timestamp: '2018-04-13',
-        },
-        {
-            content: 'Success',
-            timestamp: '2018-04-11',
-        },
-    ]
+    );
+
 </script>
 <style lang="scss">
     .post-detail-timeline-container {
@@ -224,6 +269,17 @@
             box-shadow:0px 2px 6px rgba(0, 0, 0, 0.12);
             .el-card__header{
                 padding-bottom: 9px!important;
+            }
+            .footer{
+                text-align: right;
+                padding-top: 10px;
+                border-top: 1px solid var(--el-card-border-color);
+                span{
+                    color: rgb(148,158,177);
+                }
+                span:hover{
+                    cursor: pointer;
+                }
             }
         }
     }

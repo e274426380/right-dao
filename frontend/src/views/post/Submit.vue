@@ -173,9 +173,11 @@
     });
 
     const submit = () => {
-        loading.value = true
-        console.log("form", form.value)
-        submitPost(form.value).then(res => {
+        loading.value = true;
+        console.log("form", form.value);
+        let post = {...form.value};
+        post.end_time[0] *= 1000 * 1000;
+        submitPost(post).then(res => {
             console.log(res);
             if (res.Ok) {
                 showMessageSuccess(t('message.post.create'));
@@ -186,7 +188,7 @@
         })
     }
 
-    const init = () =>{
+    const init = () => {
         console.log("currentUserPrincipal.value",currentUserPrincipal.value)
         //验证是否登录
         nextTick(() => {
