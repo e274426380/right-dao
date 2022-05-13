@@ -111,7 +111,7 @@ type CurrencyUnit = variant {
 type PostStatus = variant {
     Enable;
     Completed;
-    Terminated;
+    Closed;
 };
 
 type PostComment = record {
@@ -125,7 +125,6 @@ type PostComment = record {
 };
 
 type PostEvent = record {
-    id: nat64;
     post_id: nat64;
     event_time: nat64;
     description: text;
