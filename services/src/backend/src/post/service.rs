@@ -96,16 +96,21 @@ impl PostService {
 
     /// add comment to post's comment
     pub fn add_comment_comment(&mut self, cmd: CommentCommentCommand, comment_id: u64, author: Principal, now: Timestamp) -> Result<bool, PostError> {
+        // let c_id = &cmd.comment_id;
         match self.posts.get_mut(&cmd.post_id) {
             Some(p) if p.is_active() => {
-                let mut comment = p.comments.iter().find(|c| c.id == cmd.comment_id).cloned();
-                match &mut comment {
-                    Some(c) => {
-                        c.comments.push(cmd.build_comment(comment_id, author, now));
-                        Ok(true)
+                let comments = &mut p.comments;
+                
+                let c_id = &cmd.comment_id;
+                let new_comment = cmd.clone().build_comment(comment_id, author, now);
+                for comment in comments {
+                    if comment.id == *c_id {
+                        comment.comments.push(new_comment.clone());
                     }
-                    None => Err(PostError::PostCommentNotFound)
-                }              
+                }
+
+                Ok(true)
+                            
             }
             Some(_) => Err(PostError::PostAlreadyCompleted),
             _ => Err(PostError::PostNotFound)
@@ -123,5 +128,66 @@ impl PostService {
             Some(_) => Err(PostError::PostAlreadyCompleted),
             _ => Err(PostError::PostNotFound)
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use crate::post::domain::RichText;
+
+    use super::*;
+
+    #[test] 
+    fn add_comment_comment_should_work() {
+        let mut svc = PostService::default();
+        let id = 10001u64;
+        let caller = Principal::anonymous();
+        let now = 20220516u64;
+        let create_cmd = PostCreateCommand { 
+            title: "james title".to_string(),
+            content: RichText {
+                content: "james content".to_string(),
+                format: "md".to_string(),
+            },
+            category: "Tech".to_string(),
+            photos: vec![30, 20],
+            participants: vec!["Layer".to_string()],
+            end_time: None,
+        };
+
+        let res1 = svc.create_post(create_cmd, id, caller, now);
+
+        assert_eq!(res1.unwrap(), 10001u64);
+
+        let add_comment_cmd = PostCommentCommand {
+            post_id: id,
+            content: RichText { content: "coment james".to_string(), format: "md".to_string() },
+        };
+
+        let comment_id = 10002u64;
+        let res2 = svc.add_post_comment(add_comment_cmd, comment_id, caller, now);
+        assert!(res2.unwrap());
+
+        let res3 = svc.get_post(id).unwrap();
+        assert_eq!(res3.title, "james title".to_string());
+        assert_eq!(res3.comments.len(), 1);
+        assert_eq!(res3.comments.first().unwrap().content, RichText { content: "coment james".to_string(), format: "md".to_string() });
+
+        let add_cc_cmd = CommentCommentCommand {
+            post_id: id,
+            comment_id,
+            content: RichText { content: "coment comment".to_string(), format: "md".to_string() }
+        };
+
+        let cc_id = 10003u64;
+
+        let res4 = svc.add_comment_comment(add_cc_cmd, cc_id, caller, now).unwrap();
+        assert!(res4);
+
+        let res5 = svc.get_post(id).unwrap();
+        assert_eq!(res5.comments.len(), 1);
+        assert_eq!(res5.comments.first().unwrap().comments.len(), 1);
+        assert_eq!(res5.comments.first().unwrap().comments.first().unwrap().content.content, "coment comment".to_string());
     }
 }

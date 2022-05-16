@@ -14,6 +14,8 @@ pub mod post;
 
 pub mod user;
 
+pub use post::*;
+
 thread_local! {
     static CONTEXT: RefCell<DaoContext> = RefCell::default();
 }

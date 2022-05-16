@@ -6,16 +6,6 @@ use std::{
 
 use candid::{CandidType, Deserialize, Principal};
 
-
-
-// #[derive(Debug, Clone, Copy, CandidType, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
-// pub struct PostId(u64);
-
-// impl From<u64> for PostId {
-//     fn from(id: u64) -> Self {
-//         Self(id)
-//     }
-// }
 pub type PostId = u64;
 pub type Timestamp = u64;
 
@@ -163,11 +153,11 @@ pub enum EventStatus {
 #[derive(Debug, Clone, CandidType, Deserialize)]
 pub struct PostCreateCommand {
     pub title: String,
-    content: RichText,
-    category: String,
-    photos: Vec<u64>,
-    participants: Vec<String>,
-    end_time: Option<Timestamp>,
+    pub content: RichText,
+    pub category: String,
+    pub photos: Vec<u64>,
+    pub participants: Vec<String>,
+    pub end_time: Option<Timestamp>,
 }
 
 impl PostCreateCommand {
@@ -230,7 +220,7 @@ pub struct PostPageQuery {
     pub querystring: String,
 }
 
-#[derive(Debug, Clone, CandidType, Deserialize)]
+#[derive(Debug, Clone, CandidType, PartialEq, Eq, Deserialize)]
 pub struct PostComment {
     pub id: u64,
     pub post_id: u64,
@@ -243,13 +233,13 @@ pub struct PostComment {
     pub comments: Vec<PostComment>,
 }
 
-#[derive(Debug, Clone, CandidType, Deserialize)]
+#[derive(Debug, Clone, CandidType, Deserialize, PartialEq, Eq)]
 pub enum CommentStatus {
     Enable,
     Disable,
 }
 
-#[derive(Debug, Clone, CandidType, Deserialize)]
+#[derive(Debug, Clone, CandidType, Deserialize, PartialEq, Eq)]
 pub struct PostCommentCommand {
     pub post_id: u64,
     pub content: RichText,
