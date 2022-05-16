@@ -1,5 +1,5 @@
 import 'element-plus/dist/index.css'; // element plus 生效的样式
-
+import '@vueup/vue-quill/dist/vue-quill.snow.css'; //导入quill编辑器样式
 import '@purge-icons/generated'; // 导入 icons
 import { createApp } from 'vue';
 import i18n from './locale';

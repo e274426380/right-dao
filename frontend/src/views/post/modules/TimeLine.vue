@@ -36,7 +36,12 @@
     </div>
     <el-dialog v-model="timelineFormVisible" custom-class="post-timeLine-dialog" :title="t('post.timeline.add')" width="30%">
         <el-form :model="timelineForm" hide-required-asterisk>
-            <el-form-item :label="$t('post.timeline.time')+'：'">
+            <el-form-item :label="$t('post.timeline.time')+'：'"
+                          prop="event_time"
+                          :rules="[{
+                required: true,
+                message: t('form.time'),
+                trigger: 'blur'}]">
                 <el-config-provider :locale="elementPlusLocale">
                     <el-date-picker
                         v-model="timelineForm.event_time"
@@ -72,7 +77,12 @@
     </el-dialog>
     <el-dialog v-model="statusFormVisible" custom-class="post-status-dialog" :title="t('post.status.title')" width="30%">
         <el-form :model="statusForm" hide-required-asterisk>
-            <el-form-item :label="$t('post.status.status')+'：'">
+            <el-form-item :label="$t('post.status.status')+'：'"
+                          prop="status"
+                          :rules="[{
+                required: true,
+                message: t('form.status'),
+                trigger: 'blur'}]">
                 <el-select class="i-select"
                            popper-class="i-select-pop"
                            v-model="statusForm.status"
@@ -104,7 +114,7 @@
         <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="statusFormVisible = false">{{t('common.cancel')}}</el-button>
-                    <el-button type="primary" @click="addTimeline()" :loading="statusLoading">{{t('common.confirm')}}</el-button>
+                    <el-button type="primary" @click="changeStatus()" :loading="statusLoading">{{t('common.confirm')}}</el-button>
                 </span>
         </template>
     </el-dialog>
@@ -135,7 +145,7 @@
     import zhCn from 'element-plus/lib/locale/lang/zh-cn';
     import {useStore} from "vuex";
     import {addPostTimeline, changePostStatus} from "@/api/post";
-    import {showMessageError} from "@/utils/message";
+    import {showMessageError, showMessageSuccess} from "@/utils/message";
     import {ApiPostTimeline} from "@/api/types";
     import {formatDate} from "@/utils/dates";
     const store = useStore();
@@ -146,9 +156,11 @@
     const props = defineProps({
         postId: {
             type: Number,
+            required: true,
         },
         timeline: {
             type: Array as PropType<ApiPostTimeline[]>,
+            required: true,
         },
     });
     const timelineShowMore =ref(false);
@@ -157,7 +169,7 @@
     const timelineLoading = ref(false);
     const timelineForm = ref({
         post_id: props.postId,
-        event_time: 0,
+        event_time: null,
         description: ""
     })
     const statusFormVisible = ref(false)
@@ -231,10 +243,13 @@
         addPostTimeline(timeline).then(res => {
             console.log("res", res)
             if (res.Ok) {
+                showMessageSuccess(t('post.timeline.success'));
                 emit('addTimelineSuccess');
                 timelineFormVisible.value = false;
             } else if (res.Err && res.Err.PostAlreadyCompleted !== undefined) {
                 showMessageError(t('message.error.post.alreadyCompleted'));
+            } else {
+                console.error(res)
             }
         }).finally(() => {
             timelineLoading.value = false;
@@ -243,8 +258,18 @@
 
     const changeStatus = () => {
         statusLoading.value = true;
+        let status = {...statusForm.value};
+        status.description += Object.keys(status.status);
         changePostStatus(statusForm.value).then(res => {
-            console.log(res)
+            if (res.Ok) {
+                showMessageSuccess(t('post.status.success'));
+                emit('addTimelineSuccess');
+                statusFormVisible.value = false;
+            } else if (res.Err && res.Err.PostAlreadyCompleted !== undefined) {
+                showMessageError(t('message.error.post.alreadyCompleted'));
+            } else {
+                console.error(res)
+            }
         }).finally(() => {
             statusLoading.value = false;
         })

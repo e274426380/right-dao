@@ -29,9 +29,11 @@ export default {
         add: "新增时间线",
         time:"发生时间",
         timePlaceholder:"请输入发生时间",
+        success:"增加时间线成功。"
     },
     status:{
         title:"修改贴子状态",
-        status:"贴子状态"
+        status:"贴子状态",
+        success:"修改状态成功。"
     }
 };

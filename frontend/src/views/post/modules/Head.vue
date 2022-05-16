@@ -6,7 +6,7 @@
                     <div class="post-title">
                         <el-row justify="space-between">
                             <el-col :span="16" class="card-info">
-                                <Avatar :username="author?.name"
+                                <Avatar :username="author?.name as string"
                                         :principal-id=post.author.toString()
                                         :avatar-id="Number(author?.avatar_id)"
                                         :clickable="false"
@@ -14,11 +14,14 @@
                                 <div class="text">
                                     <div class="title">
                                         <span>{{post.title}}</span>
+                                        <span class="post-status enable" v-if="post.status.Enable!==undefined">活跃</span>
+                                        <span class="post-status completed" v-else-if="post.status.Completed!==undefined">完成</span>
+                                        <span class="post-status closed" v-else-if="post.status.Closed!==undefined">关闭</span>
                                     </div>
                                     <div class="info">
                                         <span v-if="author!==undefined && author.name!==''">{{author.name}} </span>
                                         <span v-else>{{post.author.toString()}} </span>
-                                        <span style="margin-left: 5px;margin-right: 5px">|</span>
+                                        <span>|</span>
                                         <span class="createTime">{{formatDate(Number(post.created_at))}}</span>
                                     </div>
                                     <div class="need-type">
@@ -46,7 +49,7 @@
                             </div>
                         </div>
                         <div class="footer">
-                            <el-button type="primary" style="margin-right: 5px">写回答</el-button>
+                            <el-button type="primary" style="margin-right: 5px" @click="writeReply">写回答</el-button>
                             <el-button type="primary" style="margin-right: 5px">发起提案</el-button>
                             <span style="margin: 5px;">1 条回复</span>
                             <span>收起</span>
@@ -59,7 +62,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-    import {ref, onMounted, defineProps, PropType} from 'vue';
+    import {ref, onMounted, defineProps, PropType,defineEmits} from 'vue';
     import {ElRow, ElCol, ElButton, ElCard, ElTag} from 'element-plus/es';
     import Avatar from '@/components/common/Avatar.vue';
     import {ApiPost, ApiUserInfo} from "@/api/types";
@@ -71,6 +74,7 @@
     const props = defineProps({
         post: {
             type: Object as PropType<ApiPost>,
+            required: true,
         },
     });
 
@@ -86,12 +90,20 @@
         })
     }
 
+    const emit =defineEmits(['showWrite'])
+    const writeReply = () => {
+        emit('showWrite');
+    }
+
 </script>
 <style lang="scss">
     .post-detail-head-container {
         background-color: white;
         -webkit-box-shadow: 0 1px 3px rgb(18 18 18 / 10%);
         box-shadow: 0 1px 3px rgb(18 18 18 / 10%);
+        span+span{
+            margin-left: 10px;
+        }
         .post-title {
             margin-top: 40px;
             .card-info {
@@ -112,7 +124,7 @@
                 }
                 .need-type{
                     .el-tag{
-                        margin-right: 5px;
+                        /*margin-right: 5px;*/
                     }
                 }
             }

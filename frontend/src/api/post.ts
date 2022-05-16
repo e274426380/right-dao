@@ -21,3 +21,15 @@ export async function addPostTimeline(timeline: { post_id: number, event_time: n
 export async function changePostStatus(timeline: { id: number, status: string, description: string }): Promise<ApiResult<boolean>> {
     return getBackend().change_post_status(timeline);
 }
+
+
+// 增加贴子的回贴
+export async function addPostReply(id:number,content:string): Promise<ApiResult<boolean>> {
+    return getBackend().add_post_comment({
+        post_id:id,
+        content:{
+            content:content,
+            format:"html"
+        }
+    });
+}

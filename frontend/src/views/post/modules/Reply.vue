@@ -10,6 +10,7 @@
                         <div class="reply">
                             <div class="author">
                                 <Avatar :username="T"
+                                        :principalId='T'
                                         :clickable="false"
                                         :size="38"/>
                                 <div class="authorName">

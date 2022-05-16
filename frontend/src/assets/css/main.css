@@ -100,7 +100,24 @@ body {
     min-height:200px!important;
     border-radius: 0 0 4px 4px;
 }
+
 /*自定义时间选择器*/
 .i-date-pop .el-picker-panel__icon-btn{
     margin-top: -3px;
 }
+/*状态的样式*/
+.post-status{
+    padding: 2px 12px;
+    border-radius: 14px;
+    color: white;
+}
+.post-status.enable{
+    background-color: rgb(103,194,58);
+}
+.post-status.completed{
+    background-color: rgb(144,147,153);
+}
+.post-status.closed{
+    background-color: rgb(245,108,108);
+}
+

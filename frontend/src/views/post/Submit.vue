@@ -82,7 +82,6 @@
     } from 'element-plus/es';
     import {SupportedLocale, t} from '@/locale';
     import {QuillEditor} from '@vueup/vue-quill';
-    import '@vueup/vue-quill/dist/vue-quill.snow.css';
     import {useRoute, useRouter} from 'vue-router';
     import en from 'element-plus/lib/locale/lang/en';
     import zhCn from 'element-plus/lib/locale/lang/zh-cn';
@@ -90,7 +89,7 @@
     import {submitPost} from "@/api/post";
     import {goBack} from "@/router/routers";
     import {showMessageError, showMessageSuccess} from "@/utils/message";
-    import {calculatedICPIdLength, filterImgToICPId} from "@/utils/images";
+    import {calculatedICPIdLength} from "@/utils/images";
     const store = useStore();
     const router = useRouter();
     const route = useRoute();
@@ -202,28 +201,28 @@
         });
     }
 
-    const  filterEditorImg = async (html:string) =>{
-        try {
-            //限制图片大小2M
-            const limitSize = 2;
-            //全是空格不准提交
-            if (myTextEditor.getText().trim() === '') {
-                showMessageError(t('project.create.informationNull'));
-                return null;
-            }
-            let res = await filterImgToICPId(html, limitSize, limitLength);
-            //超过限制的长度，返回错误
-            if (res.overLimitLength) {
-                loading.value = false;
-                return null;
-            } else {
-                return res;
-            }
-        } catch (e: any) {
-            console.error(e);
-            return null;
-        }
-    }
+    // const  filterEditorImg = async (html:string) =>{
+    //     try {
+    //         //限制图片大小2M
+    //         const limitSize = 2;
+    //         //全是空格不准提交
+    //         if (myTextEditor.value?.getText().trim() === '') {
+    //             showMessageError(t('project.create.informationNull'));
+    //             return null;
+    //         }
+    //         let res = await filterImgToICPId(html, limitSize, limitLength);
+    //         //超过限制的长度，返回错误
+    //         if (res.overLimitLength) {
+    //             loading.value = false;
+    //             return null;
+    //         } else {
+    //             return res;
+    //         }
+    //     } catch (e: any) {
+    //         console.error(e);
+    //         return null;
+    //     }
+    // }
 </script>
 
 <style lang="scss">

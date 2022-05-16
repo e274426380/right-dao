@@ -76,4 +76,8 @@ export type ApiPostTimeline = {
     created_at: number;
     description: string;
     event_time: number;
+    type?:string;
+    hollow?:boolean;
+    time?:string;
+
 }
