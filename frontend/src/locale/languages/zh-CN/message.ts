@@ -11,7 +11,8 @@ export default {
         }
     },
     post:{
-        create:"创建求助成功"
+        create:"创建求助成功",
+        reply:"回复成功"
     },
     tip: {
         comingSoon: "尽请期待"

@@ -2,9 +2,9 @@
     <div class="post-detail-container">
         <Navigator/>
         <Head :post="post" @showWrite="showWriteReply(true)" v-if="post!==undefined"/>
-        <WriteReply @foldWrite="showWriteReply(false)" v-show="showWrite"/>
+        <WriteReply @foldWrite="showWriteReply(false)" @replySuccess="init" v-show="showWrite"/>
         <TimeLine :postId="postId" :timeline="post.events" @addTimelineSuccess="init" v-if="post!==undefined"/>
-        <Reply/>
+        <Reply :comments="post.comments" v-if="post!==undefined"/>
     </div>
 </template>
 <script lang="ts" setup>

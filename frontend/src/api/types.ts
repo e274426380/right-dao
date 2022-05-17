@@ -8,7 +8,7 @@ export type ApiError = {
     emailAddressNotValid: null; // 邮箱格式不正确
     UserNotFound: null; // 找不到目标用户
     UserEmailInvalid: null; // 用户的邮箱格式存在问题
-    PostAlreadyCompleted:null; //贴子已经完成
+    PostAlreadyCompleted: null; //贴子已经完成
 };
 
 // 后端的返回结果
@@ -28,7 +28,11 @@ export type ApiResultByPage<T> = {
 };
 
 export type ApiStatus = 'enable' | 'disable' | 'pending' | 'deleted';
-export type ApiPostStatus = 'Enable' | 'Completed' | 'Closed';// 正常 | 完成 | 关闭
+export type ApiPostStatus = {
+    Enable?: null,
+    Completed?: null,
+    Closed?: null,
+};// 正常 | 完成 | 关闭
 
 export type RichText = {
     content: string; // 实际内容
@@ -51,19 +55,20 @@ export type ApiUserInfo = {
     avatar_uri: string; //头像网址，暂时没用
     avatar_id: bigint; //头像id，暂时没用
     biography: string; //类似于个人签名
-    interests:string[]; //兴趣，类似于标签
+    interests: string[]; //兴趣，类似于标签
 };
 
 export type ApiPost = {
     id: bigint; //id
     author: Principal | string; // 作者
     title: string;
+    comments: ApiPostComments[];
     content: RichText;
     category: PostCategory;
     photos: number[];
     participants: string[];//期待参与的人
     end_time: [number]; //结束时间  opt格式，类似于[1000]，数组中只有一个数据。
-    events:ApiPostTimeline[];
+    events: ApiPostTimeline[];
     likes_count: number;
     ask_for_money: any;
     status: ApiPostStatus;
@@ -76,8 +81,19 @@ export type ApiPostTimeline = {
     created_at: number;
     description: string;
     event_time: number;
-    type?:string;
-    hollow?:boolean;
-    time?:string;
+    type?: string;
+    hollow?: boolean;
+    time?: string;
+}
 
+
+export type ApiPostComments = {
+    author: Principal | string; // 作者principalID
+    authorData?: ApiUserInfo; //作者详细资料 通过id获取对应资料
+    comment_id: number[];
+    comments: [];
+    content: RichText;
+    created_at: bigint;
+    id: bigint;
+    post_id: bigint;
 }

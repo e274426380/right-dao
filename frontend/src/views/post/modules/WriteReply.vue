@@ -79,7 +79,7 @@
     const myTextEditor = ref<{ setHTML: Function; getText: Function } | null>(null);
     const reply = ref('');
 
-    const emit =defineEmits(['foldWrite'])
+    const emit =defineEmits(['foldWrite','replySuccess'])
     const foldReply = () => {
         emit('foldWrite');
     }
@@ -95,8 +95,9 @@
         addPostReply(postId,reply.value).then(res => {
             console.log(res);
             if (res.Ok) {
-                showMessageSuccess(t('message.post.create'));
-
+                emit('replySuccess');
+                showMessageSuccess(t('message.post.reply'));
+                emit('foldWrite');
             }
         }).finally(() => {
             loading.value = false;

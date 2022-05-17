@@ -25,9 +25,12 @@
                                {{ item.description }}
                             </el-timeline-item>
                         </el-timeline>
-                        <div class="footer">
+                        <div class="footer" v-if="showList.length && showList.length > 3">
                             <span @click="showTimeline()" v-if="!timelineShowMore">展开全部进展</span>
                             <span @click="showTimeline()" v-else>收起全部进展</span>
+                        </div>
+                        <div v-else-if="!showList.length">
+                            没有相关时间线内容
                         </div>
                     </el-card>
                 </el-col>
@@ -169,7 +172,7 @@
     const timelineLoading = ref(false);
     const timelineForm = ref({
         post_id: props.postId,
-        event_time: null,
+        event_time: "",
         description: ""
     })
     const statusFormVisible = ref(false)
@@ -210,6 +213,7 @@
                 item['hollow'] = true;
             }
         })
+        console.log("props.timeline",props.timeline)
     }
 
     const showList = computed(() => {

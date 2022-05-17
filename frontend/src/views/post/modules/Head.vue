@@ -51,7 +51,7 @@
                         <div class="footer">
                             <el-button type="primary" style="margin-right: 5px" @click="writeReply">写回答</el-button>
                             <el-button type="primary" style="margin-right: 5px">发起提案</el-button>
-                            <span style="margin: 5px;">1 条回复</span>
+                            <span style="margin: 5px;">{{post.comments.length}} 条回复</span>
                             <span>收起</span>
 
                         </div>
@@ -134,7 +134,7 @@
                 align-items: center;
             }
             .footer {
-                margin-top: 30px;
+                margin-top: 15px;
                 margin-bottom: 15px;
             }
         }

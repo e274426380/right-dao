@@ -100,6 +100,10 @@ body {
     min-height:200px!important;
     border-radius: 0 0 4px 4px;
 }
+/*富文本编辑器显示的样式*/
+.ql-editor{
+    padding: 10px 0!important;
+}
 
 /*自定义时间选择器*/
 .i-date-pop .el-picker-panel__icon-btn{
