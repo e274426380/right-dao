@@ -54,6 +54,43 @@ impl PostProfile {
     }
 }
 
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct PostInfo {
+    pub id: PostId,
+    pub author: Principal,
+    pub title: String,
+    pub content: RichText,
+    pub category: Category,
+    pub photos: Vec<u64>,
+    pub participants: Vec<String>,
+    pub end_time: Option<Timestamp>,
+    pub likes_count: u64,
+    pub ask_for_money: Currency,
+    pub status: PostStatus,
+    pub created_at: Timestamp,
+    pub updated_at: Timestamp,
+}
+
+impl From<PostProfile> for PostInfo{
+    fn from(profile: PostProfile) -> Self {
+        Self {
+            id: profile.id,
+            author: profile.author,
+            title: profile.title,
+            content: profile.content,
+            category: profile.category,
+            photos: profile.photos,
+            participants: profile.participants,
+            end_time: profile.end_time,
+            likes_count: profile.likes_count,
+            ask_for_money: profile.ask_for_money,
+            status: profile.status,
+            created_at: profile.created_at,
+            updated_at: profile.updated_at,
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, CandidType, Deserialize)]
 pub struct RichText {
     pub content: String,

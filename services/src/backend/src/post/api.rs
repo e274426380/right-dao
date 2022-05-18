@@ -1,5 +1,8 @@
 
+use std::collections::VecDeque;
+
 use ic_cdk_macros::{update, query};
+use crate::domain::{PostComment, PostEvent, PostInfo};
 use crate::{CONTEXT, post::domain::PostStatus};
 use crate::common::guard::has_user_guard;
 
@@ -138,6 +141,29 @@ fn get_post(cmd: PostIdCommand) -> Result<PostProfile, PostError> {
         c.borrow().post_service.get_post(cmd.id).ok_or(PostError::PostNotFound)
     })
 }
+
+#[query]
+fn get_post_info(cmd: PostIdCommand) -> Result<PostInfo, PostError> {
+    CONTEXT.with(|c| {
+        c.borrow().post_service.get_post(cmd.id).map(|p| p.into()).ok_or(PostError::PostNotFound)
+    })
+}
+
+#[query]
+fn get_post_comments(cmd: PostIdCommand) -> Result<Vec<PostComment>, PostError> {
+    CONTEXT.with(|c| {
+        c.borrow().post_service.get_post(cmd.id).map(|p| p.comments).ok_or(PostError::PostNotFound)
+    })
+}
+
+#[query]
+fn get_post_events(cmd: PostIdCommand) -> Result<VecDeque<PostEvent>, PostError> {
+    CONTEXT.with(|c| {
+        c.borrow().post_service.get_post(cmd.id).map(|p| p.events).ok_or(PostError::PostNotFound)
+    })
+}
+
+
 
 #[query]
 fn page_posts(query: PostPageQuery) -> Result<PostPage, PostError> {

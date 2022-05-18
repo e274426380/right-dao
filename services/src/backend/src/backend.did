@@ -76,6 +76,22 @@ type PostProfile = record {
     updated_at: nat64;
 };
 
+type PostInfo = record {
+    id: nat64;
+    author: principal;
+    title: text;
+    content: RichText;
+    category: Category;
+    photos: vec nat64;
+    participants: vec text;
+    end_time: opt nat64;
+    likes_count : nat64;
+    ask_for_money : Currency;
+    status: PostStatus;
+    created_at: nat64;
+    updated_at: nat64;
+};
+
 type PostCreateCommand = record {
     title: text;
     content: RichText;
@@ -213,6 +229,21 @@ type PostResult = variant {
     Err: PostError;
 };
 
+type PostInfoResult = variant {
+    Ok: PostInfo;
+    Err: PostError;
+};
+
+type PostEventResult = variant {
+    Ok: vec PostEvent;
+    Err: PostError;
+};
+
+type PostCommentResult = variant {
+    Ok: vec PostComment;
+    Err: PostError;
+};
+
 service : {
  
     "greet": (text) -> (text) query;
@@ -229,6 +260,9 @@ service : {
     "change_post_status" : (PostChangeStatusCommand) -> (BoolPostResult);
     "delete_post" : (PostIdCommand) -> (BoolPostResult);
     "get_post" : (PostIdCommand) -> (PostResult);
+    "get_post_info" : (PostIdCommand) -> (PostInfoResult);
+    "get_post_comments" : (PostIdCommand) -> (PostCommentResult);
+    "get_post_events" : (PostIdCommand) -> (PostEventResult);
     "page_posts" : (PostPageQuery) -> (PostPageResult);
     
     "add_post_comment" : (PostCommentCommand) -> (BoolPostResult);
