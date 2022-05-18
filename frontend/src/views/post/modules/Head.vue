@@ -6,7 +6,7 @@
                     <div class="post-title">
                         <el-row justify="space-between">
                             <el-col :span="16" class="card-info">
-                                <Avatar :username="author?.name as string"
+                                <Avatar :username="author && author.name ? author?.name : ''"
                                         :principal-id=post.author.toString()
                                         :avatar-id="Number(author?.avatar_id)"
                                         :clickable="false"
@@ -27,7 +27,6 @@
                                     <div class="need-type">
                                         希望参加者：
                                         <el-tag v-for="(item,index) in post.participants">{{item}}</el-tag>
-                                        <el-tag>律师</el-tag>
                                     </div>
                                 </div>
                             </el-col>
@@ -37,9 +36,9 @@
                                 <el-button type="primary" v-else>{{t('post.help.category.other')}}</el-button>
                             </el-col>
                         </el-row>
-                        <div class="content">
+                        <div class="content ql-snow">
                             <div v-if="post.content.format==='html'"
-                                 class="ql-editor project-detail-information"
+                                 class="ql-editor"
                                  ref="htmlInformation"
                                  v-html="post.content.content"
                             >
@@ -51,7 +50,7 @@
                         <div class="footer">
                             <el-button type="primary" style="margin-right: 5px" @click="writeReply">写回答</el-button>
                             <el-button type="primary" style="margin-right: 5px">发起提案</el-button>
-                            <span style="margin: 5px;">{{post.comments.length}} 条回复</span>
+                            <!--<span style="margin: 5px;">{{post.comments.length}} 条回复</span>-->
                             <span>收起</span>
 
                         </div>

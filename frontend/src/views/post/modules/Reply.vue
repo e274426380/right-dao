@@ -5,7 +5,7 @@
                 <el-col :span="16" :offset="4">
                     <el-card>
                         <div class="head">
-                            <b>{{comments.length}}个 回答</b>
+                            <b>{{list.length}}个 回答</b>
                         </div>
                         <div class="reply" v-for="(item,index) in list">
                             <div class="author">
@@ -22,9 +22,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="content">
+                            <div class="content ql-snow">
                                 <div v-if="item.content.format==='html'"
-                                     class="ql-editor project-detail-information"
+                                     class="ql-editor"
                                      ref="htmlInformation"
                                      v-html="item.content.content"
                                 >
@@ -55,26 +55,29 @@
     import Avatar from '@/components/common/Avatar.vue';
     import {ApiPostComments} from "@/api/types";
     import {getTargetUser} from "@/api/user";
+    import {getPostComments} from "@/api/post";
 
     const props = defineProps({
-        comments: {
-            type: Array as PropType<ApiPostComments[]>,
+        postId: {
+            type: Number,
             required: true,
         },
     });
+    const list = ref<ApiPostComments[]>([]);
 
-    const list = ref<ApiPostComments[]>(props.comments);
-
-
-    const init = () => {
-        console.log("list",list.value)
+    const init = async () => {
+        await getPostComments(props.postId).then(res => {
+            if (res.Ok) {
+                list.value = res.Ok
+            }
+        })
+        console.log("list", list.value)
         for (let i = 0; i < list.value.length; i++) {
             getTargetUser(list.value[i].author.toString()).then(res => {
-                console.log("res", res)
                 if (res.Ok) {
                     list.value[i] = {
                         ...list.value[i],
-                        authorData:res.Ok,
+                        authorData: res.Ok,
                     }
                 }
             })

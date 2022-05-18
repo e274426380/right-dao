@@ -2,9 +2,11 @@
     <div class="post-detail-container">
         <Navigator/>
         <Head :post="post" @showWrite="showWriteReply(true)" v-if="post!==undefined"/>
-        <WriteReply @foldWrite="showWriteReply(false)" @replySuccess="init" v-show="showWrite"/>
-        <TimeLine :postId="postId" :timeline="post.events" @addTimelineSuccess="init" v-if="post!==undefined"/>
-        <Reply :comments="post.comments" v-if="post!==undefined"/>
+        <WriteReply @foldWrite="showWriteReply(false)" @replySuccess="replyInit" v-show="showWrite"/>
+        <div v-show="post!==undefined">
+            <TimeLine :postId="postId" @changeStatusSuccess="init"/>
+            <Reply :postId="postId" :ref="reply"/>
+        </div>
     </div>
 </template>
 <script lang="ts" setup>
@@ -15,7 +17,7 @@
     import WriteReply from './modules/WriteReply.vue';
     import Reply from './modules/Reply.vue';
     import {useRoute} from 'vue-router';
-    import {getPost} from "@/api/post";
+    import {getPostInfo} from "@/api/post";
     import {ApiPost} from "@/api/types";
     import {useStore} from "vuex";
 
@@ -31,6 +33,7 @@
         }
     });
     const post = ref<ApiPost>();
+    const reply = ref()
     const loading = ref(false);
     const showWrite = ref(false)
 
@@ -38,10 +41,14 @@
         init();
     });
 
+    const replyInit = () => {
+        reply.value.init();
+    }
+
     const init = () => {
         loading.value = true;
-        getPost(postId).then(res => {
-            console.log("getPost", res)
+        getPostInfo(postId).then(res=>{
+            console.log("getPostInfo",res)
             if (res.Ok) {
                 post.value = res.Ok
             }

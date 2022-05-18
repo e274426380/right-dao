@@ -101,7 +101,7 @@ body {
     border-radius: 0 0 4px 4px;
 }
 /*富文本编辑器显示的样式*/
-.ql-editor{
+.content.ql-snow .ql-editor{
     padding: 10px 0!important;
 }
 

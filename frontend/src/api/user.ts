@@ -43,6 +43,7 @@ export async function getTargetUser(principal: string): Promise<ApiResult<any | 
     return await getCache({
         key: 'USER_INFO_' + getCurrentPrincipal().toUpperCase(),
         //TODO 记得改成方法参数
+        // execute: () => getBackend().get_user(Principal.fromText(principal)),
         execute: () => getBackend().get_user(Principal.fromText("2vxsx-fae")),
         ttl: TTL.minute10,
         isLocal: true, // 需要本地存储

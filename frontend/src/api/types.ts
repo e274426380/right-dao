@@ -62,13 +62,13 @@ export type ApiPost = {
     id: bigint; //id
     author: Principal | string; // 作者
     title: string;
-    comments: ApiPostComments[];
+    comments?: ApiPostComments[];
     content: RichText;
     category: PostCategory;
     photos: number[];
     participants: string[];//期待参与的人
     end_time: [number]; //结束时间  opt格式，类似于[1000]，数组中只有一个数据。
-    events: ApiPostTimeline[];
+    events?: ApiPostTimeline[];
     likes_count: number;
     ask_for_money: any;
     status: ApiPostStatus;

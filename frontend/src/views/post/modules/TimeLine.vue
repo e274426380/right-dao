@@ -123,7 +123,7 @@
     </el-dialog>
 </template>
 <script lang="ts" setup>
-    import {ref, onMounted, computed, watch, defineProps, defineEmits, PropType} from 'vue';
+    import {ref, onMounted, computed, defineProps, defineEmits} from 'vue';
     import {
         ElRow,
         ElCol,
@@ -147,7 +147,7 @@
     import en from 'element-plus/lib/locale/lang/en';
     import zhCn from 'element-plus/lib/locale/lang/zh-cn';
     import {useStore} from "vuex";
-    import {addPostTimeline, changePostStatus} from "@/api/post";
+    import {addPostTimeline, changePostStatus, getPostTimeLine} from "@/api/post";
     import {showMessageError, showMessageSuccess} from "@/utils/message";
     import {ApiPostTimeline} from "@/api/types";
     import {formatDate} from "@/utils/dates";
@@ -161,18 +161,15 @@
             type: Number,
             required: true,
         },
-        timeline: {
-            type: Array as PropType<ApiPostTimeline[]>,
-            required: true,
-        },
     });
     const timelineShowMore =ref(false);
+    //默认展开3个时间线
     const timelineMount = ref(3);
     const timelineFormVisible = ref(false);
     const timelineLoading = ref(false);
     const timelineForm = ref({
         post_id: props.postId,
-        event_time: "",
+        event_time: 0,
         description: ""
     })
     const statusFormVisible = ref(false)
@@ -192,7 +189,7 @@
         value:"Closed",
         label: t('common.status.closed')
     }]
-    const showItem = ref({});
+    const timeline = ref<ApiPostTimeline[]>([]);
     const elementPlusLocale = computed(() => {
         switch (locale.value) {
             case SupportedLocale.zhCN:
@@ -202,22 +199,24 @@
         }
     });
 
-    const emit =defineEmits(['addTimelineSuccess'])
-
     const init = () => {
-        props.timeline.map((item, index) => {
-            item.created_at = Number(item.created_at);
-            item['time'] = formatDate(Number(item.event_time));
-            if (index === 0) {
-                item['type'] = 'primary';
-                item['hollow'] = true;
+        getPostTimeLine(props.postId).then(res => {
+            if (res.Ok) {
+                timeline.value = res.Ok
             }
         })
-        console.log("props.timeline",props.timeline)
+        // props.timeline.map((item, index) => {
+        //     item.created_at = Number(item.created_at);
+        //     item['time'] = formatDate(Number(item.event_time));
+        //     if (index === 0) {
+        //         item['type'] = 'primary';
+        //         item['hollow'] = true;
+        //     }
+        // })
     }
 
     const showList = computed(() => {
-        const show = props.timeline.slice(0,timelineMount.value).map((item, index) => {
+        const show = timeline.value.slice(0,timelineMount.value).map((item, index) => {
             item.created_at = Number(item.created_at);
             item['time'] = formatDate(Number(item.event_time));
             if (index === 0) {
@@ -233,7 +232,7 @@
         //控制时间线的展开与收起，默认是收起，false状态。
         timelineShowMore.value = !timelineShowMore.value;
         if (timelineShowMore.value) {
-            timelineMount.value = props.timeline.length;
+            timelineMount.value = timeline.value.length;
         } else {
             timelineMount.value = 3;
         }
@@ -245,10 +244,9 @@
         let timeline = {...timelineForm.value};
         timeline.event_time *= (1000 * 1000);
         addPostTimeline(timeline).then(res => {
-            console.log("res", res)
             if (res.Ok) {
+                init()
                 showMessageSuccess(t('post.timeline.success'));
-                emit('addTimelineSuccess');
                 timelineFormVisible.value = false;
             } else if (res.Err && res.Err.PostAlreadyCompleted !== undefined) {
                 showMessageError(t('message.error.post.alreadyCompleted'));
@@ -260,14 +258,16 @@
         })
     }
 
+    const emit =defineEmits(['changeStatusSuccess'])
     const changeStatus = () => {
         statusLoading.value = true;
         let status = {...statusForm.value};
-        status.description += Object.keys(status.status);
-        changePostStatus(statusForm.value).then(res => {
+        status.description = "Post status change to '"+status.status+"' : "+status.description;
+        changePostStatus(status).then(res => {
             if (res.Ok) {
+                emit('changeStatusSuccess')
+                init()
                 showMessageSuccess(t('post.status.success'));
-                emit('addTimelineSuccess');
                 statusFormVisible.value = false;
             } else if (res.Err && res.Err.PostAlreadyCompleted !== undefined) {
                 showMessageError(t('message.error.post.alreadyCompleted'));
@@ -283,12 +283,12 @@
         init()
     });
 
-    watch(
-        () => props.timeline,
-        () => {
-            init()
-        },
-    );
+    // watch(
+    //     () => props.timeline,
+    //     () => {
+    //         init()
+    //     },
+    // );
 
 </script>
 <style lang="scss">
