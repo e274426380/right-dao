@@ -100,9 +100,9 @@ impl UserEditCommand {
             return Err(UserError::UserNameTooLong);
         }
 
-        if !UserProfile::valid_email(&self.email) {
-            return Err(UserError::UserEmailInvalid);
-        }
+        // if !UserProfile::valid_email(&self.email) {
+        //     return Err(UserError::UserEmailInvalid);
+        // }
 
         if !UserProfile::valid_biography(&self.biography) {
             return Err(UserError::UserBiographyTooLong);
