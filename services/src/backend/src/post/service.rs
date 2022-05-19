@@ -1,8 +1,10 @@
+
+
 use std::collections::BTreeMap;
 
 use candid::Principal;
 
-use super::{domain::{PostProfile, PostId, PostCreateCommand, Timestamp, PostStatus, PostEditCommand, PostIdCommand, PostPage, PostPageQuery, PostCommentCommand, PostComment, PostEventCommand, CommentCommentCommand, PostChangeStatusCommand, PostEvent, }, error::PostError};
+use super::{domain::{PostProfile, PostId, PostCreateCommand, Timestamp, PostStatus, PostEditCommand, PostPage, PostPageQuery, PostCommentCommand, PostEventCommand, CommentCommentCommand, PostChangeStatusCommand, PostEvent, }, error::PostError};
 
 
 #[derive(Debug, Default)]
@@ -58,19 +60,21 @@ impl PostService {
     }
     
     pub fn get_post(&self, id: PostId) -> Option<PostProfile> {
-        self.posts.get(&id).cloned()
+        self.posts
+            .get(&id)
+            .cloned()
     }
 
-    pub fn page_posts(&self, query_args: &PostPageQuery) -> PostPage {
+    pub fn my_posts(&self, caller: Principal, query_args: &PostPageQuery) -> PostPage {
+        let total_count = self.posts.len();
+
         let data: Vec<PostProfile> = self.posts
             .iter()
-            .filter(|(_, q)| query_args.querystring.is_empty() || (q.title.contains(&query_args.querystring) || q.content.content.contains(&query_args.querystring)))
+            .filter(|(_, p)| p.author == caller && (query_args.querystring.is_empty() || (p.title.contains(&query_args.querystring) || p.content.content.contains(&query_args.querystring))))
             .skip(query_args.page_num * query_args.page_size)
             .take(query_args.page_size)
             .map(|(_, q)| q.clone())
             .collect();
-
-        let total_count = self.posts.len();
         
         PostPage {
             data,
@@ -79,6 +83,27 @@ impl PostService {
             total_count,
         }
     }
+
+    pub fn page_posts(&self, query_args: &PostPageQuery) -> PostPage {
+        let total_count = self.posts.len();
+
+        let data: Vec<PostProfile> = self.posts
+            .iter()
+            .filter(|(_, q)| query_args.querystring.is_empty() || (q.title.contains(&query_args.querystring) || q.content.content.contains(&query_args.querystring)))
+            .skip(query_args.page_num * query_args.page_size)
+            .take(query_args.page_size)
+            .map(|(_, q)| q.clone())
+            .collect();
+
+        PostPage {
+            data,
+            page_size: query_args.page_size,
+            page_num: query_args.page_num,
+            total_count,
+        }
+    }
+
+    
 
     /// add comment to post
     pub fn add_post_comment(&mut self, cmd: PostCommentCommand, comment_id: u64, author: Principal, now: Timestamp) -> Result<bool, PostError> {

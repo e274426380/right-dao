@@ -163,11 +163,18 @@ fn get_post_events(cmd: PostIdCommand) -> Result<VecDeque<PostEvent>, PostError>
     })
 }
 
-
-
 #[query]
 fn page_posts(query: PostPageQuery) -> Result<PostPage, PostError> {
     CONTEXT.with(|c| {
         Ok(c.borrow().post_service.page_posts(&query))
+    })
+}
+
+#[query]
+fn my_posts(query: PostPageQuery) -> Result<PostPage, PostError> {
+    CONTEXT.with(|c| {
+        let ctx = c.borrow();
+        let caller = ctx.env.caller();
+        Ok(ctx.post_service.my_posts(caller, &query))
     })
 }

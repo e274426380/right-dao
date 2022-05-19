@@ -264,7 +264,8 @@ service : {
     "get_post_comments" : (PostIdCommand) -> (PostCommentResult);
     "get_post_events" : (PostIdCommand) -> (PostEventResult);
     "page_posts" : (PostPageQuery) -> (PostPageResult);
-    
+    "my_posts" : (PostPageQuery) -> (PostPageResult);
+
     "add_post_comment" : (PostCommentCommand) -> (BoolPostResult);
     "add_comment_comment" : (CommentCommentCommand) -> (BoolPostResult);
     "add_post_event" : (PostEventCommand) -> (BoolPostResult);

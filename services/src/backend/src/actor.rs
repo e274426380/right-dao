@@ -5,7 +5,7 @@ use ic_cdk::{caller, id, print};
 use ic_cdk_macros::*;
 use ic_cdk::storage;
 
-use crate::context::{DaoContext, DaoDataStarage};
+use crate::context::{DaoContext, DaoDataStorage};
 
 use crate::CONTEXT;
 use crate::env::CanisterEnvironment;
@@ -26,7 +26,7 @@ fn get_caller() -> String {
 }
 
 #[init]
-fn init_cainster() {
+fn init_canister() {
     ic_cdk::setup();
 
     let context = DaoContext {
@@ -53,7 +53,7 @@ fn pre_upgrade() {
             .iter()
             .map(|(_k, v)| (v.clone())));
 
-        let payload: DaoDataStarage = DaoDataStarage {
+        let payload: DaoDataStorage = DaoDataStorage {
             id, users, posts
         };
         
@@ -70,7 +70,7 @@ fn post_upgrade() {
     let canister_id = id();
     print(format!("starting post_upgrade {:?}", canister_id));
 
-    let (payload, ): (DaoDataStarage, ) = storage::stable_restore().expect("failed to restore users");
+    let (payload, ): (DaoDataStorage, ) = storage::stable_restore().expect("failed to restore users");
 
     let state_stable = DaoContext::from(payload);
     

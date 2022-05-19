@@ -15,13 +15,13 @@ use crate::post::{
 };
 
 #[derive(Debug, Clone, CandidType, Deserialize)]
-pub struct DaoDataStarage {
+pub struct DaoDataStorage {
     pub id: u64,
     pub users: Vec<UserProfile>,
     pub posts: Vec<PostProfile>,
 }
 
-impl From<DaoContext> for DaoDataStarage {
+impl From<DaoContext> for DaoDataStorage {
     fn from(state: DaoContext) -> Self {
         let id = state.id;
         let users = Vec::from_iter(state.user_service.users
@@ -57,8 +57,8 @@ impl Default for DaoContext {
     }
 }
 
-impl From<DaoDataStarage> for DaoContext {
-    fn from(payload: DaoDataStarage) -> Self {
+impl From<DaoDataStorage> for DaoContext {
+    fn from(payload: DaoDataStorage) -> Self {
         let users: BTreeMap<Principal, UserProfile> = payload
             .users
             .into_iter()
