@@ -47,3 +47,15 @@ export async function addPostReply(id:number,content:string): Promise<ApiResult<
         }
     });
 }
+
+// 增加贴子回答的评论
+export async function addPostReplyReply(commentId: number, postId, content: string): Promise<ApiResult<boolean>> {
+    return getBackend().add_comment_comment({
+        post_id: postId,
+        comment_id: commentId,
+        content: {
+            content: content,
+            format: "text" //评论只是单纯的text，不含html
+        }
+    });
+}

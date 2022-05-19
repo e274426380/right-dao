@@ -35,7 +35,7 @@
                             </div>
                             <div class="footer">
                                 <div>
-                                    <span>1 条评论</span>
+                                    <span @click="openReplyReply(Number(item.id),item.comments)">{{item.comments.length}} 条评论</span>
                                     <span>转发</span>
                                 </div>
                                <div>
@@ -48,11 +48,13 @@
             </el-row>
         </div>
     </div>
+    <ReplyReply v-model:visible="showReplyReply" :comments="comments" :replyId="commentId" :postId="props.postId"/>
 </template>
 <script lang="ts" setup>
-    import {ref, onMounted, computed, watch, defineProps, defineEmits, PropType} from 'vue';
+    import {ref, onMounted, defineProps} from 'vue';
     import {ElRow, ElCol, ElButton,ElCard} from 'element-plus/es';
     import Avatar from '@/components/common/Avatar.vue';
+    import ReplyReply from './ReplyReply.vue';
     import {ApiPostComments} from "@/api/types";
     import {getTargetUser} from "@/api/user";
     import {getPostComments} from "@/api/post";
@@ -64,6 +66,15 @@
         },
     });
     const list = ref<ApiPostComments[]>([]);
+    const showReplyReply = ref(false);
+    const commentId = ref(0);
+    const comments = ref<ApiPostComments[]>([]);
+
+    const openReplyReply = (id: number, itemComments: ApiPostComments[]) => {
+        comments.value = itemComments;
+        showReplyReply.value = true;
+        commentId.value = id;
+    }
 
     const init = async () => {
         await getPostComments(props.postId).then(res => {
