@@ -135,8 +135,10 @@ type PostComment = record {
     id: nat64;
     post_id: nat64;
     comment_id: opt nat64;
+    quote_id: opt nat64;
     content: RichText;
     author: principal;
+    status: CommentStatus;
     created_at: nat64;
     comments: vec PostComment;
 };
@@ -175,6 +177,7 @@ type PostCommentCommand = record {
 type CommentCommentCommand = record {
     post_id: nat64;
     comment_id: nat64;
+    quote_id: nat64;
     content: RichText;
 };
 
@@ -244,6 +247,36 @@ type PostCommentResult = variant {
     Err: PostError;
 };
 
+type CommentSumary = record {
+    id: nat64;
+    post_id: nat64;
+    post_title: text;
+    comment_id: opt nat64;
+    quote_id: opt nat64;
+    content: RichText;
+    author: principal;
+    status: CommentStatus;
+    created_at: nat64;
+    updated_at: nat64
+};
+
+type CommentStatus = variant {
+    Enable;
+    Disable;
+};
+
+type CommentSummaryPage = record {
+    data: vec CommentSumary;
+    page_num: nat64;
+    page_size: nat64;
+    total_count: nat64
+};
+
+type CommentSummaryPageResult = variant {
+    Ok: CommentSummaryPage;
+    Err: PostError;
+};
+
 service : {
  
     "greet": (text) -> (text) query;
@@ -265,6 +298,8 @@ service : {
     "get_post_events" : (PostIdCommand) -> (PostEventResult);
     "page_posts" : (PostPageQuery) -> (PostPageResult);
     "my_posts" : (PostPageQuery) -> (PostPageResult);
+    "my_post_comments" : (PostPageQuery) -> (PostPageResult);
+    "my_comments" : (PostPageQuery) -> (CommentSummaryPageResult);
 
     "add_post_comment" : (PostCommentCommand) -> (BoolPostResult);
     "add_comment_comment" : (CommentCommentCommand) -> (BoolPostResult);

@@ -251,6 +251,14 @@ pub struct PostPage {
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct CommentSummaryPage {
+    pub data: Vec<CommentSummary>,
+    pub page_size: usize,
+    pub page_num: usize,
+    pub total_count: usize,
+}
+
+#[derive(Debug, Clone, CandidType, Deserialize)]
 pub struct PostPageQuery {
     pub page_size: usize,
     pub page_num: usize,
@@ -261,13 +269,28 @@ pub struct PostPageQuery {
 pub struct PostComment {
     pub id: u64,
     pub post_id: u64,
-    pub comment_id: Option<u64>,
+    pub comment_id: Option<u64>,   // 回答 id
+    pub quote_id: Option<u64>,      // 引用评论id
     pub content: RichText,
     pub author: Principal,
     pub status: CommentStatus,
     pub created_at: Timestamp,
     pub updated_at: Timestamp,
     pub comments: Vec<PostComment>,
+}
+
+#[derive(Debug, Clone, CandidType, PartialEq, Eq, Deserialize)]
+pub struct CommentSummary {
+    pub id: u64,
+    pub post_id: u64,
+    pub post_title: String,
+    pub comment_id: Option<u64>,   // 回答 id
+    pub quote_id: Option<u64>,      // 引用评论id
+    pub content: RichText,
+    pub author: Principal,
+    pub status: CommentStatus,
+    pub created_at: Timestamp,
+    pub updated_at: Timestamp,
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize, PartialEq, Eq)]
@@ -288,6 +311,7 @@ impl PostCommentCommand {
             id,
             post_id: self.post_id,
             comment_id: None,
+            quote_id: None,
             content: self.content,
             author,
             status: CommentStatus::Enable,
@@ -302,6 +326,7 @@ impl PostCommentCommand {
 pub struct CommentCommentCommand {
     pub post_id: u64,
     pub comment_id: u64,
+    pub quote_id: Option<u64>,
     pub content: RichText,
 }
 
@@ -311,6 +336,7 @@ impl CommentCommentCommand {
             id,
             post_id: self.post_id,
             comment_id: Some(self.comment_id),
+            quote_id: self.quote_id,
             content: self.content,
             author,
             status: CommentStatus::Enable,

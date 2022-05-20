@@ -2,7 +2,7 @@
 use std::collections::VecDeque;
 
 use ic_cdk_macros::{update, query};
-use crate::domain::{PostComment, PostEvent, PostInfo};
+use crate::domain::{PostComment, PostEvent, PostInfo, CommentSummaryPage};
 use crate::{CONTEXT, post::domain::PostStatus};
 use crate::common::guard::has_user_guard;
 
@@ -180,11 +180,19 @@ fn my_posts(query: PostPageQuery) -> Result<PostPage, PostError> {
 }
 
 #[query]
-fn my_comments(query: PostPageQuery) -> Result<PostPage, PostError> {
+fn my_post_comments(query: PostPageQuery) -> Result<PostPage, PostError> {
+    CONTEXT.with(|c| {
+        let ctx = c.borrow();
+        let caller = ctx.env.caller();
+        Ok(ctx.post_service.my_post_comments(caller, &query))
+    })
+}
+
+#[query]
+fn my_comments(query: PostPageQuery) -> Result<CommentSummaryPage, PostError> {
     CONTEXT.with(|c| {
         let ctx = c.borrow();
         let caller = ctx.env.caller();
         Ok(ctx.post_service.my_comments(caller, &query))
     })
 }
-

@@ -4,6 +4,8 @@ use std::collections::BTreeMap;
 
 use candid::Principal;
 
+use crate::domain::{CommentSummaryPage, CommentSummary};
+
 use super::{domain::{PostProfile, PostId, PostCreateCommand, Timestamp, PostStatus, PostEditCommand, PostPage, PostPageQuery, PostCommentCommand, PostEventCommand, CommentCommentCommand, PostChangeStatusCommand, PostEvent, }, error::PostError};
 
 
@@ -65,38 +67,70 @@ impl PostService {
             .cloned()
     }
 
-    pub fn my_posts(&self, caller: Principal, q: &PostPageQuery) -> PostPage {
-        
-        let page_size= q.page_size;
-        let page_num = q.page_num;
-        let filter = |p: &&PostProfile| p.author == caller && (q.querystring.is_empty() || (p.title.contains(&q.querystring) || p.content.content.contains(&q.querystring)));
-        let ps = &self.posts;
-
-        paging(ps, page_size, page_num, filter)
-    }
-
     pub fn page_posts(&self, q: &PostPageQuery) -> PostPage {
 
         let page_size= q.page_size;
         let page_num = q.page_num;
-        let filter = |p: &&PostProfile| q.querystring.is_empty() || (p.title.contains(&q.querystring) || p.content.content.contains(&q.querystring));
+        let filter = |p: &&PostProfile| q.querystring.is_empty() || 
+            (p.title.contains(&q.querystring) || p.content.content.contains(&q.querystring));
         let ps = &self.posts;
 
         paging(ps, page_size, page_num, filter)
     }
 
-    pub fn my_comments(&self, caller: Principal, q: &PostPageQuery)-> PostPage {
+    pub fn my_posts(&self, caller: Principal, q: &PostPageQuery) -> PostPage {
+        
+        let page_size= q.page_size;
+        let page_num = q.page_num;
+        let filter = |p: &&PostProfile| p.author == caller && 
+            (q.querystring.is_empty() || (p.title.contains(&q.querystring) || p.content.content.contains(&q.querystring)));
+        let ps = &self.posts;
+
+        paging(ps, page_size, page_num, filter)
+    }
+
+    pub fn my_post_comments(&self, caller: Principal, q: &PostPageQuery)-> PostPage {
 
         let page_size= q.page_size;
         let page_num = q.page_num;
-        let filter = |p: && PostProfile| p.comments.iter().any(|c| c.author == caller) && (q.querystring.is_empty() || (p.title.contains(&q.querystring) || p.content.content.contains(&q.querystring)));
+        let filter = |p: && PostProfile| p.comments.iter().any(|c| c.author == caller) && 
+            (q.querystring.is_empty() || (p.title.contains(&q.querystring) || p.content.content.contains(&q.querystring)));
         let ps = &self.posts;
-        paging(
-            ps, 
-            page_size, 
-            page_num, 
-            filter)
+        paging(ps, page_size, page_num, filter)
  
+    }
+
+    pub fn my_comments(&self, caller: Principal, q: &PostPageQuery) -> CommentSummaryPage {
+        let mut data = Vec::new();
+        let mut total_count = 0;
+        
+        for (_, p) in self.posts.iter() {
+            for c in &p.comments {
+                if c.author == caller {
+                    data.push( CommentSummary {
+                        id: c.id,
+                        post_id: p.id,
+                        post_title: p.title.clone(),
+                        comment_id: c.comment_id,
+                        quote_id: c.quote_id,
+                        content: c.content.clone(),
+                        author: c.author,
+                        created_at: c.created_at,
+                        updated_at: c.updated_at,
+                        status: c.status.clone(),
+                    });
+
+                    total_count += 1;
+                }
+            }
+        }
+
+        CommentSummaryPage { 
+            data, 
+            page_size: q.page_size, 
+            page_num: q.page_num, 
+            total_count 
+        }
     }
 
     /// add comment to post
@@ -208,6 +242,7 @@ mod tests {
         let add_cc_cmd = CommentCommentCommand {
             post_id: id,
             comment_id,
+            quote_id: None,
             content: RichText { content: "coment comment".to_string(), format: "md".to_string() }
         };
 
