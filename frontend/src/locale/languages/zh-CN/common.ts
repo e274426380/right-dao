@@ -3,7 +3,7 @@ export default {
     confirm: "确认",
     cancel: "取消",
     status: {
-        enable: "启用",
+        enable: "活跃",
         completed: "完成",
         closed: "关闭"
     }

@@ -1,10 +1,15 @@
 import { getCache, TTL } from '@/common/cache';
 import {getBackend} from "@/api/canister_pool";
-import {ApiPost, ApiPostComments, ApiPostTimeline, ApiResult} from "@/api/types";
+import {ApiPost, ApiPostComments, ApiPostTimeline, ApiResult, ApiResultByPage} from "@/api/types";
 
 // 更新用户自己的信息
 export async function submitPost(post: any | ApiPost): Promise<ApiResult<boolean>> {
     return getBackend().create_post(post);
+}
+
+// 获取贴子详情，所有内容
+export async function getPostPage(pageNum: number, pageSize: number, query: string): Promise<ApiResultByPage<ApiPost>> {
+    return getBackend().page_posts({page_num: pageNum, page_size: pageSize, querystring: query});
 }
 
 // 获取贴子详情，所有内容

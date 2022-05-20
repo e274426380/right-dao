@@ -5,7 +5,7 @@
         <WriteReply @foldWrite="showWriteReply(false)" @replySuccess="replyInit" v-show="showWrite"/>
         <div v-show="post!==undefined">
             <TimeLine :postId="postId" @changeStatusSuccess="init"/>
-            <Reply :postId="postId" :ref="reply"/>
+            <Reply :postId="postId" ref="reply"/>
         </div>
     </div>
 </template>
@@ -16,12 +16,16 @@
     import TimeLine from './modules/TimeLine.vue';
     import WriteReply from './modules/WriteReply.vue';
     import Reply from './modules/Reply.vue';
-    import {useRoute} from 'vue-router';
+    import {useRoute, useRouter} from 'vue-router';
     import {getPostInfo} from "@/api/post";
     import {ApiPost} from "@/api/types";
     import {useStore} from "vuex";
+    import {goBack} from "@/router/routers";
+    import {showMessageError} from "@/utils/message";
+    import {t} from "@/locale";
 
     const route = useRoute();
+    const router = useRouter();
     const store = useStore();
     const postId = Number(route.params.id);
     const currentUserPrincipal = computed<string>(() => store.state.user.principal);
@@ -51,6 +55,12 @@
             console.log("getPostInfo",res)
             if (res.Ok) {
                 post.value = res.Ok
+            } else if(res.Err.PostNotFound!==undefined){
+                showMessageError(t('message.error.noPost'));
+                setTimeout(() => {
+                    //等用户看清了错误提示再弹
+                    goBack(router);
+                }, 1500);
             }
         }).finally(() => {
             loading.value = false

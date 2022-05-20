@@ -1,5 +1,10 @@
 export default {
     back: "Back",
     confirm: "Confirm",
-    cancel: "Cancel"
+    cancel: "Cancel",
+    status: {
+        enable: "Enable",
+        completed: "Completed",
+        closed: "Closed"
+    }
 };

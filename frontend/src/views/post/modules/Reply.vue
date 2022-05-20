@@ -10,7 +10,7 @@
                         <div class="reply" v-for="(item,index) in list">
                             <div class="author">
                                 <Avatar :username="item.authorData && item.authorData.name!=='' ?
-                                item.authorData.name : item.author.toString()"
+                                            item.authorData.name : item.author.toString()"
                                         :principalId=item.author.toString()
                                         :clickable="false"
                                         :size="38"/>
@@ -51,7 +51,7 @@
     <ReplyReply v-model:visible="showReplyReply" :comments="comments" :replyId="commentId" :postId="props.postId"/>
 </template>
 <script lang="ts" setup>
-    import {ref, onMounted, defineProps} from 'vue';
+    import {ref, onMounted, defineProps, defineExpose} from 'vue';
     import {ElRow, ElCol, ElButton,ElCard} from 'element-plus/es';
     import Avatar from '@/components/common/Avatar.vue';
     import ReplyReply from './ReplyReply.vue';
@@ -79,6 +79,7 @@
     const init = async () => {
         await getPostComments(props.postId).then(res => {
             if (res.Ok) {
+                console.log("getPostComments",res)
                 list.value = res.Ok
             }
         })
@@ -98,6 +99,10 @@
     onMounted(() => {
         init();
     });
+
+    defineExpose({
+        init
+    })
 
 </script>
 <style lang="scss">

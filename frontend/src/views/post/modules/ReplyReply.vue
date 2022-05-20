@@ -4,7 +4,7 @@
             v-model="visible"
             :before-close="onClose"
             :title="props.comments.length+' 条评论'"
-            width="45%"
+            width="35%"
         >
             <template v-if="props.comments.length>0">
                 <div class="replyReply" v-for="(item,index) in props.comments">
@@ -21,11 +21,12 @@
                     </div>
                     <div class="content">
                         {{item.content.content}}
+                        <span>回复</span>
                     </div>
                 </div>
             </template>
-            <el-input v-model="replyReply" placeholder="请输入你的评论..."></el-input>
             <template #footer>
+                <el-input class="replyInput" v-model="replyReply" placeholder="请输入你的评论..."></el-input>
               <span style="display: flex;justify-content: space-between">
                 <el-button @click="onClose">取消</el-button>
                 <el-button type="primary" @click="submit">提交评论</el-button>
@@ -69,6 +70,7 @@
     });
 
     const init = () =>{
+        console.log("props.comments",props.comments)
         for (let i = 0; i < props.comments.length; i++) {
             getTargetUser(props.comments[i].author.toString()).then(res => {
                 console.log("props.comments[i].author",res)
@@ -94,19 +96,23 @@
     const onClose = () => {
         emit('update:visible');
     }
-    //
-    // watch(
-    //     () => props.visible,
-    //     (nv) => {
-    //         console.log("props.showDialog", props.visible)
-    //         console.log("nv", nv)
-    //         dialogVisible.value = props.visible;
-    //     },
-    // );
+
+    watch(
+        () => props.visible,
+        (nv) => {
+            console.log("props.comments",props.comments)
+        },
+    );
 
 </script>
 <style lang="scss">
     .post-reply-reply-container {
+        .el-dialog__body{
+            padding-top: 0;
+        }
+        .replyInput{
+            margin-bottom: 10px;
+        }
         .replyReply{
             padding-top: 12px;
             padding-bottom: 10px;

@@ -8,7 +8,8 @@ export type ApiError = {
     emailAddressNotValid: null; // 邮箱格式不正确
     UserNotFound: null; // 找不到目标用户
     UserEmailInvalid: null; // 用户的邮箱格式存在问题
-    PostAlreadyCompleted: null; //贴子已经完成
+    PostAlreadyCompleted: null; //贴子已经进入完成状态，不能再修改
+    PostNotFound: null; // 贴子找不到
 };
 
 // 后端的返回结果
@@ -18,13 +19,13 @@ export type ApiResult<T> = {
 };
 // 后端的返回结果 分页
 export type ApiResultByPage<T> = {
-    ok?: {
+    Ok?: {
         data: T[];
         pageNum: bigint; // 当前页码
         pageSize: bigint; // 页面大小
         totalCount: bigint; // 总数
     };
-    err?: ApiError;
+    Err?: ApiError;
 };
 
 export type ApiStatus = 'enable' | 'disable' | 'pending' | 'deleted';
@@ -61,6 +62,7 @@ export type ApiUserInfo = {
 export type ApiPost = {
     id: bigint; //id
     author: Principal | string; // 作者
+    authorData?: ApiUserInfo; //作者详细资料 通过id获取对应资料
     title: string;
     comments?: ApiPostComments[];
     content: RichText;
