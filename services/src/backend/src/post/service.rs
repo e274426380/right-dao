@@ -124,11 +124,27 @@ impl PostService {
                 }
             }
         }
+        
+        data.sort_by(|c1, c2| c2.id.cmp(&c1.id));
+
+        let filter = |c: && CommentSummary| c.author == caller && 
+            (q.querystring.is_empty() || (c.post_title.contains(&q.querystring) || c.content.content.contains(&q.querystring)));
+
+        let page_size= q.page_size;
+        let page_num = q.page_num;
+
+        let data = data
+            .iter()
+            .filter(filter)
+            .skip(page_num * page_size)
+            .take(page_size)
+            .cloned()
+            .collect();
 
         CommentSummaryPage { 
             data, 
-            page_size: q.page_size, 
-            page_num: q.page_num, 
+            page_size, 
+            page_num, 
             total_count 
         }
     }
@@ -187,10 +203,13 @@ impl PostService {
 fn paging(ps: &BTreeMap<u64, PostProfile>, page_size: usize, page_num: usize,
               ff: impl Fn(&&PostProfile) -> bool)
               -> PostPage {
-    let ps: Vec<PostProfile> = ps
+    let mut ps: Vec<PostProfile> = ps
         .values()
         .cloned()
         .collect();
+
+    ps.sort_by(|p1, p2| p2.id.cmp(&p1.id));
+
     let total_count = ps.len();
     let data = ps.iter().filter(ff).skip(page_num * page_size).take(page_size).cloned().collect();
     PostPage { page_num, page_size, total_count, data }

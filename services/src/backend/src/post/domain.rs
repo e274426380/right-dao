@@ -9,7 +9,7 @@ use candid::{CandidType, Deserialize, Principal};
 pub type PostId = u64;
 pub type Timestamp = u64;
 
-#[derive(Debug, Clone, CandidType, Deserialize)]
+#[derive(Debug, Clone, CandidType, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub struct PostProfile {
     pub id: PostId,
     pub author: Principal,
@@ -91,13 +91,13 @@ impl From<PostProfile> for PostInfo{
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, CandidType, Deserialize)]
+#[derive(Debug, Clone, CandidType, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub struct RichText {
     pub content: String,
     pub format: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, CandidType, Deserialize)]
+#[derive(Debug, Clone, CandidType, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub enum  Category {
     Tech,
     Law,
@@ -116,7 +116,7 @@ impl FromStr for Category {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, CandidType, Deserialize)]
+#[derive(Debug, Clone, CandidType, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub enum PostStatus {
     Enable,
     Completed,
@@ -135,14 +135,14 @@ impl FromStr for PostStatus {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, CandidType, Deserialize)]
+#[derive(Debug, Clone, CandidType, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Currency {
     pub amount: u64,
     pub unit: CurrencyUnit,
     pub decimals: u8,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, CandidType, Deserialize)]
+#[derive(Debug, Clone, CandidType, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub enum CurrencyUnit {
     USDT,
     ICP,
@@ -160,7 +160,7 @@ impl Default for Currency {
     }
 }
 
-#[derive(Debug, Clone, CandidType, Deserialize)]
+#[derive(Debug, Clone, CandidType, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub struct PostEvent {
     post_id: u64,
     event_time: Timestamp,
@@ -181,7 +181,7 @@ impl PostEvent {
     }
 }
 
-#[derive(Debug, Clone, CandidType, Deserialize)]
+#[derive(Debug, Clone, CandidType, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub enum EventStatus {
     Enable,
     Disable,
@@ -273,7 +273,7 @@ pub struct PostPageOtherQuery {
     pub other: String,
 }
 
-#[derive(Debug, Clone, CandidType, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, CandidType, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub struct PostComment {
     pub id: u64,
     pub post_id: u64,
@@ -301,7 +301,7 @@ pub struct CommentSummary {
     pub updated_at: Timestamp,
 }
 
-#[derive(Debug, Clone, CandidType, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, CandidType, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub enum CommentStatus {
     Enable,
     Disable,
