@@ -265,6 +265,14 @@ pub struct PostPageQuery {
     pub querystring: String,
 }
 
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct PostPageOtherQuery {
+    pub page_size: usize,
+    pub page_num: usize,
+    pub querystring: String,
+    pub other: String,
+}
+
 #[derive(Debug, Clone, CandidType, PartialEq, Eq, Deserialize)]
 pub struct PostComment {
     pub id: u64,

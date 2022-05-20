@@ -157,6 +157,12 @@ type PostPageQuery = record {
     querystring: text;
 };
 
+type PostPageOtherQuery = record {
+    page_num: nat64;
+    page_size: nat64;
+    querystring: text;
+    other: text;
+};
 
 type PostEditCommand = record {
     id: nat64;
@@ -208,6 +214,7 @@ type PostError = variant {
     PostAlreadyCompleted;
     PostUnAuthorizedOperation;
     PostCommentNotFound;
+    UserNotFound;
 };
 
 type BoolPostResult = variant {
@@ -297,9 +304,14 @@ service : {
     "get_post_comments" : (PostIdCommand) -> (PostCommentResult);
     "get_post_events" : (PostIdCommand) -> (PostEventResult);
     "page_posts" : (PostPageQuery) -> (PostPageResult);
+
     "my_posts" : (PostPageQuery) -> (PostPageResult);
     "my_post_comments" : (PostPageQuery) -> (PostPageResult);
     "my_comments" : (PostPageQuery) -> (CommentSummaryPageResult);
+
+    "other_posts" : (PostPageOtherQuery) -> (PostPageResult);
+    "other_post_comments" : (PostPageOtherQuery) -> (PostPageResult);
+    "other_comments" : (PostPageOtherQuery) -> (CommentSummaryPageResult);
 
     "add_post_comment" : (PostCommentCommand) -> (BoolPostResult);
     "add_comment_comment" : (CommentCommentCommand) -> (BoolPostResult);

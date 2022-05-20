@@ -9,4 +9,5 @@ pub enum PostError {
     PostAlreadyCompleted,
     PostUnAuthorizedOperation,
     PostCommentNotFound,
+    UserNotFound,
 }

@@ -1,8 +1,9 @@
 
 use std::collections::VecDeque;
 
+use candid::Principal;
 use ic_cdk_macros::{update, query};
-use crate::domain::{PostComment, PostEvent, PostInfo, CommentSummaryPage};
+use crate::domain::{PostComment, PostEvent, PostInfo, CommentSummaryPage, PostPageOtherQuery};
 use crate::{CONTEXT, post::domain::PostStatus};
 use crate::common::guard::has_user_guard;
 
@@ -194,5 +195,59 @@ fn my_comments(query: PostPageQuery) -> Result<CommentSummaryPage, PostError> {
         let ctx = c.borrow();
         let caller = ctx.env.caller();
         Ok(ctx.post_service.my_comments(caller, &query))
+    })
+}
+
+#[query]
+fn other_posts(query: PostPageOtherQuery) -> Result<PostPage, PostError> {
+    CONTEXT.with(|c| {
+        let ctx = c.borrow();
+        let q = PostPageQuery {
+            page_size: query.page_size,
+            page_num: query.page_num,
+            querystring: query.querystring,
+        };
+
+        match Principal::from_text(query.other) {
+            Ok(p) => Ok(ctx.post_service.my_posts(p, &q)),
+            Err(_) => Err(PostError::UserNotFound)
+        }
+        
+    })
+}
+
+#[query]
+fn other_post_comments(query: PostPageOtherQuery) -> Result<PostPage, PostError> {
+    CONTEXT.with(|c| {
+        let ctx = c.borrow();
+        let q = PostPageQuery {
+            page_size: query.page_size,
+            page_num: query.page_num,
+            querystring: query.querystring,
+        };
+
+        match Principal::from_text(query.other) {
+            Ok(p) => Ok(ctx.post_service.my_post_comments(p, &q)),
+            Err(_) => Err(PostError::UserNotFound)
+        }
+        
+    })
+}
+
+#[query]
+fn other_comments(query: PostPageOtherQuery) -> Result<CommentSummaryPage, PostError> {
+    CONTEXT.with(|c| {
+        let ctx = c.borrow();
+        let q = PostPageQuery {
+            page_size: query.page_size,
+            page_num: query.page_num,
+            querystring: query.querystring,
+        };
+
+        match Principal::from_text(query.other) {
+            Ok(p) => Ok(ctx.post_service.my_comments(p, &q)),
+            Err(_) => Err(PostError::UserNotFound)
+        }
+        
     })
 }
