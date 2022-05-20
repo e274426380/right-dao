@@ -65,45 +65,39 @@ impl PostService {
             .cloned()
     }
 
-    pub fn my_posts(&self, caller: Principal, query_args: &PostPageQuery) -> PostPage {
-        let total_count = self.posts.len();
-
-        let data: Vec<PostProfile> = self.posts
-            .iter()
-            .filter(|(_, p)| p.author == caller && (query_args.querystring.is_empty() || (p.title.contains(&query_args.querystring) || p.content.content.contains(&query_args.querystring))))
-            .skip(query_args.page_num * query_args.page_size)
-            .take(query_args.page_size)
-            .map(|(_, q)| q.clone())
-            .collect();
+    pub fn my_posts(&self, caller: Principal, q: &PostPageQuery) -> PostPage {
         
-        PostPage {
-            data,
-            page_size: query_args.page_size,
-            page_num: query_args.page_num,
-            total_count,
-        }
+        let page_size= q.page_size;
+        let page_num = q.page_num;
+        let filter = |p: &&PostProfile| p.author == caller && (q.querystring.is_empty() || (p.title.contains(&q.querystring) || p.content.content.contains(&q.querystring)));
+        let ps = &self.posts;
+
+        paging(ps, page_size, page_num, filter)
     }
 
-    pub fn page_posts(&self, query_args: &PostPageQuery) -> PostPage {
-        let total_count = self.posts.len();
+    pub fn page_posts(&self, q: &PostPageQuery) -> PostPage {
 
-        let data: Vec<PostProfile> = self.posts
-            .iter()
-            .filter(|(_, q)| query_args.querystring.is_empty() || (q.title.contains(&query_args.querystring) || q.content.content.contains(&query_args.querystring)))
-            .skip(query_args.page_num * query_args.page_size)
-            .take(query_args.page_size)
-            .map(|(_, q)| q.clone())
-            .collect();
+        let page_size= q.page_size;
+        let page_num = q.page_num;
+        let filter = |p: &&PostProfile| q.querystring.is_empty() || (p.title.contains(&q.querystring) || p.content.content.contains(&q.querystring));
+        let ps = &self.posts;
 
-        PostPage {
-            data,
-            page_size: query_args.page_size,
-            page_num: query_args.page_num,
-            total_count,
-        }
+        paging(ps, page_size, page_num, filter)
     }
 
-    
+    pub fn my_comments(&self, caller: Principal, q: &PostPageQuery)-> PostPage {
+
+        let page_size= q.page_size;
+        let page_num = q.page_num;
+        let filter = |p: && PostProfile| p.comments.iter().any(|c| c.author == caller) && (q.querystring.is_empty() || (p.title.contains(&q.querystring) || p.content.content.contains(&q.querystring)));
+        let ps = &self.posts;
+        paging(
+            ps, 
+            page_size, 
+            page_num, 
+            filter)
+ 
+    }
 
     /// add comment to post
     pub fn add_post_comment(&mut self, cmd: PostCommentCommand, comment_id: u64, author: Principal, now: Timestamp) -> Result<bool, PostError> {
@@ -154,6 +148,18 @@ impl PostService {
             _ => Err(PostError::PostNotFound)
         }
     }
+}
+
+fn paging(ps: &BTreeMap<u64, PostProfile>, page_size: usize, page_num: usize,
+              ff: impl Fn(&&PostProfile) -> bool)
+              -> PostPage {
+    let ps: Vec<PostProfile> = ps
+        .values()
+        .cloned()
+        .collect();
+    let total_count = ps.len();
+    let data = ps.iter().filter(ff).skip(page_num * page_size).take(page_size).cloned().collect();
+    PostPage { page_num, page_size, total_count, data }
 }
 
 #[cfg(test)]

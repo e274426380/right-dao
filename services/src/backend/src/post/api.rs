@@ -178,3 +178,13 @@ fn my_posts(query: PostPageQuery) -> Result<PostPage, PostError> {
         Ok(ctx.post_service.my_posts(caller, &query))
     })
 }
+
+#[query]
+fn my_comments(query: PostPageQuery) -> Result<PostPage, PostError> {
+    CONTEXT.with(|c| {
+        let ctx = c.borrow();
+        let caller = ctx.env.caller();
+        Ok(ctx.post_service.my_comments(caller, &query))
+    })
+}
+
