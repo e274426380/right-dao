@@ -35,7 +35,7 @@
                             </div>
                             <div class="footer">
                                 <div>
-                                    <span @click="openReplyReply(Number(item.id),item.comments)">{{item.comments.length}} 条评论</span>
+                                    <span @click="openReplyReply(index)">{{item.comments.length}} 条评论</span>
                                     <span>转发</span>
                                 </div>
                                <div>
@@ -48,7 +48,8 @@
             </el-row>
         </div>
     </div>
-    <ReplyReply v-model:visible="showReplyReply" :comments="comments" :replyId="commentId" :postId="props.postId"/>
+    <ReplyReply v-if="showReplyReply" v-model:visible="showReplyReply" :comments="comments" :replyId="commentId" :postId="props.postId"
+                @refreshCallback="init()"/>
 </template>
 <script lang="ts" setup>
     import {ref, onMounted, defineProps, defineExpose} from 'vue';
@@ -67,22 +68,28 @@
     });
     const list = ref<ApiPostComments[]>([]);
     const showReplyReply = ref(false);
+    const replyIndex = ref(-1);
     const commentId = ref(0);
     const comments = ref<ApiPostComments[]>([]);
 
-    const openReplyReply = (id: number, itemComments: ApiPostComments[]) => {
-        comments.value = itemComments;
+    const openReplyReply = (index: number) => {
+        replyIndex.value=index;
+        comments.value = list.value[index].comments;
         showReplyReply.value = true;
-        commentId.value = id;
+        commentId.value = Number(list.value[index].id);
     }
 
     const init = async () => {
         await getPostComments(props.postId).then(res => {
             if (res.Ok) {
-                console.log("getPostComments",res)
+                console.log("getPostComments", res)
                 list.value = res.Ok
             }
         })
+        if (list.value.length > 0 && replyIndex.value !== -1 && showReplyReply.value) {
+            //如果replyIndex不为0，说明用户目前在看评论区，需要重新加载一下评论区的数据
+            openReplyReply(replyIndex.value);
+        }
         console.log("list", list.value)
         for (let i = 0; i < list.value.length; i++) {
             getTargetUser(list.value[i].author.toString()).then(res => {

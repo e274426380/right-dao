@@ -94,6 +94,8 @@ export type ApiPostComments = {
     authorData?: ApiUserInfo; //作者详细资料 通过id获取对应资料
     comment_id: number[];
     comments: [];
+    quote_id:number[];
+    quoteName?:string;
     content: RichText;
     created_at: bigint;
     id: bigint;

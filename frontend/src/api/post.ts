@@ -1,4 +1,4 @@
-import { getCache, TTL } from '@/common/cache';
+import {getCache, TTL} from '@/common/cache';
 import {getBackend} from "@/api/canister_pool";
 import {ApiPost, ApiPostComments, ApiPostTimeline, ApiResult, ApiResultByPage} from "@/api/types";
 
@@ -43,21 +43,22 @@ export async function changePostStatus(timeline: { id: number, status: string, d
 }
 
 // 增加贴子的回贴
-export async function addPostReply(id:number,content:string): Promise<ApiResult<boolean>> {
+export async function addPostReply(id: number, content: string): Promise<ApiResult<boolean>> {
     return getBackend().add_post_comment({
-        post_id:id,
-        content:{
-            content:content,
-            format:"html"
+        post_id: id,
+        content: {
+            content: content,
+            format: "html"
         }
     });
 }
 
 // 增加贴子回答的评论
-export async function addPostReplyReply(commentId: number, postId, content: string): Promise<ApiResult<boolean>> {
+export async function addPostReplyReply(commentId: number, postId, content: string, quoteId: number): Promise<ApiResult<boolean>> {
     return getBackend().add_comment_comment({
         post_id: postId,
         comment_id: commentId,
+        quote_id: quoteId,
         content: {
             content: content,
             format: "text" //评论只是单纯的text，不含html

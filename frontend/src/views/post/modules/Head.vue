@@ -14,9 +14,9 @@
                                 <div class="text">
                                     <div class="title">
                                         <span>{{post.title}}</span>
-                                        <span class="post-status enable" v-if="item.status.Enable!==undefined">{{t('common.status.enable')}}</span>
-                                        <span class="post-status completed" v-else-if="item.status.Completed!==undefined">{{t('common.status.completed')}}</span>
-                                        <span class="post-status closed" v-else-if="item.status.Closed!==undefined">{{t('common.status.closed')}}</span>
+                                        <span class="post-status enable" v-if="post.status.Enable!==undefined">{{t('common.status.enable')}}</span>
+                                        <span class="post-status completed" v-else-if="post.status.Completed!==undefined">{{t('common.status.completed')}}</span>
+                                        <span class="post-status closed" v-else-if="post.status.Closed!==undefined">{{t('common.status.closed')}}</span>
                                     </div>
                                     <div class="info">
                                         <span v-if="author!==undefined && author.name!==''">{{author.name}} </span>
