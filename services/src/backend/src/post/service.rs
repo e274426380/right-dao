@@ -33,9 +33,9 @@ impl PostService {
         }   
     }  
 
-    pub fn edit_post(&mut self, cmd: PostEditCommand) -> Option<bool> {
+    pub fn edit_post(&mut self, cmd: PostEditCommand, updated_at: Timestamp) -> Option<bool> {
         self.posts.get_mut(&cmd.id).map(|profile| {
-            cmd.merge_profile(profile);
+            cmd.merge_profile(profile, updated_at);
         }).map(|_| true)
     }
 
@@ -49,6 +49,7 @@ impl PostService {
             let event = PostEvent::new(cmd.id, now, cmd.description, caller, now);
             
             profile.status = new_status;
+            profile.updated_at = now;
             profile.events.push_front(event);
 
             Ok(true)
@@ -125,7 +126,7 @@ impl PostService {
             }
         }
         
-        data.sort_by(|c1, c2| c2.id.cmp(&c1.id));
+        data.sort_by(|c1, c2| c2.updated_at.cmp(&c1.updated_at));
 
         let filter = |c: && CommentSummary| c.author == caller && 
             (q.querystring.is_empty() || (c.post_title.contains(&q.querystring) || c.content.content.contains(&q.querystring)));
@@ -156,6 +157,8 @@ impl PostService {
                 p.comments.push(
                     cmd.build_comment(comment_id, author, now)
                 );
+                p.updated_at = now;
+
                 Ok(true)
             }
             Some(_) => Err(PostError::PostAlreadyCompleted),
@@ -177,6 +180,7 @@ impl PostService {
                         comment.comments.push(new_comment.clone());
                     }
                 }
+                p.updated_at = now;
 
                 Ok(true)
                             
@@ -192,6 +196,8 @@ impl PostService {
                 p.events.push_front(
                     cmd.build_event(author, now)
                 );
+                p.updated_at = now;
+
                 Ok(true)
             }
             Some(_) => Err(PostError::PostAlreadyCompleted),
@@ -208,7 +214,7 @@ fn paging(ps: &BTreeMap<u64, PostProfile>, page_size: usize, page_num: usize,
         .cloned()
         .collect();
 
-    ps.sort_by(|p1, p2| p2.id.cmp(&p1.id));
+    ps.sort_by(|p1, p2| p2.updated_at.cmp(&p1.updated_at));
 
     let total_count = ps.len();
     let data = ps.iter().filter(ff).skip(page_num * page_size).take(page_size).cloned().collect();

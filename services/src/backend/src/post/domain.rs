@@ -217,7 +217,7 @@ pub struct PostEditCommand {
 }
 
 impl PostEditCommand {
-    pub fn merge_profile(self, profile: &mut PostProfile) {
+    pub fn merge_profile(self, profile: &mut PostProfile, updated_at: Timestamp) {
         assert!(self.id == profile.id);
 
         profile.title = self.title;
@@ -227,6 +227,7 @@ impl PostEditCommand {
         profile.participants = self.participants;
         profile.end_time = self.end_time;
         profile.status = self.status;
+        profile.updated_at = updated_at;
     }
 }
 
