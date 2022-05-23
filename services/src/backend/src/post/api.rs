@@ -33,6 +33,7 @@ fn edit_post(cmd: PostEditCommand) -> Result<bool, PostError> {
         let mut ctx = c.borrow_mut();
         let caller = ctx.env.caller();
         let post_id = cmd.id;
+        let now = ctx.env.now();
         match ctx.post_service.get_post(post_id) {
             Some(p) => {
                 if p.author != caller {
@@ -41,7 +42,7 @@ fn edit_post(cmd: PostEditCommand) -> Result<bool, PostError> {
                 if p.status == PostStatus::Completed {
                     return Err(PostError::PostAlreadyCompleted);
                 }
-                ctx.post_service.edit_post(cmd).ok_or(PostError::PostNotFound)
+                ctx.post_service.edit_post(cmd, now).ok_or(PostError::PostNotFound)
             },
             None => Err(PostError::PostNotFound),
         }
