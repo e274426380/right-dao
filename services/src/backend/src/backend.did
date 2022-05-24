@@ -183,7 +183,7 @@ type PostCommentCommand = record {
 type CommentCommentCommand = record {
     post_id: nat64;
     comment_id: nat64;
-    quote_id: nat64;
+    quote_id:  opt nat64;
     content: RichText;
 };
 
