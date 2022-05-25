@@ -6,5 +6,7 @@ export default {
         enable: "活跃",
         completed: "完成",
         closed: "关闭"
-    }
+    },
+    loading:"加载中...",
+    noMore:"没有更多了"
 };

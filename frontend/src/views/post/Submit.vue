@@ -15,7 +15,7 @@
                     <el-form :model="form" hide-required-asterisk>
                         <el-form-item prop="title" :label="$t('post.help.title.label')">
                             <el-input v-model="form.title"
-                                      maxlength="20"
+                                      maxlength="40"
                                       show-word-limit
                                       :placeholder="$t('post.help.title.placeholder')"/>
                         </el-form-item>

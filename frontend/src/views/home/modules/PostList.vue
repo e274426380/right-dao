@@ -1,5 +1,5 @@
 <template>
-    <div class="post-list-container">
+    <div class="post-list-container" v-infinite-scroll="onScroll">
         <div class="container">
             <el-row justify="space-between">
                 <el-col :span="16" style="display: flex">
@@ -47,8 +47,12 @@
                                     </div>
                                 </el-col>
                                 <el-col :span="8" class="flex-right">
-                                    <el-button type="primary" v-if="item.category.Tech!==undefined">{{t('post.help.category.tech')}}</el-button>
-                                    <el-button type="primary" v-else-if="item.category.Law!==undefined">{{t('post.help.category.law')}}</el-button>
+                                    <el-button type="primary" v-if="item.category.Tech!==undefined">
+                                        {{t('post.help.category.tech')}}
+                                    </el-button>
+                                    <el-button type="primary" v-else-if="item.category.Law!==undefined">
+                                        {{t('post.help.category.law')}}
+                                    </el-button>
                                     <el-button type="primary" v-else>{{t('post.help.category.other')}}</el-button>
                                 </el-col>
                             </el-row>
@@ -65,6 +69,14 @@
                             </div>
                         </el-card>
                     </el-col>
+                </el-row>
+                <el-row :class="{ empty: list.length === 0 }" justify="center" class="loading-tip">
+                    <div class="note" v-if="pageLoading">
+                        {{ $t('common.loading') }}
+                    </div>
+                    <div class="note" v-else-if="totalCount === 0 || totalCount === list.length">
+                        {{ $t('common.noMore') }}
+                    </div>
                 </el-row>
             </div>
         </div>
@@ -86,8 +98,10 @@
     const router = useRouter();
 
     const search = ref("");
-    const pageSize = ref(20);
+    const pageSize = ref(5);
     const pageNum = ref(0);
+    const totalCount = ref(0);
+    const pageLoading = ref(false);
     const list = ref<ApiPost[]>([]);
 
     const onClick = (id: number) => {
@@ -100,6 +114,7 @@
             return {
                 ...item,
                 content: {
+                    //移除html标签
                     content: cleanHtml(item.content.content),
                     format: "html"
                 }
@@ -107,12 +122,26 @@
         });
     });
 
+    const onScroll = () => {
+        //初始化时会运行一次此方法，所以懒加载分页从1开始
+        //不能加载分页的时候停止请求博客列表，免得陷入死循环
+        if (totalCount.value !== 0 && list.value.length !== totalCount.value) {
+            pageNum.value++;
+            init()
+        }
+
+    };
+
     const init = () => {
+        pageLoading.value = true;
         getPostPage(pageNum.value, pageSize.value, search.value).then(res => {
-            console.log("page", res)
+            console.log("page",pageNum.value, res)
             if (res.Ok) {
-                list.value = res.Ok.data;
-                for (let i = 0; i < list.value.length; i++) {
+                totalCount.value = Number(res.Ok.total_count);
+                const length = list.value.length;
+                list.value.push(...res.Ok.data);
+                //需要获取user数据的index区间在(length, length + res.Ok.data.length)
+                for (let i = length; i < list.value.length; i++) {
                     getTargetUser(list.value[i].author.toString()).then(res => {
                         if (res.Ok) {
                             list.value[i] = {
@@ -123,6 +152,8 @@
                     })
                 }
             }
+        }).finally(() => {
+            pageLoading.value = false;
         })
     }
 
@@ -137,6 +168,14 @@
         display: flex;
         justify-content: center;
         position: relative;
+        margin-top: 24px;
+        .empty{
+            margin-top: 200px;
+        }
+        .loading-tip{
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
         .container {
             .flex-right {
                 display: flex;
@@ -154,13 +193,13 @@
                     .text {
                         margin-left: 20px;
                     }
-                    .info{
-                        span+span{
+                    .info {
+                        span + span {
                             margin-left: 10px;
                         }
-                        .createTime{
-                            color: rgb(133,144,166);
-                            font-size:16px;
+                        .createTime {
+                            color: rgb(133, 144, 166);
+                            font-size: 16px;
                         }
                     }
                     .title {
@@ -174,9 +213,14 @@
                         }
                     }
                 }
-                .content{
+                .content {
                     margin-top: 10px;
-                    &:hover{
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 6;
+                    -webkit-box-orient: vertical;
+                    &:hover {
                         cursor: pointer;
                     }
                 }

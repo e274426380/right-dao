@@ -6,9 +6,10 @@ import i18n from './locale';
 import router from './router';
 import store from './store';
 import App from './App.vue';
+import { ElInfiniteScroll } from "element-plus/es";
 
 import { VueClipboard } from '@soerenmartius/vue3-clipboard'; //复制到粘贴板
 
 const app = createApp(App);
-app.use(i18n).use(router).use(store).use(VueClipboard);
+app.use(i18n).use(router).use(store).use(VueClipboard).use(ElInfiniteScroll);
 app.mount('#app');

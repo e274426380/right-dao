@@ -21,9 +21,9 @@ export type ApiResult<T> = {
 export type ApiResultByPage<T> = {
     Ok?: {
         data: T[];
-        pageNum: bigint; // 当前页码
-        pageSize: bigint; // 页面大小
-        totalCount: bigint; // 总数
+        page_num: bigint; // 当前页码
+        page_size: bigint; // 页面大小
+        total_count: bigint; // 总数
     };
     Err?: ApiError;
 };
@@ -100,4 +100,5 @@ export type ApiPostComments = {
     created_at: bigint;
     id: bigint;
     post_id: bigint;
+    // isReply?:boolean; //是否被回复
 }

@@ -104,6 +104,14 @@ body {
 .content.ql-snow .ql-editor{
     padding: 10px 0!important;
 }
+/*隐藏富文本编辑器的行数*/
+.content.ql-snow .ql-editor.hidden{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+}
 
 /*自定义时间选择器*/
 .i-date-pop .el-picker-panel__icon-btn{

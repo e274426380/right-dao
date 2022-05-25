@@ -54,7 +54,7 @@ export async function addPostReply(id: number, content: string): Promise<ApiResu
 }
 
 // 增加贴子回答的评论
-export async function addPostReplyReply(commentId: number, postId, content: string, quoteId: number): Promise<ApiResult<boolean>> {
+export async function addPostReplyReply(commentId: number, postId, content: string, quoteId: number[]): Promise<ApiResult<boolean>> {
     return getBackend().add_comment_comment({
         post_id: postId,
         comment_id: commentId,

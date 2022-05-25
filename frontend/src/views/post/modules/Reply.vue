@@ -24,7 +24,7 @@
                             </div>
                             <div class="content ql-snow">
                                 <div v-if="item.content.format==='html'"
-                                     class="ql-editor"
+                                     class="ql-editor hidden"
                                      ref="htmlInformation"
                                      v-html="item.content.content"
                                 >
@@ -38,9 +38,9 @@
                                     <span @click="openReplyReply(index)">{{item.comments.length}} 条评论</span>
                                     <span>转发</span>
                                 </div>
-                               <div>
-                                   <span>收起</span>
-                               </div>
+                                <div>
+                                    <span>收起</span>
+                                </div>
                             </div>
                         </div>
                     </el-card>
@@ -48,12 +48,13 @@
             </el-row>
         </div>
     </div>
-    <ReplyReply v-if="showReplyReply" v-model:visible="showReplyReply" :comments="comments" :replyId="commentId" :postId="props.postId"
+    <ReplyReply v-if="showReplyReply" v-model:visible="showReplyReply" :comments="comments" :replyId="commentId"
+                :postId="props.postId"
                 @refreshCallback="init()"/>
 </template>
 <script lang="ts" setup>
     import {ref, onMounted, defineProps, defineExpose} from 'vue';
-    import {ElRow, ElCol, ElButton,ElCard} from 'element-plus/es';
+    import {ElRow, ElCol, ElButton, ElCard} from 'element-plus/es';
     import Avatar from '@/components/common/Avatar.vue';
     import ReplyReply from './ReplyReply.vue';
     import {ApiPostComments} from "@/api/types";
@@ -73,7 +74,7 @@
     const comments = ref<ApiPostComments[]>([]);
 
     const openReplyReply = (index: number) => {
-        replyIndex.value=index;
+        replyIndex.value = index;
         comments.value = list.value[index].comments;
         showReplyReply.value = true;
         commentId.value = Number(list.value[index].id);
@@ -114,27 +115,27 @@
 </script>
 <style lang="scss">
     .post-detail-reply-container {
-        .el-card{
+        .el-card {
             margin-top: 10px;
-            .reply{
+            .reply {
                 margin-top: 10px;
                 padding-top: 10px;
-                border-top: 1px solid rgb(246,246,246);
-                .author{
+                border-top: 1px solid rgb(246, 246, 246);
+                .author {
                     display: flex;
                     align-items: center;
-                    .authorName{
+                    .authorName {
                         margin-left: 10px;
                     }
                 }
-                .footer{
+                .footer {
                     display: flex;
                     justify-content: space-between;
-                    color:rgb(133, 144, 166);
-                    span:hover{
+                    color: rgb(133, 144, 166);
+                    span:hover {
                         cursor: pointer;
                     }
-                    span+span{
+                    span + span {
                         margin-left: 10px;
                     }
                 }

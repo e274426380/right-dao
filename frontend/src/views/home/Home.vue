@@ -1,7 +1,7 @@
 <template>
     <div class="home-container">
         <Navigator/>
-        <Public/>
+        <!--<Public/>-->
         <PostList/>
     </div>
 </template>

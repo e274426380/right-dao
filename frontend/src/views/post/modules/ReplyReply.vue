@@ -3,27 +3,40 @@
         <el-dialog
             v-model="visible"
             :before-close="onClose"
-            :title="showList.length+' 条评论'"
+            :title="total+' 条评论'"
             width="35%"
         >
             <template v-if="showList.length>0">
                 <div class="replyReply" v-for="(item,index) in showList">
-                    <div class="author">
-                        <Avatar :username="item.authorData && item.authorData.name!=='' ?
+                    <div class="head">
+                        <div class="author">
+                            <Avatar :username="item.authorData && item.authorData.name!=='' ?
                                 item.authorData.name : item.author.toString()"
-                                :principalId=item.author.toString()
-                                :clickable="false"
-                                :size="24"/>
-                        <div class="authorName">
-                            <b>{{item.authorData && item.authorData.name!=='' ? item.authorData.name:
-                                item.author.toString()}}</b>
-                            <span class="quote-name" v-if="Number(item.quote_id[0])!==0">回复{{" "+item.quoteName}}</span>
+                                    :principalId=item.author.toString()
+                                    :clickable="false"
+                                    :size="24"/>
+                            <div class="authorName">
+                                <div>
+                                    <b>{{item.authorData && item.authorData.name!=='' ? item.authorData.name:
+                                        item.author.toString()}}</b>
+                                    <span class="quote-name" v-if="item.quote_id.length >0">回复{{" "+item.quoteName}}</span>
+                                </div>
+                            </div>
                         </div>
+                        <span>{{formatDate(Number(item.created_at))}}</span>
                     </div>
                     <div class="content">
                         {{item.content.content}}
-                        <span class="reply-button" @click="replyOther(item)">回复</span>
+                        <span class="reply-button" v-if="item.isReply" @click="replyOther(item)">取消回复</span>
+                        <span class="reply-button" v-else @click="replyOther(item)">回复</span>
                     </div>
+                </div>
+                <div class="dialog-pagination">
+                    <el-pagination layout="prev, pager, next"
+                                   :page-size="pageSize"
+                                   v-model:currentPage="pageNum"
+                                   @current-change="init()"
+                                   :total="total" />
                 </div>
             </template>
             <template #footer>
@@ -38,10 +51,11 @@
 </template>
 <script lang="ts" setup>
     import {ref, onMounted, watch, defineProps, defineEmits, PropType} from 'vue';
-    import {ElRow, ElCol, ElButton, ElCard, ElDialog, ElInput} from 'element-plus/es';
+    import {ElRow, ElCol, ElButton, ElCard, ElDialog, ElInput,ElPagination} from 'element-plus/es';
     import {addPostReplyReply} from "@/api/post";
     import {ApiPostComments} from "@/api/types";
     import Avatar from '@/components/common/Avatar.vue';
+    import {formatDate} from "@/utils/dates";
     import {getTargetUser} from "@/api/user";
     import {showMessageSuccess} from "@/utils/message";
     import {t} from "@/locale";
@@ -68,31 +82,42 @@
     const dialogVisible = ref(false);
     const loading = ref(false);
     const replyReply = ref("")
-    const placeholder=ref("请输入你的评论...")
-    const quoteId=ref(0)
+    const placeholder = ref("请输入你的评论...")
+    const quoteId = ref([])
     const showList = ref<ApiPostComments[]>([])
+    const itemList = ref<ApiPostComments[]>([])
     const emit = defineEmits(['update:visible', 'refreshCallback'])
+    const pageSize = ref(10);
+    const pageNum = ref(1);
+    const total = ref(0);
+
     onMounted(() => {
-        init()
+        total.value = props.comments.length;
+        //深拷贝props，防止修改props数据
+        [...itemList.value] = props.comments;
+        itemList.value.reverse();
+        init();
+        console.log("showList.value", showList.value)
     });
 
     const init = () => {
-        console.log("props.comments", props.comments)
-        showList.value = props.comments;
+        showList.value = itemList.value.slice(pageSize.value * (pageNum.value - 1), pageSize.value * pageNum.value);
         for (let i = 0; i < showList.value.length; i++) {
             const quoteId = Number(showList.value[i].quote_id[0]);
-            let quoteIndex: number = null;
+            let quoteIndex: number = -1;
             //查询是否有引用的评论，先把principalId加进去。
-            if (quoteId !== 0) {
+            if (quoteId && quoteId !== 0) {
                 showList.value.map((item, index) => {
                     if (Number(item.id) === quoteId) {
                         quoteIndex = index;
                     }
                 })
-                showList.value[i].quoteName = showList.value[quoteIndex].author.toString();
+                if (quoteIndex !== -1) {
+                    showList.value[i].quoteName = showList.value[quoteIndex].author.toString();
+                }
             }
             getTargetUser(showList.value[i].author.toString()).then(res => {
-                if (res.Ok) {
+                if (res.Ok && showList.value[i].author.toString()===res.Ok.owner.toString()) {
                     showList.value[i] = {
                         ...showList.value[i],
                         authorData: res.Ok,
@@ -108,10 +133,19 @@
 
     const replyOther = (item: ApiPostComments) => {
         replyReply.value = "";
-        const name = item.authorData && item.authorData.name !== '' ? item.authorData.name :
-            item.author.toString();
-        placeholder.value = "回复 " + name + " ：";
-        quoteId.value = Number(item.id);
+        //取消回复
+        if(item['isReply']){
+            item['isReply']=false;
+            placeholder.value = "请输入你的评论...";
+            quoteId.value = [];
+        } else {
+            //正常回复
+            item['isReply']=true;
+            const name = item.authorData && item.authorData.name !== '' ? item.authorData.name :
+                item.author.toString();
+            placeholder.value = "回复 " + name + " ：";
+            quoteId.value = [Number(item.id)];
+        }
     }
 
     const submit = () => {
@@ -120,6 +154,7 @@
             console.log("addPostReplyReply", res)
             if (res.Ok) {
                 showMessageSuccess(t('message.post.reply'));
+                replyReply.value = "";
                 emit('refreshCallback');
             }
         }).finally(() => {
@@ -143,25 +178,40 @@
 </script>
 <style lang="scss">
     .post-reply-reply-container {
-        .el-dialog__header{
+        .el-dialog__header {
             border-bottom: 1px solid rgb(246, 246, 246);
         }
         .el-dialog__body {
             padding-top: 0;
+            padding-bottom: 5px;
         }
         .replyInput {
             margin-bottom: 10px;
+        }
+        .dialog-pagination .el-pagination{
+            border-bottom: 1px solid rgb(246, 246, 246);
+            border-top: 1px solid rgb(246, 246, 246);
+            padding-top: 10px;
+            padding-bottom: 10px;
+            justify-content: center;
+            .number{
+                padding-top: 4px;
+            }
         }
         .replyReply {
             padding-top: 12px;
             padding-bottom: 10px;
             border-top: 1px solid rgb(246, 246, 246);
-            .author {
+            .head {
                 display: flex;
                 align-items: center;
+                justify-content: space-between;
+                .author{
+                    display: flex;
+                }
                 .authorName {
                     margin-left: 10px;
-                    .quote-name{
+                    .quote-name {
                         margin-left: 10px;
                     }
                 }

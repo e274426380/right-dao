@@ -55,7 +55,7 @@
             console.log("getPostInfo",res)
             if (res.Ok) {
                 post.value = res.Ok
-            } else if(res.Err.PostNotFound!==undefined){
+            } else if(res.Err && res.Err.PostNotFound!==undefined){
                 showMessageError(t('message.error.noPost'));
                 setTimeout(() => {
                     //等用户看清了错误提示再弹
