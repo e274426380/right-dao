@@ -35,7 +35,7 @@
                     <el-pagination layout="prev, pager, next"
                                    :page-size="pageSize"
                                    v-model:currentPage="pageNum"
-                                   @current-change="init()"
+                                   @current-change="paging()"
                                    :total="total" />
                 </div>
             </template>
@@ -92,15 +92,19 @@
     const total = ref(0);
 
     onMounted(() => {
+        init()
+    });
+
+    const init = () => {
         total.value = props.comments.length;
         //深拷贝props，防止修改props数据
         [...itemList.value] = props.comments;
         itemList.value.reverse();
-        init();
+        paging();
         console.log("showList.value", showList.value)
-    });
+    }
 
-    const init = () => {
+    const paging = () => {
         showList.value = itemList.value.slice(pageSize.value * (pageNum.value - 1), pageSize.value * pageNum.value);
         for (let i = 0; i < showList.value.length; i++) {
             const quoteId = Number(showList.value[i].quote_id[0]);

@@ -129,7 +129,6 @@
             pageNum.value++;
             init()
         }
-
     };
 
     const init = () => {

@@ -39,6 +39,7 @@
                         <div class="content ql-snow">
                             <div v-if="post.content.format==='html'"
                                  class="ql-editor"
+                                 :class="{hidden:isFold}"
                                  ref="htmlInformation"
                                  v-html="post.content.content"
                             >
@@ -49,9 +50,10 @@
                         </div>
                         <div class="footer">
                             <el-button type="primary" style="margin-right: 5px" @click="writeReply">写回答</el-button>
-                            <el-button type="primary" style="margin-right: 5px">发起提案</el-button>
+                            <!--<el-button type="primary" style="margin-right: 5px">发起提案</el-button>-->
                             <!--<span style="margin: 5px;">{{post.comments.length}} 条回复</span>-->
-                            <span>收起</span>
+                            <span v-if="isFold" @click="isFold = !isFold" class="fold">{{t('common.expand')}}</span>
+                            <span v-else @click="isFold = !isFold" class="fold">{{t('common.fold')}}</span>
 
                         </div>
                     </div>
@@ -70,6 +72,8 @@
     import {t} from '@/locale';
     const author = ref<ApiUserInfo>();
 
+    const isFold = ref(true)
+
     const props = defineProps({
         post: {
             type: Object as PropType<ApiPost>,
@@ -80,6 +84,10 @@
     onMounted(() => {
         init();
     });
+
+    const fold = () => {
+        isFold.value = !isFold.value;
+    }
 
     const init = () => {
         getTargetUser(props.post.author.toString()).then(res => {
@@ -102,6 +110,13 @@
         box-shadow: 0 1px 3px rgb(18 18 18 / 10%);
         span+span{
             margin-left: 10px;
+        }
+        .fold{
+            color: rgb(133, 144, 166);
+            margin-left: 10px;
+            &:hover{
+                cursor: pointer;
+            }
         }
         .post-title {
             margin-top: 40px;

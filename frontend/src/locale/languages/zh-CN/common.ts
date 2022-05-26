@@ -7,6 +7,8 @@ export default {
         completed: "完成",
         closed: "关闭"
     },
-    loading:"加载中...",
-    noMore:"没有更多了"
+    expand: "展开",
+    fold: "收起",
+    loading: "加载中...",
+    noMore: "没有更多了"
 };
