@@ -244,6 +244,18 @@ type PostInfoResult = variant {
     Err: PostError;
 };
 
+type PostInfoPage = record {
+    data: vec PostInfo;
+    page_num: nat64;
+    page_size: nat64;
+    total_count: nat64
+};
+
+type PostInfoPageResult = variant {
+    Ok: PostInfoPage;
+    Err: PostError;
+};
+
 type PostEventResult = variant {
     Ok: vec PostEvent;
     Err: PostError;
@@ -305,11 +317,11 @@ service : {
     "get_post_events" : (PostIdCommand) -> (PostEventResult);
     "page_posts" : (PostPageQuery) -> (PostPageResult);
 
-    "my_posts" : (PostPageQuery) -> (PostPageResult);
+    "my_posts" : (PostPageQuery) -> (PostInfoPageResult);
     "my_post_comments" : (PostPageQuery) -> (PostPageResult);
     "my_comments" : (PostPageQuery) -> (CommentSummaryPageResult);
 
-    "other_posts" : (PostPageOtherQuery) -> (PostPageResult);
+    "other_posts" : (PostPageOtherQuery) -> (PostInfoPageResult);
     "other_post_comments" : (PostPageOtherQuery) -> (PostPageResult);
     "other_comments" : (PostPageOtherQuery) -> (CommentSummaryPageResult);
 

@@ -4,7 +4,7 @@ use std::collections::BTreeMap;
 
 use candid::Principal;
 
-use crate::domain::{CommentSummaryPage, CommentSummary};
+use crate::domain::{CommentSummaryPage, CommentSummary, PostInfoPage};
 
 use super::{domain::{PostProfile, PostId, PostCreateCommand, Timestamp, PostStatus, PostEditCommand, PostPage, PostPageQuery, PostCommentCommand, PostEventCommand, CommentCommentCommand, PostChangeStatusCommand, PostEvent, }, error::PostError};
 
@@ -79,7 +79,7 @@ impl PostService {
         paging(ps, page_size, page_num, filter)
     }
 
-    pub fn my_posts(&self, caller: Principal, q: &PostPageQuery) -> PostPage {
+    pub fn my_posts(&self, caller: Principal, q: &PostPageQuery) -> PostInfoPage {
         
         let page_size= q.page_size;
         let page_num = q.page_num;
@@ -87,7 +87,15 @@ impl PostService {
             (q.querystring.is_empty() || (p.title.contains(&q.querystring) || p.content.content.contains(&q.querystring)));
         let ps = &self.posts;
 
-        paging(ps, page_size, page_num, filter)
+        let profiles = paging(ps, page_size, page_num, filter);
+
+        PostInfoPage {
+            page_size,
+            page_num,
+            total_count: profiles.total_count,
+            data: profiles.data.into_iter().map(|p| p.into()).collect()
+        }
+
     }
 
     pub fn my_post_comments(&self, caller: Principal, q: &PostPageQuery)-> PostPage {

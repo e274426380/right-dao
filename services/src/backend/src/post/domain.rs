@@ -252,6 +252,14 @@ pub struct PostPage {
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct PostInfoPage {
+    pub data: Vec<PostInfo>,
+    pub page_size: usize,
+    pub page_num: usize,
+    pub total_count: usize,
+}
+
+#[derive(Debug, Clone, CandidType, Deserialize)]
 pub struct CommentSummaryPage {
     pub data: Vec<CommentSummary>,
     pub page_size: usize,

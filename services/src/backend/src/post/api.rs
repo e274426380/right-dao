@@ -3,7 +3,7 @@ use std::collections::VecDeque;
 
 use candid::Principal;
 use ic_cdk_macros::{update, query};
-use crate::domain::{PostComment, PostEvent, PostInfo, CommentSummaryPage, PostPageOtherQuery};
+use crate::domain::{PostComment, PostEvent, PostInfo, CommentSummaryPage, PostPageOtherQuery, PostInfoPage};
 use crate::{CONTEXT, post::domain::PostStatus};
 use crate::common::guard::has_user_guard;
 
@@ -173,7 +173,7 @@ fn page_posts(query: PostPageQuery) -> Result<PostPage, PostError> {
 }
 
 #[query]
-fn my_posts(query: PostPageQuery) -> Result<PostPage, PostError> {
+fn my_posts(query: PostPageQuery) -> Result<PostInfoPage, PostError> {
     CONTEXT.with(|c| {
         let ctx = c.borrow();
         let caller = ctx.env.caller();
@@ -200,7 +200,7 @@ fn my_comments(query: PostPageQuery) -> Result<CommentSummaryPage, PostError> {
 }
 
 #[query]
-fn other_posts(query: PostPageOtherQuery) -> Result<PostPage, PostError> {
+fn other_posts(query: PostPageOtherQuery) -> Result<PostInfoPage, PostError> {
     CONTEXT.with(|c| {
         let ctx = c.borrow();
         let q = PostPageQuery {
