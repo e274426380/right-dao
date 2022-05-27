@@ -1,6 +1,6 @@
 
 
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, cmp::Ordering};
 
 use candid::Principal;
 
@@ -75,8 +75,8 @@ impl PostService {
         let filter = |p: &&PostProfile| q.querystring.is_empty() || 
             (p.title.contains(&q.querystring) || p.content.content.contains(&q.querystring));
         let ps = &self.posts;
-
-        paging(ps, page_size, page_num, filter)
+        let compare = |p1:&PostProfile, p2: &PostProfile| p2.updated_at.cmp(&p1.updated_at);
+        paging(ps, page_size, page_num, filter, compare)
     }
 
     pub fn my_posts(&self, caller: Principal, q: &PostPageQuery) -> PostInfoPage {
@@ -87,7 +87,8 @@ impl PostService {
             (q.querystring.is_empty() || (p.title.contains(&q.querystring) || p.content.content.contains(&q.querystring)));
         let ps = &self.posts;
 
-        let profiles = paging(ps, page_size, page_num, filter);
+        let compare = |p1:&PostProfile, p2: &PostProfile| p2.created_at.cmp(&p1.created_at);
+        let profiles = paging(ps, page_size, page_num, filter, compare);
 
         PostInfoPage {
             page_size,
@@ -105,7 +106,9 @@ impl PostService {
         let filter = |p: && PostProfile| p.comments.iter().any(|c| c.author == caller) && 
             (q.querystring.is_empty() || (p.title.contains(&q.querystring) || p.content.content.contains(&q.querystring)));
         let ps = &self.posts;
-        paging(ps, page_size, page_num, filter)
+
+        let compare = |p1:&PostProfile, p2: &PostProfile| p2.created_at.cmp(&p1.created_at);
+        paging(ps, page_size, page_num, filter, compare)
  
     }
 
@@ -215,14 +218,14 @@ impl PostService {
 }
 
 fn paging(ps: &BTreeMap<u64, PostProfile>, page_size: usize, page_num: usize,
-              ff: impl Fn(&&PostProfile) -> bool)
+              ff: impl Fn(&&PostProfile) -> bool, compare: impl Fn(&PostProfile, &PostProfile) -> Ordering)
               -> PostPage {
     let mut ps: Vec<PostProfile> = ps
         .values()
         .cloned()
         .collect();
 
-    ps.sort_by(|p1, p2| p2.updated_at.cmp(&p1.updated_at));
+    ps.sort_by(compare);
 
     let total_count = ps.len();
     let data = ps.iter().filter(ff).skip(page_num * page_size).take(page_size).cloned().collect();
