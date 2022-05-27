@@ -19,7 +19,7 @@
                                 <div>
                                     <b>{{item.authorData && item.authorData.name!=='' ? item.authorData.name:
                                         item.author.toString()}}</b>
-                                    <span class="quote-name" v-if="item.quote_id.length >0">回复{{" "+item.quoteName}}</span>
+                                    <span class="quote-name" v-if="item.quote_id.length >0">{{t('common.reply')+" "+item.quoteName}}</span>
                                 </div>
                             </div>
                         </div>
@@ -28,10 +28,10 @@
                     <div class="content">
                         {{item.content.content}}
                         <span class="reply-button" v-if="item.isReply" @click="replyOther(item)">取消回复</span>
-                        <span class="reply-button" v-else @click="replyOther(item)">回复</span>
+                        <span class="reply-button" v-else @click="replyOther(item)">{{t('common.reply')}}</span>
                     </div>
                 </div>
-                <div class="dialog-pagination">
+                <div class="dialog-pagination" v-if="showList.length>pageSize">
                     <el-pagination layout="prev, pager, next"
                                    :page-size="pageSize"
                                    v-model:currentPage="pageNum"
@@ -147,7 +147,7 @@
             item['isReply']=true;
             const name = item.authorData && item.authorData.name !== '' ? item.authorData.name :
                 item.author.toString();
-            placeholder.value = "回复 " + name + " ：";
+            placeholder.value = " " + name + " ：";
             quoteId.value = [Number(item.id)];
         }
     }

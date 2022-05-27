@@ -1,6 +1,6 @@
-import { clearCacheData, getCache, TTL } from '@/common/cache';
-import { getCurrentPrincipal, getBackend } from './canister_pool';
-import {ApiResult, ApiUserInfo} from "@/api/types";
+import {clearCacheData, getCache, TTL} from '@/common/cache';
+import {getCurrentPrincipal, getBackend} from './canister_pool';
+import {ApiProfilePost, ApiResult, ApiResultByPage, ApiUserInfo} from "@/api/types";
 import {Principal} from "@dfinity/principal/lib/cjs";
 
 // 注册用户接口，将当前登录用户 id 登记在后端 应当有缓存 不需要返回值
@@ -11,13 +11,13 @@ export async function registerUser(principalId: string): Promise<ApiResult<strin
         execute: async () => {
             //注册一个空的用户，等之后用户自己处理
             const r = await getBackend().register_user({
-                email:"",
-                name:"",
-                memo:""
+                email: "",
+                name: "",
+                memo: ""
             });
             if (r.err && r.err.userAlreadyExists != undefined) {
                 // 拦截已经注册的情况 就当请求成功了
-                return { ok: r };
+                return {ok: r};
             }
             return r;
         },
@@ -48,6 +48,36 @@ export async function getTargetUser(principal: string): Promise<ApiResult<any | 
         ttl: TTL.minute10,
         isLocal: true, // 需要本地存储
     });
+}
+
+// 获取目标用户发贴记录
+export async function getTargetUserPost(pageNum: number, pageSize: number, query: string, principal: string): Promise<ApiResultByPage<ApiProfilePost>> {
+    return getBackend().other_posts({
+        page_num: pageNum,
+        page_size: pageSize,
+        querystring: query,
+        other: principal
+    })
+}
+
+// 获取目标用户回答记录
+export async function getTargetUserPostComments(pageNum: number, pageSize: number, query: string, principal: string): Promise<ApiResultByPage<ApiProfilePost>> {
+    return getBackend().other_post_comments({
+        page_num: pageNum,
+        page_size: pageSize,
+        querystring: query,
+        other: principal
+    })
+}
+
+// 获取目标用户评论记录
+export async function getTargetUserComments(pageNum: number, pageSize: number, query: string, principal: string): Promise<ApiResultByPage<ApiProfilePost>> {
+    return getBackend().other_comments({
+        page_num: pageNum,
+        page_size: pageSize,
+        querystring: query,
+        other: principal
+    })
 }
 
 // 更新用户自己的信息

@@ -156,6 +156,10 @@
     .post-detail-reply-container {
         .el-card {
             margin-top: 10px;
+            .el-card__body{
+                /*padding-left: 30px;*/
+                /*padding-right: 30px;*/
+            }
             .reply {
                 margin-top: 10px;
                 padding-top: 10px;

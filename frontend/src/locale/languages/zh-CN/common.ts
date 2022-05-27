@@ -9,6 +9,7 @@ export default {
     },
     expand: "展开",
     fold: "收起",
+    reply: "回复",
     loading: "加载中...",
     noMore: "没有更多了"
 };

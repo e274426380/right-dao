@@ -102,3 +102,13 @@ export type ApiPostComments = {
     post_id: bigint;
     // isReply?:boolean; //是否被回复
 }
+
+export type ApiProfilePost = {
+    author?: Principal | string; // 作者principalID
+    content: RichText;
+    comments?:[];
+    length:number;
+    created_at: bigint;
+    title:string;
+    id: bigint;
+}

@@ -101,6 +101,9 @@ body {
     min-height:200px!important;
     border-radius: 0 0 4px 4px;
 }
+.ql-editor{
+    line-height: 1.6!important;
+}
 /*富文本编辑器显示的样式*/
 .content.ql-snow .ql-editor{
     padding: 10px 0!important;
