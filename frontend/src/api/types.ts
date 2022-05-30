@@ -107,8 +107,9 @@ export type ApiProfilePost = {
     author?: Principal | string; // 作者principalID
     content: RichText;
     comments?:[];
-    length:number;
+    length?:number;
     created_at: bigint;
     title:string;
+    post_title?:string; //评论的title名
     id: bigint;
 }

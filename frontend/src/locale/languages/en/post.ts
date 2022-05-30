@@ -1,4 +1,7 @@
 export default {
+    topics:"Topics",
+    reply:"Reply",
+    joined:"Joined",
     help: {
         create: "Create Help",
         title: {

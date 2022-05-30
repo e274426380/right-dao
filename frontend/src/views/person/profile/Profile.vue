@@ -1,14 +1,21 @@
 <template>
     <div class="person-profile-container">
         <Navigator/>
-        <ProfileUser />
-        <ProfileList />
+        <ProfileUser @username="getName"/>
+        <ProfileList :username="username"/>
     </div>
 </template>
 <script lang="ts" setup>
+    import {ref} from 'vue';
     import Navigator from '@/components/navigator/Navigator.vue';
     import ProfileUser from './modules/ProfileUser.vue';
     import ProfileList from './modules/ProfileList.vue';
+
+    const username = ref('')
+
+    const getName = (value) => {
+        username.value = value;
+    }
 
 </script>
 <style lang="scss">

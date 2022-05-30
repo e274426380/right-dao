@@ -11,9 +11,15 @@ export default {
             alreadyCompleted: "贴子已经完成，不能进行操作。"
         }
     },
+    update:{
+        success:"信息更新成功。"
+    },
     post: {
         create: "创建求助成功",
         reply: "回复成功"
+    },
+    user:{
+        notFound:"找不到目标用户信息。"
     },
     tip: {
         comingSoon: "尽请期待"

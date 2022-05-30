@@ -10,8 +10,14 @@ export default {
             alreadyCompleted: "Timeline cannot be after posting close time."
         }
     },
+    update:{
+        success:"Information update successful."
+    },
     post:{
         create:"Create help request successfully"
+    },
+    user:{
+        notFound:"Target user information not found."
     },
     tip: {
         comingSoon: "Coming Soon"

@@ -19,33 +19,35 @@
                                 {{user.name}}
                             </div>
                             <el-button v-if="isOwner" @click="dialogFormVisible = true">
-                                编辑
+                                {{t('common.edit')}}
                             </el-button>
                         </el-row>
                         <el-row>
                             {{ targetPrincipal }}
                         </el-row>
-                        <el-row>
+                        <el-row v-if="user.email">
                             <el-icon>
                                 <Message/>
                             </el-icon>
                             {{user.email}}
                         </el-row>
-                        <el-row>
+                        <el-row v-if="user.memo">
                             <el-icon>
                                 <Comment/>
                             </el-icon>
                             {{user.memo}}
                         </el-row>
                         <el-row justify="space-between">
-                            <div class="flex-y-center">
-                                <el-icon>
-                                    <StarFilled/>
-                                </el-icon>
-                                <el-tag v-for="(item,index) in user.interests">{{item}}</el-tag>
+                            <div>
+                                <div class="flex-y-center" v-if="user.interests.length>0">
+                                    <el-icon>
+                                        <StarFilled/>
+                                    </el-icon>
+                                    <el-tag v-for="(item,index) in user.interests">{{item}}</el-tag>
+                                </div>
                             </div>
                             <div>
-                                {{"加入于 " + formatDate(Number(user?.created_at ? user?.created_at : 0))}}
+                                {{t('post.joined')+" " + formatDate(Number(user?.created_at ? user?.created_at : 0))}}
                             </div>
                         </el-row>
                     </div>
@@ -62,7 +64,7 @@
         <el-form :model="form" hide-required-asterisk>
             <el-form-item prop="name" :rules="[{
                 required: true,
-                message: '请输入用户名',
+                message: $t('user.placeholder.name'),
                 trigger: 'blur'}]">
                 <template #label>
                     <el-icon>
@@ -72,7 +74,7 @@
                 <el-input v-model="form.name"
                           maxlength="20"
                           show-word-limit
-                          placeholder="用户名"/>
+                          :placeholder="t('user.name')"/>
             </el-form-item>
             <el-form-item>
                 <template #label>
@@ -83,7 +85,7 @@
                 <el-input v-model="form.email"
                           maxlength="30"
                           show-word-limit
-                          placeholder="邮箱"/>
+                          :placeholder="t('user.email')"/>
             </el-form-item>
             <el-form-item>
                 <template #label>
@@ -96,7 +98,7 @@
                           :rows="2"
                           maxlength="120"
                           show-word-limit
-                          placeholder="签名"/>
+                          :placeholder="t('user.sign')"/>
             </el-form-item>
             <el-form-item v-for="(item, index) in form.interests"
                           label-width="32px"
@@ -104,7 +106,7 @@
                           :prop="'interests.' + index"
                           :rules="{
                             required: true,
-                            message: '兴趣领域不能为空',
+                            message: $t('user.placeholder.interest'),
                             trigger: 'blur',
                             }">
                 <template #label>
@@ -116,7 +118,7 @@
                 <el-input v-model="form.interests[index]"
                           maxlength="10"
                           show-word-limit
-                          placeholder="兴趣领域">
+                          :placeholder="t('user.interest')">
                     <template #append>
                         <el-button :icon="Close" @click.prevent="removeInterest(index)"></el-button>
                     </template>
@@ -125,17 +127,17 @@
         </el-form>
         <template #footer>
             <div style="display: flex;justify-content: space-between">
-                <el-button @click="addInterest">增加兴趣</el-button>
+                <el-button @click="addInterest">{{t('user.addInterest')}}</el-button>
                 <span class="dialog-footer">
-                    <el-button @click="dialogFormVisible = false">取消</el-button>
-                    <el-button type="primary" @click="updateSelf()" :loading="loading">确认</el-button>
+                    <el-button @click="dialogFormVisible = false">{{t('common.cancel')}}</el-button>
+                    <el-button type="primary" @click="updateSelf()" :loading="loading">{{t('common.confirm')}}</el-button>
                 </span>
             </div>
         </template>
     </el-dialog>
 </template>
 <script lang="ts" setup>
-    import {ref, onMounted, computed} from 'vue';
+    import {ref, onMounted, computed,defineEmits} from 'vue';
     import {useStore} from 'vuex';
     import {useRoute, useRouter} from 'vue-router';
     import {t} from '@/locale';
@@ -157,7 +159,7 @@
         name: "",
         memo: "",
         created_at: 0,
-        interests: [""]
+        interests: [] as string[]
     });
     const user = ref({
         owner: "",
@@ -200,20 +202,21 @@
         }
     }
 
+    const emit = defineEmits(['username']);
+
     const initUser = () => {
         getTargetUser(targetPrincipal.value).then(res => {
             console.log("getTargetUser", res)
             if (res.Ok) {
                 user.value = res.Ok;
                 form.value = {...user.value};
+                emit('username',res.Ok.name);
                 //如果没有兴趣领域，添加一个空的先给表单用
-                if (form.value.interests.length == 0) {
-                    form.value.interests = [""];
-                }
-                console.log("getTargetUseruser.value", user.value)
-                console.log("form.value", form.value)
+                // if (form.value.interests.length == 0) {
+                //     form.value.interests = [""];
+                // }
             } else if (res.Err && res.Err.UserNotFound !== undefined) {
-                showMessageError("找不到目标用户信息");
+                showMessageError(t('message.user.notFound'));
                 router.push('/');
             }
         })
@@ -227,7 +230,7 @@
                 // console.log("edit", res)
                 if (res.Ok) {
                     initUser();
-                    showMessageSuccess('信息更新成功');
+                    showMessageSuccess(t('message.update.success'));
                     dialogFormVisible.value = false;
                 } else if (res.Err && res.Err.UserEmailInvalid !== undefined) {
                     showMessageError(t('message.error.profile.emailInvalid'))

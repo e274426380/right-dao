@@ -50,7 +50,7 @@ export async function getTargetUser(principal: string): Promise<ApiResult<any | 
     });
 }
 
-// 获取目标用户发贴记录
+// 获取目标用户发贴记录，不包含回答
 export async function getTargetUserPost(pageNum: number, pageSize: number, query: string, principal: string): Promise<ApiResultByPage<ApiProfilePost>> {
     return getBackend().other_posts({
         page_num: pageNum,
@@ -60,7 +60,7 @@ export async function getTargetUserPost(pageNum: number, pageSize: number, query
     })
 }
 
-// 获取目标用户回答记录
+// 获取目标用户发贴和回答记录
 export async function getTargetUserPostComments(pageNum: number, pageSize: number, query: string, principal: string): Promise<ApiResultByPage<ApiProfilePost>> {
     return getBackend().other_post_comments({
         page_num: pageNum,

@@ -1,4 +1,7 @@
 export default {
+    topics:"主题",
+    reply:"回复",
+    joined:"加入于",
     help: {
         create: "创建求助",
         title:{
