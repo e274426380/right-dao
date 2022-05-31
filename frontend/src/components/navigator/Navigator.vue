@@ -407,10 +407,10 @@
                     display: none;
                 }
                 > .icon {
-                    /*position: absolute;*/
-                    /*left: -100px;*/
+                    position: absolute;
+                    left: -150px;
                     /*top: 52px;*/
-                    /*z-index: 100;*/
+                    z-index: 100;
                     > div {
                         width: 132px;
                         height: 32px;

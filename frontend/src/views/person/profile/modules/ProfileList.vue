@@ -156,7 +156,7 @@
                 totalCount.value = Number(res.Ok.total_count);
                 list.value.push(...res.Ok.data.map(item => {
                     return {
-                        id: item.id,
+                        id: item.post_id ? item.post_id : item.id,
                         created_at: item.created_at,
                         title: item.post_title ? item.post_title : "",
                         content: {

@@ -3,6 +3,7 @@ export default {
     reply:"Reply",
     joined:"Joined",
     help: {
+        search:"Search Title and Content",
         create: "Create Help",
         title: {
             label: "Help Title：",

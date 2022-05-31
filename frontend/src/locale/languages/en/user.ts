@@ -1,4 +1,5 @@
 export default {
+    editInfo: "Edit Information",
     name: "Username",
     email: "Email",
     sign: "Signature",

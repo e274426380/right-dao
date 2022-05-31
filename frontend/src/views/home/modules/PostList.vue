@@ -6,18 +6,19 @@
                     <el-input
                         v-model="search"
                         class="search"
-                        placeholder="搜索标题和内容"
+                        :placeholder="t('post.help.search')"
                         :prefix-icon="Search"
                     />
                 </el-col>
                 <el-col :span="8" class="flex-right">
-                    <el-button type="primary" @click="router.push('/post/submit')">求助</el-button>
+                    <el-button type="primary" @click="router.push('/post/submit')">{{t('post.help.create')}}</el-button>
                 </el-col>
             </el-row>
             <div class="post-list">
                 <el-row>
                     <el-col :span="18" :offset="3">
-                        <el-card class="post-card" v-for="(item,inex) in showList">
+                        <el-card class="post-card" v-for="(item,inex) in showList"
+                                 @click="onClick(Number(item.id))">
                             <el-row justify="space-between">
                                 <el-col :span="16" class="card-info">
                                     <Avatar :username="item.authorData && item.authorData.name!=='' ?
@@ -41,7 +42,7 @@
                                             <span class="createTime">{{formatDate(Number(item.created_at))}}</span>
                                         </div>
                                         <div class="need-type">
-                                            希望参加者：
+                                            {{t('post.help.participants.label')}}
                                             <el-tag v-for="(item,index) in item.participants">{{item}}</el-tag>
                                         </div>
                                     </div>
@@ -61,10 +62,9 @@
                             </div>
                             <div class="footer">
                                 <div>
-                                    还有 1 天
                                 </div>
-                                <div>
-                                    回复 {{item.comments.length}}
+                                <div class="reply">
+                                    {{t('post.reply')+" "+item.comments.length}}
                                 </div>
                             </div>
                         </el-card>
@@ -184,6 +184,9 @@
             .post-card {
                 text-align: left;
                 margin-top: 20px;
+                &:hover{
+                    cursor: pointer;
+                }
                 .el-card__body {
                     padding: 20px 60px;
                 }
@@ -228,6 +231,9 @@
                     justify-content: space-between;
                     align-items: center;
                     margin-top: 25px;
+                    .reply{
+                        color: rgb(133, 144, 166);
+                    }
                 }
             }
         }

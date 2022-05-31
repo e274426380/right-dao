@@ -112,4 +112,5 @@ export type ApiProfilePost = {
     title:string;
     post_title?:string; //评论的title名
     id: bigint;
+    post_id?: bigint;
 }

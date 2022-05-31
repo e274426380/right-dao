@@ -1,4 +1,5 @@
 export default {
+    editInfo: "编辑信息",
     name: "用户名",
     email: "邮箱",
     sign: "签名",
