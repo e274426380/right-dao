@@ -3,8 +3,8 @@
         <div class="container">
             <el-row>
                 <el-col :span="16" :offset="4">
-                    <el-card>
-                        <h4>回答</h4>
+                    <el-card :class="{ isEditorError: isEditorErr }">
+                        <h4>{{t('post.answer')}}</h4>
                         <QuillEditor
                             ref="myTextEditor"
                             v-model:content="reply"
@@ -12,15 +12,18 @@
                             :options="editorOption"
                             @update:content="isEditorChange = true"
                         />
+                        <div v-if="isEditorErr" class="errorTip">
+                            {{t('message.post.error')}}
+                        </div>
                         <div class="footer">
                             <div>
-                                <span class="fold" @click="foldReply">收起回答</span>
+                                <span class="fold" @click="foldReply">{{t('post.answerFold')}}</span>
                             </div>
                             <div>
-                                <span class="editorCalculate" :class="{ isCalcError: isEditorErr }">
+                                <span class="editorCalculate">
                                     {{ showEditorLength }} / {{ limitLength }}
                                 </span>
-                                <el-button @click="submit()" :loading="loading">发布回答</el-button>
+                                <el-button @click="submit()" :loading="loading">{{t('post.answerSubmit')}}</el-button>
                             </div>
                         </div>
                     </el-card>
@@ -79,20 +82,30 @@
     const myTextEditor = ref<{ setHTML: Function; getText: Function } | null>(null);
     const reply = ref('');
 
-    const emit =defineEmits(['foldWrite','replySuccess'])
+    const emit = defineEmits(['foldWrite', 'replySuccess'])
     const foldReply = () => {
         emit('foldWrite');
     }
 
     const showEditorLength = computed(() => {
+        //如果内容为空，就返回0
+        if(myTextEditor.value && myTextEditor.value.getText().trim().length===0){
+            return 0;
+        }
+        //这个返回的字数是专门把图片上传到后端，用特殊字符串取代，放以后再看看
         const length = calculatedICPIdLength(reply.value);
         length > limitLength ? (isEditorErr.value = true) : (isEditorErr.value = false);
         return length;
     });
 
     const submit = () => {
+        if (reply.value.length === 0) {
+            //内容为空不准提交
+            isEditorErr.value = true;
+            return
+        }
         loading.value = true;
-        addPostReply(postId,reply.value).then(res => {
+        addPostReply(postId, reply.value).then(res => {
             console.log(res);
             if (res.Ok) {
                 emit('replySuccess');
@@ -107,6 +120,17 @@
 </script>
 <style lang="scss">
     .post-detail-write-reply-container {
+        .isEditorError{
+            .ql-toolbar{
+                border: 1px solid var(--el-color-danger);
+            }
+            .ql-container {
+                border: 1px solid var(--el-color-danger);
+            }
+            .errorTip,.editorCalculate{
+                color: var(--el-color-danger)!important;
+            }
+        }
         .el-card {
             position: relative;
             margin-top: 10px;

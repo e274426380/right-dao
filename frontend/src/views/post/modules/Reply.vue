@@ -5,14 +5,15 @@
                 <el-col :span="16" :offset="4">
                     <el-card>
                         <div class="head">
-                            <b>{{list.length}}个 回答</b>
+                            <b v-if="list.length === 0 || list.length === 1">{{list.length+ " " + t('post.size') +
+                                t('post.answer')}}</b>
+                            <b v-else>{{list.length+ " " + t('post.size') + t('post.answers')}}</b>
                         </div>
                         <div class="reply" v-for="(item,index) in showList">
                             <div class="author">
                                 <Avatar :username="item.authorData && item.authorData.name!=='' ?
                                             item.authorData.name : item.author.toString()"
                                         :principalId=item.author.toString()
-                                        :clickable="false"
                                         :size="38"/>
                                 <div class="authorName">
                                     <b>{{item.authorData && item.authorData.name!=='' ? item.authorData.name:
@@ -36,8 +37,14 @@
                             </div>
                             <div class="footer">
                                 <div>
-                                    <span @click="openReplyReply(index)">{{item.comments.length}} 条评论</span>
-                                    <span>转发</span>
+                                    <span v-if="item.comments.length===0 || item.comments.length===1"
+                                          @click="openReplyReply(index)">
+                                        {{item.comments.length+ " " + t('post.item') + t('post.comment')}}
+                                    </span>
+                                    <span v-else @click="openReplyReply(index)">
+                                        {{item.comments.length+ " " + t('post.item') + t('post.comments')}}
+                                    </span>
+                                    <span @click="share(item.id)">{{t('common.share')}}</span>
                                 </div>
                                 <div>
                                     <span v-if="!foldIndex[index]" @click="fold(index)">{{t('common.expand')}}</span>
@@ -46,7 +53,7 @@
                             </div>
                         </div>
                         <div class="reply" v-if="list.length===0">
-                            暂时还没有其他人回答
+                            {{t('post.noAnswer')}}
                         </div>
                     </el-card>
                 </el-col>
@@ -66,6 +73,8 @@
     import {getTargetUser} from "@/api/user";
     import {getPostComments} from "@/api/post";
     import {t} from '@/locale';
+    import {toClipboard} from "@soerenmartius/vue3-clipboard";
+    import {showMessageSuccess} from "@/utils/message";
 
     const props = defineProps({
         postId: {
@@ -83,10 +92,10 @@
     const totalCount = ref(0);
     const replyIndex = ref(-1);
     const commentId = ref(0);
-    const comments = ref<ApiPostComments[]>([]);
+    const comments = ref<any[]>([]);
 
     const onScroll = () => {
-        //初始化时会运行一次此方法，所以懒加载分页从1开始
+        //初始化时会运行一次此方法
         //不能加载分页的时候停止请求博客列表，免得陷入死循环
         console.log("onScroll", pageNum.value)
         if (totalCount.value !== 0 && showList.value.length !== totalCount.value) {
@@ -100,16 +109,27 @@
     }
 
     const openReplyReply = (index: number) => {
+        //打开评论列表
         replyIndex.value = index;
         comments.value = list.value[index].comments;
         showReplyReply.value = true;
         commentId.value = Number(list.value[index].id);
     }
 
+    const share = async (id: bigint) => {
+        try {
+            await toClipboard(window.location.href)
+            showMessageSuccess(t('message.share.success'))
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
     const paging = () => {
         if (totalCount.value > 0) {
             const length = showList.value.length;
             showList.value.push(...list.value.slice(pageSize.value * (pageNum.value - 1), pageSize.value * pageNum.value));
+            console.log("showList", showList.value)
             //需要获取user数据的index区间在(length, length + pageSize)
             for (let i = length; i < showList.value.length; i++) {
                 getTargetUser(showList.value[i].author.toString()).then(res => {
@@ -156,7 +176,7 @@
     .post-detail-reply-container {
         .el-card {
             margin-top: 10px;
-            .el-card__body{
+            .el-card__body {
                 /*padding-left: 30px;*/
                 /*padding-right: 30px;*/
             }

@@ -100,7 +100,7 @@ export type ApiPostComments = {
     created_at: bigint;
     id: bigint;
     post_id: bigint;
-    // isReply?:boolean; //是否被回复
+    isReply?:boolean; //是否被回复
 }
 
 export type ApiProfilePost = {

@@ -73,7 +73,7 @@
                             <div>
                                 {{ t('navbar.login') }}
                             </div>
-                            <img src="@/assets/images/navigator/right-arrow.png" />
+                            <!--<img src="@/assets/images/navigator/right-arrow.png" />-->
                         </div>
                     </div>
                     <!-- username -->
@@ -484,17 +484,18 @@
                     .login {
                         > div {
                             margin: 0 auto;
-                            background-color: #0fb8e0ff;
-                            width: 174px;
-                            height: 56px;
-                            border-radius: 28px;
+                            background-color: #06f;
+                            width: 114px;
+                            height: 40px;
+                            border-radius: 30px;
                             display: flex;
                             flex-direction: row;
                             align-items: center;
                             justify-content: center;
                             cursor: pointer;
                             &:hover {
-                                background-color: rgb(45, 203, 238);
+                                border-color: #005ce6;
+                                background-color: #005ce6;
                             }
                             > div {
                                 font-size: 22px;

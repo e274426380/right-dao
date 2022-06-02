@@ -25,7 +25,7 @@
                                         <span class="createTime">{{formatDate(Number(post.created_at))}}</span>
                                     </div>
                                     <div class="need-type">
-                                        希望参加者：
+                                        {{t('post.help.participants.label')}}
                                         <el-tag v-for="(item,index) in post.participants">{{item}}</el-tag>
                                     </div>
                                 </div>
@@ -49,7 +49,7 @@
                             </div>
                         </div>
                         <div class="footer">
-                            <el-button type="primary" style="margin-right: 5px" @click="writeReply">写回答</el-button>
+                            <el-button type="primary" style="margin-right: 5px" @click="writeAnswer">{{t('post.writeAnswer')}}</el-button>
                             <!--<el-button type="primary" style="margin-right: 5px">发起提案</el-button>-->
                             <!--<span style="margin: 5px;">{{post.comments.length}} 条回复</span>-->
                             <span v-if="isFold" @click="isFold = !isFold" class="fold">{{t('common.expand')}}</span>
@@ -98,7 +98,7 @@
     }
 
     const emit = defineEmits(['showWrite'])
-    const writeReply = () => {
+    const writeAnswer = () => {
         emit('showWrite');
     }
 

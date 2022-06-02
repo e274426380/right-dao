@@ -8,6 +8,7 @@ export default {
         completed: "Completed",
         closed: "Closed"
     },
+    share: "Share",
     expand: "Expand",
     fold: "Fold",
     loading: "Loading...",

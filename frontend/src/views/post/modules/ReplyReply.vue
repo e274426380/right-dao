@@ -3,7 +3,9 @@
         <el-dialog
             v-model="visible"
             :before-close="onClose"
-            :title="total+' 条评论'"
+            :title="total === 1 || total ===0 ?
+                    total + $t('post.item') + $t('post.comment'):
+                    total + $t('post.item') + $t('post.comments')"
             width="35%"
         >
             <template v-if="showList.length>0">
@@ -27,11 +29,11 @@
                     </div>
                     <div class="content">
                         {{item.content.content}}
-                        <span class="reply-button" v-if="item.isReply" @click="replyOther(item)">取消回复</span>
+                        <span class="reply-button" v-if="item.isReply" @click="replyOther(item)">{{t('post.cancelReply')}}</span>
                         <span class="reply-button" v-else @click="replyOther(item)">{{t('post.reply')}}</span>
                     </div>
                 </div>
-                <div class="dialog-pagination" v-if="showList.length>pageSize">
+                <div class="dialog-pagination">
                     <el-pagination layout="prev, pager, next"
                                    :page-size="pageSize"
                                    v-model:currentPage="pageNum"
@@ -42,8 +44,8 @@
             <template #footer>
                 <el-input class="replyInput" v-model="replyReply" :placeholder="placeholder"></el-input>
                 <span style="display: flex;justify-content: space-between">
-                <el-button @click="onClose">取消</el-button>
-                <el-button type="primary" @click="submit()" :loading="loading">提交评论</el-button>
+                <el-button @click="onClose">{{t('common.cancel')}}</el-button>
+                <el-button type="primary" @click="submit()" :loading="loading">{{t('post.submitComment')}}</el-button>
               </span>
             </template>
         </el-dialog>
@@ -57,7 +59,7 @@
     import Avatar from '@/components/common/Avatar.vue';
     import {formatDate} from "@/utils/dates";
     import {getTargetUser} from "@/api/user";
-    import {showMessageSuccess} from "@/utils/message";
+    import {showMessageError, showMessageSuccess} from "@/utils/message";
     import {t} from "@/locale";
 
     const props = defineProps({
@@ -82,8 +84,8 @@
     const dialogVisible = ref(false);
     const loading = ref(false);
     const replyReply = ref("")
-    const placeholder = ref("请输入你的评论...")
-    const quoteId = ref([])
+    const placeholder = ref(t('post.commentPlaceholder'))
+    const quoteId = ref([] as number[])
     const showList = ref<ApiPostComments[]>([])
     const itemList = ref<ApiPostComments[]>([])
     const emit = defineEmits(['update:visible', 'refreshCallback'])
@@ -135,12 +137,12 @@
         }
     }
 
-    const replyOther = (item: ApiPostComments) => {
+    const replyOther = (item: any) => {
         replyReply.value = "";
         //取消回复
         if(item['isReply']){
             item['isReply']=false;
-            placeholder.value = "请输入你的评论...";
+            placeholder.value = t('post.commentPlaceholder');
             quoteId.value = [];
         } else {
             //正常回复
@@ -153,6 +155,10 @@
     }
 
     const submit = () => {
+        if(replyReply.value.trim().length===0){
+            showMessageError(t('message.post.error'))
+            return
+        }
         loading.value = true;
         addPostReplyReply(props.replyId, props.postId, replyReply.value, quoteId.value).then(res => {
             console.log("addPostReplyReply", res)

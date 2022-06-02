@@ -101,7 +101,7 @@
     import Navigator from '@/components/navigator/Navigator.vue';
     import {
         ElRow, ElCol, ElButton, ElSelect, ElOption, ElForm, ElFormItem, ElInput, ElMessage, ElConfigProvider,
-        ElDatePicker,
+        ElDatePicker,ElLoading
     } from 'element-plus/es';
     import {SupportedLocale, t} from '@/locale';
     import {QuillEditor} from '@vueup/vue-quill';
@@ -200,6 +200,10 @@
         if (!formEl) return;
         await formEl.validate((valid, fields) => {
             if (valid && !isEditorErr.value) {
+                const fullLoading = ElLoading.service({
+                    target:".container",
+                    lock:true
+                });
                 loading.value = true;
                 console.log("form", form.value);
                 let post = {...form.value};
@@ -214,6 +218,7 @@
                     }
                 }).finally(() => {
                     loading.value = false;
+                    fullLoading.close();
                 })
             } else {
                 console.error('error submit!', fields)

@@ -41,10 +41,10 @@ const props = defineProps({
         type: String as PropType<'circle' | 'square'>,
         default: 'circle',
     },
-    // 支持的动作
+    // 是否可以点击（hover时鼠标变手）
     clickable: {
         type: Boolean,
-        default: true,
+        default: false,
     },
     clickCallback: Function,
 });

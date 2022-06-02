@@ -6,10 +6,14 @@
                     <el-card class="timeline-card">
                         <template #header>
                             <div style="display:flex;justify-content: space-between">
-                                <h4>最新进展</h4>
-                                <div>
-                                    <el-button type="primary" @click="statusFormVisible=true">{{t('post.status.title')}}</el-button>
-                                    <el-button type="primary" @click="timelineFormVisible=true">{{t('post.timeline.add')}}</el-button>
+                                <h4>{{t('post.timeline.new')}}</h4>
+                                <div v-if="isOwner">
+                                    <el-button type="primary" @click="statusFormVisible=true">
+                                        {{t('post.status.title')}}
+                                    </el-button>
+                                    <el-button type="primary" @click="timelineFormVisible=true">
+                                        {{t('post.timeline.add')}}
+                                    </el-button>
                                 </div>
                             </div>
                         </template>
@@ -22,22 +26,23 @@
                                 :hollow="item.hollow"
                                 :timestamp="item.time"
                             >
-                               {{ item.description }}
+                                {{ item.description }}
                             </el-timeline-item>
                         </el-timeline>
                         <div class="footer" v-if="showList.length && showList.length > 3">
-                            <span @click="showTimeline()" v-if="!timelineShowMore">展开全部进展</span>
-                            <span @click="showTimeline()" v-else>收起全部进展</span>
+                            <span @click="showTimeline()" v-if="!timelineShowMore">{{t('post.timeline.expand')}}</span>
+                            <span @click="showTimeline()" v-else>{{t('post.timeline.fold')}}</span>
                         </div>
                         <div v-else-if="!showList.length">
-                            没有相关时间线内容
+                            {{t('post.timeline.no')}}
                         </div>
                     </el-card>
                 </el-col>
             </el-row>
         </div>
     </div>
-    <el-dialog v-model="timelineFormVisible" custom-class="post-timeLine-dialog" :title="t('post.timeline.add')" width="30%">
+    <el-dialog v-model="timelineFormVisible" custom-class="post-timeLine-dialog" :title="t('post.timeline.add')"
+               width="30%">
         <el-form :model="timelineForm" hide-required-asterisk>
             <el-form-item :label="$t('post.timeline.time')+'：'"
                           prop="event_time"
@@ -74,11 +79,13 @@
         <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="timelineFormVisible = false">{{t('common.cancel')}}</el-button>
-                    <el-button type="primary" @click="addTimeline()" :loading="timelineLoading">{{t('common.confirm')}}</el-button>
+                    <el-button type="primary" @click="addTimeline()"
+                               :loading="timelineLoading">{{t('common.confirm')}}</el-button>
                 </span>
         </template>
     </el-dialog>
-    <el-dialog v-model="statusFormVisible" custom-class="post-status-dialog" :title="t('post.status.title')" width="30%">
+    <el-dialog v-model="statusFormVisible" custom-class="post-status-dialog" :title="t('post.status.title')"
+               width="30%">
         <el-form :model="statusForm" hide-required-asterisk>
             <el-form-item :label="$t('post.status.status')+'：'"
                           prop="status"
@@ -117,13 +124,14 @@
         <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="statusFormVisible = false">{{t('common.cancel')}}</el-button>
-                    <el-button type="primary" @click="changeStatus()" :loading="statusLoading">{{t('common.confirm')}}</el-button>
+                    <el-button type="primary" @click="changeStatus()"
+                               :loading="statusLoading">{{t('common.confirm')}}</el-button>
                 </span>
         </template>
     </el-dialog>
 </template>
 <script lang="ts" setup>
-    import {ref, onMounted, computed, defineProps, defineEmits} from 'vue';
+    import {ref, onMounted, computed, defineProps, defineEmits, watch} from 'vue';
     import {
         ElRow,
         ElCol,
@@ -151,6 +159,7 @@
     import {showMessageError, showMessageSuccess} from "@/utils/message";
     import {ApiPostTimeline} from "@/api/types";
     import {formatDate} from "@/utils/dates";
+
     const store = useStore();
     const locale = computed<SupportedLocale>(() => {
         return store.state.user.locale
@@ -161,8 +170,12 @@
             type: Number,
             required: true,
         },
+        isOwner: {
+            type: Boolean,
+            required: true,
+        }
     });
-    const timelineShowMore =ref(false);
+    const timelineShowMore = ref(false);
     //默认展开3个时间线
     const timelineMount = ref(3);
     const timelineFormVisible = ref(false);
@@ -186,7 +199,7 @@
         value: "Completed",
         label: t('common.status.completed')
     }, {
-        value:"Closed",
+        value: "Closed",
         label: t('common.status.closed')
     }]
     const timeline = ref<ApiPostTimeline[]>([]);
@@ -205,18 +218,10 @@
                 timeline.value = res.Ok
             }
         })
-        // props.timeline.map((item, index) => {
-        //     item.created_at = Number(item.created_at);
-        //     item['time'] = formatDate(Number(item.event_time));
-        //     if (index === 0) {
-        //         item['type'] = 'primary';
-        //         item['hollow'] = true;
-        //     }
-        // })
     }
 
     const showList = computed(() => {
-        const show = timeline.value.slice(0,timelineMount.value).map((item, index) => {
+        const show = timeline.value.slice(0, timelineMount.value).map((item, index) => {
             item.created_at = Number(item.created_at);
             item['time'] = formatDate(Number(item.event_time));
             if (index === 0) {
@@ -258,11 +263,11 @@
         })
     }
 
-    const emit =defineEmits(['changeStatusSuccess'])
+    const emit = defineEmits(['changeStatusSuccess'])
     const changeStatus = () => {
         statusLoading.value = true;
         let status = {...statusForm.value};
-        status.description = "Post status change to '"+status.status+"' : "+status.description;
+        status.description = "Post status change to '" + status.status + "' : " + status.description;
         changePostStatus(status).then(res => {
             if (res.Ok) {
                 emit('changeStatusSuccess')
@@ -284,9 +289,9 @@
     });
 
     // watch(
-    //     () => props.timeline,
+    //     () => props.isOwner,
     //     () => {
-    //         init()
+    //         console.log("watch isOwner",props.isOwner)
     //     },
     // );
 
@@ -294,19 +299,19 @@
 <style lang="scss">
     .post-detail-timeline-container {
         margin-top: 10px;
-        .timeline-card{
-            box-shadow:0px 2px 6px rgba(0, 0, 0, 0.12);
-            .el-card__header{
-                padding-bottom: 9px!important;
+        .timeline-card {
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.12);
+            .el-card__header {
+                padding-bottom: 9px !important;
             }
-            .footer{
+            .footer {
                 text-align: right;
                 padding-top: 10px;
                 border-top: 1px solid var(--el-card-border-color);
-                span{
-                    color: rgb(148,158,177);
+                span {
+                    color: rgb(148, 158, 177);
                 }
-                span:hover{
+                span:hover {
                     cursor: pointer;
                 }
             }

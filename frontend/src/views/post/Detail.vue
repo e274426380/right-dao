@@ -1,10 +1,10 @@
 <template>
     <div class="post-detail-container">
         <Navigator/>
-        <Head :post="post" @showWrite="showWriteReply(true)" v-if="post!==undefined"/>
-        <WriteReply @foldWrite="showWriteReply(false)" @replySuccess="replyInit" v-show="showWrite"/>
-        <div v-show="post!==undefined">
-            <TimeLine :postId="postId" @changeStatusSuccess="init"/>
+        <Head :post="post" @showWrite="showWriteReply()" v-if="post!==undefined"/>
+        <WriteReply @foldWrite="foldWrite(false)" @replySuccess="replyInit" v-show="showWrite"/>
+        <div v-show="post!==undefined" style="min-height: 100vh">
+            <TimeLine :postId="postId" @changeStatusSuccess="init" :isOwner="isOwner"/>
             <Reply :postId="postId" ref="reply"/>
         </div>
     </div>
@@ -35,6 +35,7 @@
         if (post.value) {
             return currentUserPrincipal.value === post.value.author.toString()
         }
+        return false;
     });
     const post = ref<ApiPost>();
     const reply = ref()
@@ -55,6 +56,7 @@
             console.log("getPostInfo",res)
             if (res.Ok) {
                 post.value = res.Ok
+                console.log("detail",isOwner.value)
             } else if(res.Err && res.Err.PostNotFound!==undefined){
                 showMessageError(t('message.error.noPost'));
                 setTimeout(() => {
@@ -67,7 +69,11 @@
         })
     }
 
-    const showWriteReply = (show: boolean) => {
+    const showWriteReply = () => {
+        showWrite.value = !showWrite.value
+    }
+
+    const foldWrite = (show:boolean) => {
         showWrite.value = show
     }
 
