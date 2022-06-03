@@ -1,5 +1,5 @@
 
-use candid::{CandidType, Deserialize, Principal};
+use candid::{CandidType, Deserialize};
 
 
 #[derive(Debug, Clone, CandidType, Deserialize)]

@@ -4,7 +4,8 @@ use std::collections::VecDeque;
 use candid::Principal;
 use ic_cdk_macros::{update, query};
 
-use crate::CONTEXT;
+use crate::reputation::domain::ReputationEvent;
+use crate::{CONTEXT, reputation::domain::ReputationAction};
 use crate::common::guard::has_user_guard;
 
 use super::{domain::*, error::PostError};
@@ -19,6 +20,11 @@ fn create_post(cmd: PostCreateCommand) -> Result<u64, PostError> {
         match ctx.post_service.create_post(cmd, id, caller, now) {
             Some(_) => {
                 ctx.id += 1;    // id addOne
+
+                let re = ReputationEvent::new(ctx.id, caller, ReputationAction::PublishPost, 2, now);
+                ctx.reputation_service.handle_reputation_event(re);
+                ctx.id += 1;
+
                 Ok(id)
             },
             None => Err(PostError::PostAlreadyExists),
@@ -117,10 +123,22 @@ fn add_post_comment(cmd: PostCommentCommand) -> Result<bool, PostError> {
         let comment_id = ctx.id;
         let caller = ctx.env.caller();
         let now = ctx.env.now();
+        let post_id = cmd.post_id;
         
         match ctx.post_service.add_post_comment(cmd, comment_id, caller, now) {
             Ok(_) => {
                 ctx.id += 1;    // id addOne
+                
+                if let Some(post) =  ctx.post_service.get_post(post_id) {
+                    let re = ReputationEvent::new(ctx.id, post.author, ReputationAction::ReplyPost, 1, now);
+                    ctx.reputation_service.handle_reputation_event(re);
+                    ctx.id += 1;
+                }
+
+                let re = ReputationEvent::new(ctx.id, caller, ReputationAction::ReplyPost, 1, now);
+                ctx.reputation_service.handle_reputation_event(re);
+                ctx.id += 1;
+
                 Ok(true)
             },
             e => e,
@@ -135,10 +153,11 @@ fn add_comment_comment(cmd: CommentCommentCommand) -> Result<bool, PostError> {
         let comment_id = ctx.id;
         let caller = ctx.env.caller();
         let now = ctx.env.now();
-        
+
         match ctx.post_service.add_comment_comment(cmd, comment_id, caller, now) {
             Ok(_) => {
                 ctx.id += 1;    // id addOne
+                
                 Ok(true)
             },
             e => e,
