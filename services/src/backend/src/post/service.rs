@@ -4,7 +4,7 @@ use std::{collections::BTreeMap, cmp::Ordering};
 
 use candid::Principal;
 
-use crate::domain::{CommentSummaryPage, CommentSummary, PostInfoPage};
+use crate::domain::{CommentSummaryPage, CommentSummary, PostInfoPage, PostAnswerCommand};
 
 use super::{domain::{PostProfile, PostId, PostCreateCommand, Timestamp, PostStatus, PostEditCommand, PostPage, PostPageQuery, PostCommentCommand, PostEventCommand, CommentCommentCommand, PostChangeStatusCommand, PostEvent, }, error::PostError};
 
@@ -39,7 +39,7 @@ impl PostService {
         }).map(|_| true)
     }
 
-    pub fn change_post_status(&mut self, cmd: PostChangeStatusCommand, caller: Principal, now: Timestamp) -> Result<bool, PostError> {
+    pub fn update_post_status(&mut self, cmd: PostChangeStatusCommand, caller: Principal, now: Timestamp) -> Result<bool, PostError> {
         if let Some(profile) = self.posts.get_mut(&cmd.id) {
             if !profile.is_active() {
                 return Err(PostError::PostAlreadyCompleted);
@@ -51,6 +51,18 @@ impl PostService {
             profile.status = new_status;
             profile.updated_at = now;
             profile.events.push_front(event);
+
+            Ok(true)
+        } else {
+            Err(PostError::PostNotFound)
+        }
+    }
+
+    pub fn update_post_answer(&mut self, cmd: PostAnswerCommand, now: Timestamp) -> Result<bool, PostError> {
+        if let Some(profile) = self.posts.get_mut(&cmd.post_id) {
+            
+            profile.answer = Some(cmd.comment_id);
+            profile.updated_at = now;
 
             Ok(true)
         } else {

@@ -32,6 +32,8 @@ type UserProfile = record {
     avatar_uri: text;
     biography: text;
     interests: vec text;
+    city: text;
+    country: text;
     memo : text;
     status : UserStatus;
     created_at : nat64;
@@ -49,6 +51,8 @@ type UserEditCommand = record {
     avatar_uri: text;
     biography: text;
     interests: vec text;
+    city: text;
+    country: text;
     memo: text;
     status: UserStatus;
 };
@@ -71,6 +75,7 @@ type PostProfile = record {
     ask_for_money : Currency;
     events: vec PostEvent;
     comments: vec PostComment;
+    answer: opt nat64;
     status: PostStatus;
     created_at: nat64;
     updated_at: nat64;
@@ -87,6 +92,7 @@ type PostInfo = record {
     end_time: opt nat64;
     likes_count : nat64;
     ask_for_money : Currency;
+    answer: opt nat64;
     status: PostStatus;
     created_at: nat64;
     updated_at: nat64;
@@ -197,6 +203,11 @@ type PostIdCommand = record {
     id: nat64;
 };
 
+type PostAnswerCommand = record {
+    post_id: nat64;
+    comment_id: nat64;
+};
+
 type PostChangeStatusCommand = record {
     id: nat64;
     status: text;
@@ -296,6 +307,25 @@ type CommentSummaryPageResult = variant {
     Err: PostError;
 };
 
+
+type ReputationSummary = record {
+    user: principal;
+    amount: nat64;
+};
+
+type ReputationError = variant {
+    ReputationNotFound;
+};
+
+type ReputationSummaryResult = variant {
+    Ok: ReputationSummary;
+    Err: ReputationError;
+};
+
+type ReputationGetQuery = record {
+    user: text;
+};
+
 service : {
  
     "greet": (text) -> (text) query;
@@ -328,6 +358,8 @@ service : {
     "add_post_comment" : (PostCommentCommand) -> (BoolPostResult);
     "add_comment_comment" : (CommentCommentCommand) -> (BoolPostResult);
     "add_post_event" : (PostEventCommand) -> (BoolPostResult);
-    "likes_post" : (PostIdCommand) -> (BoolPostResult);
+    "submit_post_answer" : (PostAnswerCommand) -> (BoolPostResult);
 
+    "my_reputation" : () -> (ReputationSummaryResult);
+    "get_reputation" : (ReputationGetQuery) -> (ReputationSummaryResult);
 }

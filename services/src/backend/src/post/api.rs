@@ -3,12 +3,11 @@ use std::collections::VecDeque;
 
 use candid::Principal;
 use ic_cdk_macros::{update, query};
-use crate::domain::{PostComment, PostEvent, PostInfo, CommentSummaryPage, PostPageOtherQuery, PostInfoPage};
-use crate::{CONTEXT, post::domain::PostStatus};
+
+use crate::CONTEXT;
 use crate::common::guard::has_user_guard;
 
-use super::domain::{PostCommentCommand, PostEventCommand, CommentCommentCommand, PostChangeStatusCommand};
-use super::{domain::{PostCreateCommand, PostEditCommand, PostIdCommand, PostProfile, PostPageQuery, PostPage}, error::PostError};
+use super::{domain::*, error::PostError};
 
 #[update(guard = "has_user_guard")] 
 fn create_post(cmd: PostCreateCommand) -> Result<u64, PostError> {
@@ -63,7 +62,27 @@ fn change_post_status(cmd: PostChangeStatusCommand) -> Result<bool, PostError> {
                     return Err(PostError::PostUnAuthorizedOperation);
                 }
                 
-                ctx.post_service.change_post_status(cmd, caller, now)
+                ctx.post_service.update_post_status(cmd, caller, now)
+            },
+            None => Err(PostError::PostNotFound),
+        }
+    })
+}
+
+#[update]
+fn submit_post_answer(cmd: PostAnswerCommand) -> Result<bool, PostError> {
+    CONTEXT.with(|c| {
+        let mut ctx = c.borrow_mut();
+        let caller = ctx.env.caller();
+        let post_id = cmd.post_id;
+        let now = ctx.env.now();
+        match ctx.post_service.get_post(post_id) {
+            Some(p) => {
+                if p.author != caller {
+                    return Err(PostError::PostUnAuthorizedOperation);
+                }
+                
+                ctx.post_service.update_post_answer(cmd, now)
             },
             None => Err(PostError::PostNotFound),
         }

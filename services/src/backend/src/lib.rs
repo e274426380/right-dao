@@ -12,6 +12,8 @@ pub mod env;
 
 pub mod post;
 
+pub mod reputation;
+
 pub mod user;
 
 pub use post::*;

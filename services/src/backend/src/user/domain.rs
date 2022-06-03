@@ -16,6 +16,8 @@ pub struct UserProfile {
     pub avatar_uri: String,
     pub biography: String,
     pub interests: Vec<String>,
+    pub city: String,
+    pub country: String,
     pub memo: String,
     pub status: UserStatus,
     pub created_at: Timestamp,
@@ -29,11 +31,10 @@ pub struct UserProfile {
 //         }
 //     }
 // }
-
 impl UserProfile {
     pub fn new(id: UserId, owner: Principal, email: String, name: String, 
             avatar_id: u64, avatar_uri: String, biography: String, interests: Vec<String>,
-            memo: String, status: UserStatus, created_at: u64) -> Self {
+            city: String, country: String, memo: String, status: UserStatus, created_at: u64) -> Self {
         Self {
             id,
             owner,
@@ -43,6 +44,8 @@ impl UserProfile {
             avatar_uri,
             biography,
             interests,
+            city,
+            country,
             memo,
             status,
             created_at,
@@ -78,7 +81,7 @@ pub struct UserRegisterCommand {
 impl UserRegisterCommand {
     pub fn build_profile(self, id: UserId, owner: Principal, status: UserStatus, created_at: u64) -> UserProfile {
         UserProfile::new(id, owner, self.email, self.name, 0, "".to_string(), "".to_string(),
-        vec![], self.memo, status, created_at)
+        vec![], "".to_string(), "".to_string(), self.memo, status, created_at)
     }
 }
 

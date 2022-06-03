@@ -22,6 +22,7 @@ pub struct PostProfile {
     pub likes_count: u64,
     pub ask_for_money: Currency,
     pub events: VecDeque<PostEvent>,
+    pub answer: Option<u64>,
     pub status: PostStatus,
     pub created_at: Timestamp,
     pub updated_at: Timestamp,
@@ -29,7 +30,8 @@ pub struct PostProfile {
 }
 
 impl PostProfile {
-    pub fn new(id: u64, author: Principal, title: String, content: RichText, category: Category, photos: Vec<u64>, participants: Vec<String>, end_time: Option<Timestamp>, status: PostStatus, created_at: Timestamp) -> Self {
+    pub fn new(id: u64, author: Principal, title: String, content: RichText, category: Category, photos: Vec<u64>, participants: Vec<String>, 
+            end_time: Option<Timestamp>, status: PostStatus, created_at: Timestamp) -> Self {
         Self {
             id,
             author,
@@ -42,6 +44,7 @@ impl PostProfile {
             likes_count: 0,
             ask_for_money: Currency::default(),
             events: VecDeque::new(),
+            answer: None,
             status,
             created_at,
             updated_at: created_at,
@@ -66,6 +69,7 @@ pub struct PostInfo {
     pub end_time: Option<Timestamp>,
     pub likes_count: u64,
     pub ask_for_money: Currency,
+    pub answer: Option<u64>,
     pub status: PostStatus,
     pub created_at: Timestamp,
     pub updated_at: Timestamp,
@@ -84,6 +88,7 @@ impl From<PostProfile> for PostInfo{
             end_time: profile.end_time,
             likes_count: profile.likes_count,
             ask_for_money: profile.ask_for_money,
+            answer: profile.answer,
             status: profile.status,
             created_at: profile.created_at,
             updated_at: profile.updated_at,
@@ -381,4 +386,10 @@ impl PostEventCommand {
             created_at: now,
         }
     }
+}
+
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct PostAnswerCommand {
+    pub post_id: u64,
+    pub comment_id: u64,
 }

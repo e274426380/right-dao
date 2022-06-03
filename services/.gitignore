@@ -16,8 +16,8 @@ node_modules
 /dist
 
 # rust
-target/
-**Cargo.lock
+*target/
+*Cargo.lock
 
 # misc
 .DS_Store
