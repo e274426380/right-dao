@@ -39,7 +39,7 @@
                                             <span>{{item.authorData && item.authorData.name!=='' ? item.authorData.name:
                                         item.author.toString()}}</span>
                                             <span>|</span>
-                                            <span class="createTime">{{formatDate(Number(item.created_at))}}</span>
+                                            <span class="createTime">{{getTimeF(Number(item.created_at))}}</span>
                                         </div>
                                         <div class="need-type">
                                             {{t('post.help.participants.label')}}
@@ -89,7 +89,7 @@
     import {Search} from '@element-plus/icons-vue'
     import Avatar from '@/components/common/Avatar.vue';
     import {useRoute, useRouter} from 'vue-router';
-    import {formatDate} from "@/utils/dates";
+    import {getTimeF} from "@/utils/dates";
     import {getPostPage} from "@/api/post";
     import {ApiPost} from "@/api/types";
     import {cleanHtml} from "@/common/utils";

@@ -16,7 +16,8 @@
                                 <el-icon>
                                     <UserFilled/>
                                 </el-icon>
-                                {{user.name}}
+                                <span v-if="!user.name"> {{ targetPrincipal }}</span>
+                                <span v-else>{{user.name}}</span>
                             </div>
                             <el-button v-if="isOwner" @click="dialogFormVisible = true">
                                 {{t('common.edit')}}

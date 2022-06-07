@@ -22,7 +22,7 @@
                                         <span v-if="author!==undefined && author.name!==''">{{author.name}} </span>
                                         <span v-else>{{post.author.toString()}} </span>
                                         <span>|</span>
-                                        <span class="createTime">{{formatDate(Number(post.created_at))}}</span>
+                                        <span class="createTime">{{getTimeF(Number(post.created_at))}}</span>
                                     </div>
                                     <div class="need-type">
                                         {{t('post.help.participants.label')}}
@@ -68,7 +68,7 @@
     import Avatar from '@/components/common/Avatar.vue';
     import {ApiPost, ApiUserInfo} from "@/api/types";
     import {getTargetUser} from "@/api/user";
-    import {formatDate} from "@/utils/dates";
+    import {getTimeF} from "@/utils/dates";
     import {t} from '@/locale';
     const author = ref<ApiUserInfo>();
 
@@ -82,6 +82,7 @@
     });
 
     onMounted(() => {
+        console.log("getTIme",getTimeF(props.post.created_at))
         init();
     });
 

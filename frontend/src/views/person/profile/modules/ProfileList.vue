@@ -20,7 +20,7 @@
                                 <span v-if="option==='topics'">{{t('post.reply')+" "+item.length}}</span>
                             </div>
                             <div>
-                                <span>{{formatDate(Number(item.created_at))}}</span>
+                                <span>{{getTimeF(Number(item.created_at))}}</span>
                             </div>
                         </el-row>
                     </el-card>
@@ -43,7 +43,7 @@
     import {useRoute, useRouter} from 'vue-router';
     import {ElRow, ElCol, ElInput, ElButton, ElCard, ElTag, ElTabs, ElTabPane} from 'element-plus/es';
     import {Search} from '@element-plus/icons-vue'
-    import {formatDate} from "@/utils/dates";
+    import {getTimeF} from "@/utils/dates";
     import {getTargetUserComments, getTargetUserPost, getTargetUserPostComments} from "@/api/user";
     import {ApiProfilePost} from "@/api/types";
     import {cleanHtml} from "@/common/utils";

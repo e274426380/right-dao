@@ -94,23 +94,23 @@ export type ApiPostComments = {
     authorData?: ApiUserInfo; //作者详细资料 通过id获取对应资料
     comment_id: number[];
     comments: [];
-    quote_id:number[];
-    quoteName?:string;
+    quote_id: number[];
+    quoteName?: string;
     content: RichText;
     created_at: bigint;
     id: bigint;
     post_id: bigint;
-    isReply?:boolean; //是否被回复
+    isReply?: boolean; //是否被回复
 }
 
 export type ApiProfilePost = {
     author?: Principal | string; // 作者principalID
     content: RichText;
-    comments?:[];
-    length?:number;
+    comments?: [];
+    length?: number;
     created_at: bigint;
-    title:string;
-    post_title?:string; //评论的title名
+    title: string;
+    post_title?: string; //评论的title名
     id: bigint;
     post_id?: bigint;
 }

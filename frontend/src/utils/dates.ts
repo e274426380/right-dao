@@ -1,4 +1,5 @@
-import { SupportedLocale } from '@/locale';
+import {SupportedLocale, t} from '@/locale';
+import i18n from "@/locale";
 
 // 英文月份
 const TOTAL_MONTHS = [
@@ -38,6 +39,44 @@ export const formatDate = (value: number): string => {
     let d = date.getDate()  //获取日期
     const day = d < 10 ? "0" + d : d  //日期不满10天显示前加0
     return y + "-" + month + "-" + day
+};
+
+//将后端时间戳转换成友好显示格式的字符串
+export const getTimeF = (value: bigint | number): string => {
+    //不管是bigint 还是 number 先转换为number方便计算
+    const valueNumber = Number(value);
+    const minute = 1000 * 60;
+    const hour = minute * 60;
+    const day = hour * 24;
+    const week = day * 7;
+    const month = day * 30;
+    //将纳秒时间戳转换为正常的毫秒时间戳
+    let date = new Date(valueNumber / (1000 * 1000))
+    const time1 = new Date().getTime();//当前的时间戳
+    const time2 = date.getTime();
+    //时间差 60000 1分钟 //3600000 1小时 //86400000 24小时 //对传入时间进行时间转换
+    const time = time1 - time2;
+    let result = "";
+    //太久了就直接显示日期吧
+    if (time / month >= 1) {
+        result = formatDate(valueNumber);
+        // result = "发布于" + parseInt(time / month + "") + "月前！";
+    } else if (time / week >= 1) {
+        result = formatDate(valueNumber);
+        // result = "发布于" + parseInt(time / week + "") + "周前！";
+    } else if (time / day >= 1) {
+        const count = parseInt(time / day + "")
+        result = t('date.post') + i18n.global.tc('date.day', count);
+    } else if (time / hour >= 1) {
+        const count = parseInt(time / hour + "")
+        result = t('date.post') + i18n.global.tc('date.hour', count);
+    } else if (time / minute >= 1) {
+        const count = parseInt(time / minute + "")
+        result = t('date.post') + i18n.global.tc('date.minute', count);
+    } else {
+        result = t('date.just');
+    }
+    return result;
 };
 
 

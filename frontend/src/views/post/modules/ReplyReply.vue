@@ -25,7 +25,7 @@
                                 </div>
                             </div>
                         </div>
-                        <span>{{formatDate(Number(item.created_at))}}</span>
+                        <span>{{getTimeF(Number(item.created_at))}}</span>
                     </div>
                     <div class="content">
                         {{item.content.content}}
@@ -57,7 +57,7 @@
     import {addPostReplyReply} from "@/api/post";
     import {ApiPostComments} from "@/api/types";
     import Avatar from '@/components/common/Avatar.vue';
-    import {formatDate} from "@/utils/dates";
+    import {getTimeF} from "@/utils/dates";
     import {getTargetUser} from "@/api/user";
     import {showMessageError, showMessageSuccess} from "@/utils/message";
     import {t} from "@/locale";

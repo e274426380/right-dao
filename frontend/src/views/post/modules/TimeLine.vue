@@ -158,7 +158,7 @@
     import {addPostTimeline, changePostStatus, getPostTimeLine} from "@/api/post";
     import {showMessageError, showMessageSuccess} from "@/utils/message";
     import {ApiPostTimeline} from "@/api/types";
-    import {formatDate} from "@/utils/dates";
+    import {getTimeF} from "@/utils/dates";
 
     const store = useStore();
     const locale = computed<SupportedLocale>(() => {
@@ -223,7 +223,7 @@
     const showList = computed(() => {
         const show = timeline.value.slice(0, timelineMount.value).map((item, index) => {
             item.created_at = Number(item.created_at);
-            item['time'] = formatDate(Number(item.event_time));
+            item['time'] = getTimeF(Number(item.event_time));
             if (index === 0) {
                 item['type'] = 'primary';
                 item['hollow'] = true;
