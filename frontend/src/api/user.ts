@@ -1,6 +1,6 @@
 import {clearCacheData, getCache, TTL} from '@/common/cache';
 import {getCurrentPrincipal, getBackend} from './canister_pool';
-import {ApiProfilePost, ApiResult, ApiResultByPage, ApiUserInfo} from "@/api/types";
+import {ApiProfilePost, ApiResult, ApiResultByPage, ApiUserInfo, UserReputation} from "@/api/types";
 import {Principal} from "@dfinity/principal/lib/cjs";
 
 // 注册用户接口，将当前登录用户 id 登记在后端 应当有缓存 不需要返回值
@@ -42,9 +42,9 @@ export async function getUserInfo(): Promise<ApiResult<ApiUserInfo>> {
 export async function getTargetUser(principal: string): Promise<ApiResult<any | ApiUserInfo>> {
     return await getCache({
         key: 'USER_INFO_' + getCurrentPrincipal().toUpperCase(),
-        execute: () => getBackend().get_user(Principal.fromText(principal)),
-        // 记得部署之前改成方法参数
-        // execute: () => getBackend().get_user(Principal.fromText("2vxsx-fae")),
+        // execute: () => getBackend().get_user(Principal.fromText(principal)),
+        // TODO 记得部署之前改成方法参数
+        execute: () => getBackend().get_user(Principal.fromText("2vxsx-fae")),
         ttl: TTL.minute10,
         isLocal: true, // 需要本地存储
     });
@@ -83,4 +83,14 @@ export async function getTargetUserComments(pageNum: number, pageSize: number, q
 // 更新用户自己的信息
 export async function editUserSelf(user: any | ApiUserInfo): Promise<ApiResult<boolean>> {
     return getBackend().edit_user(user);
+}
+
+
+// 获取目标用户声望值（积分）
+export async function getUserReputation(principalId: string): Promise<ApiResult<UserReputation>> {
+    return getBackend().get_reputation({
+        // TODO
+        user: "2vxsx-fae"
+        // user: principalId
+    })
 }

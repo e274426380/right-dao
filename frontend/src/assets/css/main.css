@@ -55,10 +55,18 @@ body {
     max-width: 1200px; /* 网站设计风格 用 1200 宽度 */
   }
 }
+.flex{
+    display: flex;
+}
 /*垂直居中*/
 .flex-y-center{
     display: flex;
     align-items: center;
+}
+
+.create-time{
+    font-size: 14px;
+    color: rgb(133, 144, 166);
 }
 
 .el-icon.el-backtop__icon {

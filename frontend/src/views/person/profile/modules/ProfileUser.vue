@@ -26,17 +26,31 @@
                         <el-row>
                             {{ targetPrincipal }}
                         </el-row>
+                        <el-row v-if="user.location">
+                            <el-icon>
+                                <LocationFilled/>
+                            </el-icon>
+                            {{user.location}}
+                        </el-row>
                         <el-row v-if="user.email">
                             <el-icon>
                                 <Message/>
                             </el-icon>
                             {{user.email}}
                         </el-row>
-                        <el-row v-if="user.memo">
+                        <el-row v-if="user.biography">
                             <el-icon>
                                 <Comment/>
                             </el-icon>
-                            {{user.memo}}
+                            {{user.biography}}
+                        </el-row>
+                        <el-row>
+                            <el-tooltip :content="t('user.reputation')">
+                                <div class="flex-y-center">
+                                    <img src="@/assets/favicon.svg" style="width: 20px;border-radius: 9px;margin-right: 5px">
+                                    {{reputation}}
+                                </div>
+                            </el-tooltip>
                         </el-row>
                         <el-row justify="space-between">
                             <div>
@@ -93,10 +107,21 @@
             <el-form-item>
                 <template #label>
                     <el-icon>
+                        <LocationFilled/>
+                    </el-icon>
+                </template>
+                <el-input v-model="form.location"
+                          maxlength="30"
+                          show-word-limit
+                          :placeholder="t('user.location')"/>
+            </el-form-item>
+            <el-form-item>
+                <template #label>
+                    <el-icon>
                         <Comment/>
                     </el-icon>
                 </template>
-                <el-input v-model="form.memo"
+                <el-input v-model="form.biography"
                           type="textarea"
                           :rows="2"
                           maxlength="120"
@@ -140,31 +165,33 @@
     </el-dialog>
 </template>
 <script lang="ts" setup>
-    import {ref, onMounted, computed,defineEmits} from 'vue';
+    import {ref, onMounted, computed, defineEmits} from 'vue';
     import {useStore} from 'vuex';
     import {useRoute, useRouter} from 'vue-router';
     import {t} from '@/locale';
     import {
         ElRow, ElCol, ElButton, ElDialog, ElForm, ElFormItem,
-        ElInput, ElMessage, ElTag, ElIcon
+        ElInput, ElMessage, ElTag, ElIcon,ElTooltip
     } from 'element-plus/es';
-
-    import {UserFilled, Message, Comment, Close, StarFilled} from '@element-plus/icons-vue';
+    import {UserFilled, Message, Comment, Close, StarFilled, LocationFilled} from '@element-plus/icons-vue';
     import Avatar from '@/components/common/Avatar.vue';
     import Navigator from '@/components/navigator/Navigator.vue';
     import {formatDate} from '@/utils/dates';
-    import {editUserSelf, getTargetUser} from "@/api/user";
+    import {editUserSelf, getTargetUser, getUserReputation} from "@/api/user";
     import {showMessageError, showMessageSuccess} from "@/utils/message";
+
     const store = useStore();
     const router = useRouter();
     const route = useRoute();
     const dialogFormVisible = ref(false);
     const ruleFormRef = ref("")
+    const reputation = ref(0);
     const form = ref({
         owner: "",
         email: "",
         name: "",
-        memo: "",
+        biography: "",
+        location: "",
         created_at: 0,
         interests: [] as string[]
     });
@@ -172,7 +199,8 @@
         owner: "",
         email: "",
         name: "",
-        memo: "",
+        biography: "",
+        location: "",
         created_at: 0,
         interests: []
     });
@@ -185,9 +213,19 @@
     const loading = ref(false);
 
     onMounted(() => {
+        initReputation();
         initPrincipal();
         initUser();
     });
+
+    const initReputation = () => {
+        getUserReputation(targetPrincipal.value).then(res => {
+            console.log("initReputation", res)
+            if (res.Ok) {
+                reputation.value = Number(res.Ok.amount);
+            }
+        })
+    }
 
     const initPrincipal = () => {
         // 获取 路由中的principal
@@ -218,7 +256,7 @@
                 user.value = res.Ok;
                 form.value = {...user.value};
                 //把用户名发给发贴记录组件
-                emit('username',res.Ok.name);
+                emit('username', res.Ok.name);
                 //如果没有兴趣领域，添加一个空的先给表单用
                 // if (form.value.interests.length == 0) {
                 //     form.value.interests = [""];
@@ -258,8 +296,8 @@
 
     const addInterest = () => {
         form.value.interests.push("");
-        console.log("user",user.value)
-        console.log("form",form.value)
+        console.log("user", user.value)
+        console.log("form", form.value)
     }
 
     const removeInterest = (index) => {
@@ -292,7 +330,7 @@
                 .title {
                     margin-bottom: 5px;
                 }
-                .user-tag+.user-tag{
+                .user-tag + .user-tag {
                     margin-left: 10px;
                 }
             }

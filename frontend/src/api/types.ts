@@ -54,6 +54,7 @@ export type ApiUserInfo = {
     status: string;
     created_at: bigint;
     avatar_uri: string; //头像网址，暂时没用
+    location: string; // 位置，用户想写就写。限制30个字
     avatar_id: bigint; //头像id，暂时没用
     biography: string; //类似于个人签名
     interests: string[]; //兴趣，类似于标签
@@ -113,4 +114,10 @@ export type ApiProfilePost = {
     post_title?: string; //评论的title名
     id: bigint;
     post_id?: bigint;
+}
+
+
+export type UserReputation = {
+    user: Principal | string; // 用户principalID
+    amount: bigint; //积分值
 }

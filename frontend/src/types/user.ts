@@ -5,7 +5,7 @@ export class UserInfo {
     owner = ''; // 用户principal，唯一
     email = ''; //邮箱
     name = ''; // 用户自己设置的用户名
-    memo = ''; // 用户签名
+    biography = ''; // 用户签名
     status = ''; //用户状态
     create_at = 0; //注册时间
     avatar_id = 0; // 头像 id

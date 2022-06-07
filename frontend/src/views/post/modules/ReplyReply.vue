@@ -149,7 +149,7 @@
             item['isReply']=true;
             const name = item.authorData && item.authorData.name !== '' ? item.authorData.name :
                 item.author.toString();
-            placeholder.value = " " + name + " ：";
+            placeholder.value = t('post.reply')+" " + name + "：";
             quoteId.value = [Number(item.id)];
         }
     }

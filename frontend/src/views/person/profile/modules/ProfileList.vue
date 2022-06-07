@@ -179,7 +179,7 @@
         margin-top: 30px;
         padding: 20px;
         background-color: rgb(246, 246, 246);
-        min-height: 100vh;
+        min-height: 70vh;
         .empty{
             /*margin-top: 10px;*/
         }

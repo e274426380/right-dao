@@ -12,17 +12,20 @@
                         </div>
                         <div class="reply" v-for="(item,index) in showList">
                             <div class="author">
-                                <Avatar :username="item.authorData && item.authorData.name!=='' ?
+                                <div class="flex">
+                                    <Avatar :username="item.authorData && item.authorData.name!=='' ?
                                             item.authorData.name : item.author.toString()"
-                                        :principalId=item.author.toString()
-                                        :size="38"/>
-                                <div class="authorName">
-                                    <b>{{item.authorData && item.authorData.name!=='' ? item.authorData.name:
-                                        item.author.toString()}}</b>
-                                    <div class="sign" v-if="item.authorData && item.authorData.memo!==''">
-                                        {{item.authorData.memo}}
+                                            :principalId=item.author.toString()
+                                            :size="38"/>
+                                    <div class="authorName">
+                                        <b>{{item.authorData && item.authorData.name!=='' ? item.authorData.name:
+                                            item.author.toString()}}</b>
+                                        <div class="sign" v-if="item.authorData && item.authorData.biography!==''">
+                                            {{item.authorData.biography}}
+                                        </div>
                                     </div>
                                 </div>
+                                <span class="create-time">{{getTimeF(Number(item.created_at))}}</span>
                             </div>
                             <div class="content ql-snow">
                                 <div v-if="item.content.format==='html'"
@@ -76,6 +79,7 @@
     import {t} from '@/locale';
     import {toClipboard} from "@soerenmartius/vue3-clipboard";
     import {showMessageSuccess} from "@/utils/message";
+    import {getTimeF} from "@/utils/dates";
 
     const props = defineProps({
         postId: {
@@ -188,6 +192,7 @@
                 .author {
                     display: flex;
                     align-items: center;
+                    justify-content: space-between;
                     .authorName {
                         margin-left: 10px;
                     }
