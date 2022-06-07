@@ -5,8 +5,9 @@
                 <el-col :span="16" :offset="4">
                     <el-card>
                         <div class="head">
-                            <b v-if="list.length === 0 || list.length === 1">{{list.length+ " " + t('post.size') +
-                                t('post.answer')}}</b>
+                            <b v-if="list.length === 0 || list.length === 1">
+                                {{list.length+ " " + t('post.size') + t('post.answer')}}
+                            </b>
                             <b v-else>{{list.length+ " " + t('post.size') + t('post.answers')}}</b>
                         </div>
                         <div class="reply" v-for="(item,index) in showList">

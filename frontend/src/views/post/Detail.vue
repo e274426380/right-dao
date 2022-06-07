@@ -3,7 +3,7 @@
         <Navigator/>
         <Head :post="post" @showWrite="showWriteReply()" v-if="post!==undefined"/>
         <WriteReply @foldWrite="foldWrite(false)" @replySuccess="replyInit" v-show="showWrite"/>
-        <div v-show="post!==undefined" style="min-height: 100vh">
+        <div v-show="post!==undefined" style="min-height: 70vh">
             <TimeLine :postId="postId" @changeStatusSuccess="init" :isOwner="isOwner"/>
             <Reply :postId="postId" ref="reply"/>
         </div>

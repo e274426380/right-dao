@@ -43,7 +43,7 @@
                 <!-- logo -->
                 <div class="icon">
                     <div>
-                        <img src="@/assets/images/logo.svg" @click="onHome" />
+                        <img src="@/assets/images/RightsDaoText.png" @click="onHome" />
                     </div>
                 </div>
                 <div class="content adaptation-hidden-1100">
@@ -412,12 +412,12 @@
                     /*top: 52px;*/
                     z-index: 100;
                     > div {
-                        width: 132px;
-                        height: 32px;
+                        /*width: 132px;*/
+                        /*height: 32px;*/
                         img,
                         svg {
                             width: 132px;
-                            height: 32px;
+                            /*height: 32px;*/
                             cursor: pointer;
                         }
                     }
