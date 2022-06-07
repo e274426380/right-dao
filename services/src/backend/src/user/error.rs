@@ -16,4 +16,6 @@ pub enum UserError {
     UserEmailInvalid,
     #[error("User biography is too long")]
     UserBiographyTooLong,
+    #[error("User location is too long")]
+    UserLocationTooLong,
 }

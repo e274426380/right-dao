@@ -21,6 +21,7 @@ type UserError = variant {
     UserNameTooLong;
     UserEmailInvalid;
     UserBiographyTooLong;
+    UserLocationTooLong;
 };
 
 type UserProfile = record {
@@ -32,8 +33,7 @@ type UserProfile = record {
     avatar_uri: text;
     biography: text;
     interests: vec text;
-    city: text;
-    country: text;
+    location: text;
     memo : text;
     status : UserStatus;
     created_at : nat64;
@@ -51,8 +51,7 @@ type UserEditCommand = record {
     avatar_uri: text;
     biography: text;
     interests: vec text;
-    city: text;
-    country: text;
+    location: text;
     memo: text;
     status: UserStatus;
 };
