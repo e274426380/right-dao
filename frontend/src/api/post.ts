@@ -65,3 +65,11 @@ export async function addPostReplyReply(commentId: number, postId, content: stri
         }
     });
 }
+
+// 采纳贴子的最佳答案，只能由求助者本人调用此方法。
+export async function submitPostAnswer(postId: number, commentId: number): Promise<ApiResult<boolean>> {
+    return getBackend().submit_post_answer({
+        post_id: postId,
+        comment_id: commentId,
+    });
+}

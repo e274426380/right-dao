@@ -17,7 +17,8 @@ export default {
     post: {
         create: "创建求助成功",
         reply: "回复成功",
-        error: "发布格式存在问题"
+        error: "发布格式存在问题",
+        adopt: "采纳答案成功",
     },
     share: {
         success: "分享成功，已复制到粘贴板。"

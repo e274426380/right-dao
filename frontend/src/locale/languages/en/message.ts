@@ -17,7 +17,8 @@ export default {
     post: {
         create: "Create help request successfully",
         reply: "Reply Success",
-        error: "There Is A Problem With The Publishing Format"
+        error: "There Is A Problem With The Publishing Format",
+        adopt: "Adopted Successfully",
     },
     share: {
         success: "Share Success, Copied to the pasteboard"

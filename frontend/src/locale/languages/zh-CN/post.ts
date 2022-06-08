@@ -1,6 +1,10 @@
 export default {
     topics: "主题",
     reply: "回复",
+    adopt: {
+        text: "采纳答案",
+        confirm: "你确定要采纳这个回答吗",
+    },
     cancelReply: "取消回复",
     writeAnswer: "写回答",
     answer: "回答",

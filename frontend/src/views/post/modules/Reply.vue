@@ -40,7 +40,7 @@
                                 </div>
                             </div>
                             <div class="footer">
-                                <div>
+                                <div class="flex">
                                     <span v-if="item.comments.length===0 || item.comments.length===1"
                                           @click="openReplyReply(index)">
                                         {{item.comments.length+ " " + t('post.item') + t('post.comment')}}
@@ -49,6 +49,20 @@
                                         {{item.comments.length+ " " + t('post.item') + t('post.comments')}}
                                     </span>
                                     <span @click="share(item.id)">{{t('common.share')}}</span>
+                                    <el-popconfirm :title="t('post.adopt.confirm')"
+                                                   :confirmButtonText="t('common.confirm')"
+                                                   :cancelButtonText="t('common.cancel')"
+                                                   @confirm="submitAnswer(Number(item.post_id),Number(item.id))"
+                                    >
+                                        <template #reference>
+                                            <div class="owner-div flex-y-center">
+                                                <el-icon>
+                                                    <Medal/>
+                                                </el-icon>
+                                                <span>{{t('post.adopt.text')}}</span>
+                                            </div>
+                                        </template>
+                                    </el-popconfirm>
                                 </div>
                                 <div>
                                     <span v-if="!foldIndex[index]" @click="fold(index)">{{t('common.expand')}}</span>
@@ -70,12 +84,13 @@
 </template>
 <script lang="ts" setup>
     import {ref, onMounted, defineProps, defineExpose} from 'vue';
-    import {ElRow, ElCol, ElButton, ElCard} from 'element-plus/es';
+    import {ElRow, ElCol, ElButton, ElCard, ElIcon, ElPopconfirm} from 'element-plus/es';
+    import {Medal} from '@element-plus/icons-vue';
     import Avatar from '@/components/common/Avatar.vue';
     import ReplyReply from './ReplyReply.vue';
     import {ApiPostComments} from "@/api/types";
     import {getTargetUser} from "@/api/user";
-    import {getPostComments} from "@/api/post";
+    import {getPostComments, submitPostAnswer} from "@/api/post";
     import {t} from '@/locale';
     import {toClipboard} from "@soerenmartius/vue3-clipboard";
     import {showMessageSuccess} from "@/utils/message";
@@ -86,6 +101,10 @@
             type: Number,
             required: true,
         },
+        isOwner: {
+            type: Boolean,
+            required: true,
+        }
     });
     const list = ref<ApiPostComments[]>([]);
     const showList = ref<ApiPostComments[]>([]);
@@ -130,11 +149,20 @@
         }
     }
 
+    const submitAnswer = (postId: number, commentId: number) => {
+        submitPostAnswer(postId, commentId).then(res => {
+            console.log("res", res)
+            if(res.Ok){
+                showMessageSuccess(t('message.post.adopt'))
+            }
+        })
+    }
+
     const paging = () => {
         if (totalCount.value > 0) {
             const length = showList.value.length;
             showList.value.push(...list.value.slice(pageSize.value * (pageNum.value - 1), pageSize.value * pageNum.value));
-            console.log("showList", showList.value)
+            console.log("ReplyShowList", showList.value)
             //需要获取user数据的index区间在(length, length + pageSize)
             for (let i = length; i < showList.value.length; i++) {
                 getTargetUser(showList.value[i].author.toString()).then(res => {
@@ -196,6 +224,9 @@
                     .authorName {
                         margin-left: 10px;
                     }
+                }
+                .owner-div {
+                    margin-left: 10px;
                 }
                 .footer {
                     display: flex;

@@ -38,7 +38,7 @@
                                    :page-size="pageSize"
                                    v-model:currentPage="pageNum"
                                    @current-change="paging()"
-                                   :total="total" />
+                                   :total="total"/>
                 </div>
             </template>
             <template #footer>
@@ -53,7 +53,7 @@
 </template>
 <script lang="ts" setup>
     import {ref, onMounted, watch, defineProps, defineEmits, PropType} from 'vue';
-    import {ElRow, ElCol, ElButton, ElCard, ElDialog, ElInput,ElPagination} from 'element-plus/es';
+    import {ElRow, ElCol, ElButton, ElCard, ElDialog, ElInput, ElPagination} from 'element-plus/es';
     import {addPostReplyReply} from "@/api/post";
     import {ApiPostComments} from "@/api/types";
     import Avatar from '@/components/common/Avatar.vue';
@@ -123,7 +123,7 @@
                 }
             }
             getTargetUser(showList.value[i].author.toString()).then(res => {
-                if (res.Ok && showList.value[i].author.toString()===res.Ok.owner.toString()) {
+                if (res.Ok && showList.value[i].author.toString() === res.Ok.owner.toString()) {
                     showList.value[i] = {
                         ...showList.value[i],
                         authorData: res.Ok,
@@ -140,22 +140,22 @@
     const replyOther = (item: any) => {
         replyReply.value = "";
         //取消回复
-        if(item['isReply']){
-            item['isReply']=false;
+        if (item['isReply']) {
+            item['isReply'] = false;
             placeholder.value = t('post.commentPlaceholder');
             quoteId.value = [];
         } else {
             //正常回复
-            item['isReply']=true;
+            item['isReply'] = true;
             const name = item.authorData && item.authorData.name !== '' ? item.authorData.name :
                 item.author.toString();
-            placeholder.value = t('post.reply')+" " + name + "：";
+            placeholder.value = t('post.reply') + " " + name + "：";
             quoteId.value = [Number(item.id)];
         }
     }
 
     const submit = () => {
-        if(replyReply.value.trim().length===0){
+        if (replyReply.value.trim().length === 0) {
             showMessageError(t('message.post.error'))
             return
         }
@@ -198,13 +198,13 @@
         .replyInput {
             margin-bottom: 10px;
         }
-        .dialog-pagination .el-pagination{
+        .dialog-pagination .el-pagination {
             border-bottom: 1px solid rgb(246, 246, 246);
             border-top: 1px solid rgb(246, 246, 246);
             padding-top: 10px;
             padding-bottom: 10px;
             justify-content: center;
-            .number{
+            .number {
                 padding-top: 4px;
             }
         }
@@ -216,7 +216,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                .author{
+                .author {
                     display: flex;
                 }
                 .authorName {

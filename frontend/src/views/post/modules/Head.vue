@@ -82,7 +82,6 @@
     });
 
     onMounted(() => {
-        console.log("getTIme",getTimeF(props.post.created_at))
         init();
     });
 

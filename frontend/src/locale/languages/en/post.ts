@@ -1,6 +1,10 @@
 export default {
     topics: "Topics",
     reply: "Reply",
+    adopt: {
+        text: "Adopt answer",
+        confirm: "Are you sure you want to take this answer?",
+    },
     cancelReply: "Cancel Reply",
     writeAnswer: "Write Comment",
     answer: "Comment", // answer 全改成 comment

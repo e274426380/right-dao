@@ -5,7 +5,7 @@
         <WriteReply @foldWrite="foldWrite(false)" @replySuccess="replyInit" v-show="showWrite"/>
         <div v-show="post!==undefined" style="min-height: 70vh">
             <TimeLine :postId="postId" @changeStatusSuccess="init" :isOwner="isOwner"/>
-            <Reply :postId="postId" ref="reply"/>
+            <Reply :postId="postId" ref="reply" :isOwner="isOwner"/>
         </div>
     </div>
 </template>
@@ -30,7 +30,7 @@
     const postId = Number(route.params.id);
     const currentUserPrincipal = computed<string>(() => store.state.user.principal);
     // 是否是本人。关联编辑按钮的显示与否
-    //本地环境下，author和current会有冲突。
+    // 本地环境下，authorId和currentId会有冲突。
     const isOwner = computed(() => {
         if (post.value) {
             return currentUserPrincipal.value === post.value.author.toString()
