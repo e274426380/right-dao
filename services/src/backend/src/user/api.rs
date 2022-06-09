@@ -18,7 +18,14 @@ fn register_user(cmd: UserRegisterCommand) -> Result<String, UserError> {
         let id = ctx.id;
         let caller = ctx.env.caller();
         let now = ctx.env.now();
-        match ctx.user_service.register_user(cmd, id, caller, now) {
+        let user = cmd.build_profile(
+            id,
+            caller,
+            UserStatus::Enable,
+            now
+        );
+
+        match ctx.user_service.insert_user(user) {
             Ok(p) => {
                 ctx.id += 1;    // 注册成功，id + 1
                 Ok(p.to_string())

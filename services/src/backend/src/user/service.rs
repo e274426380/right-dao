@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 
 use candid::Principal;
 
-use super::{domain::{UserProfile, UserRegisterCommand, UserStatus, Timestamp, UserEditCommand}, error::UserError};
+use super::{domain::{UserProfile, UserStatus, UserEditCommand}, error::UserError};
 
 #[derive(Debug, Default)]
 pub struct UserService {
@@ -11,22 +11,16 @@ pub struct UserService {
 }
 
 impl UserService {
-    pub fn register_user(&mut self, cmd: UserRegisterCommand, id: u64, caller: Principal, now: Timestamp) -> Result<Principal, UserError> {
-        match self.users.get(&caller) {
+    pub fn insert_user(&mut self, user: UserProfile) -> Result<Principal, UserError> {
+        let owner = user.owner;
+        match self.users.get(&owner) {
             Some(_) => Err(UserError::UserAlreadyExists),
             None => {
-                let user = cmd.build_profile(
-                    id,
-                    caller,
-                    UserStatus::Enable,
-                    now
-                );
-
                 self.users.insert(
-                    caller,
+                    owner,
                     user,
                 );                
-                Ok(caller)
+                Ok(owner)
             }
         }       
     }

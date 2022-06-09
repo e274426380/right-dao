@@ -5,6 +5,8 @@ use std::iter::FromIterator;
 
 use crate::env::{Environment, CanisterEnvironment, EmptyEnvironment};
 
+use crate::governance::GovernanceService;
+use crate::governance::domain::{GovernanceProposal, GovernanceMember};
 use crate::post::domain::PostId;
 use crate::reputation::ReputationService;
 use crate::reputation::domain::{ReputationSummary, ReputationEvent};
@@ -23,6 +25,8 @@ pub struct DaoDataStorage {
     pub posts: Vec<PostProfile>,
     pub reputation_summaries: Vec<ReputationSummary>,
     pub reputation_events: Vec<ReputationEvent>,
+    pub governance_proposals: Vec<GovernanceProposal>,
+    pub governance_members: Vec<GovernanceMember>,
 }
 
 impl From<DaoContext> for DaoDataStorage {
@@ -42,12 +46,20 @@ impl From<DaoContext> for DaoDataStorage {
             .iter()
             .map(|(_, event)| event.clone())
         );
+        let governance_proposals = Vec::from_iter(context.governance_service.proposals
+            .iter()
+            .map(|(_k, v)| (v.clone())));
+        let governance_members = Vec::from_iter(context.governance_service.members
+            .iter()
+            .map(|(_k, v)| (v.clone())));
         Self {
             id,
             users,
             posts,
             reputation_summaries,
-            reputation_events
+            reputation_events,
+            governance_proposals,
+            governance_members,
         }
     }
 }
@@ -58,6 +70,7 @@ pub struct DaoContext {
     pub user_service: UserService,
     pub post_service: PostService,
     pub reputation_service: ReputationService,
+    pub governance_service: GovernanceService,
 }
 
 impl Default for DaoContext {
@@ -68,6 +81,7 @@ impl Default for DaoContext {
             user_service: UserService::default(),
             post_service: PostService::default(),
             reputation_service: ReputationService::default(),
+            governance_service: GovernanceService::default(),
         }
     }
 }
@@ -88,7 +102,7 @@ impl From<DaoDataStorage> for DaoContext {
         let reputation_summaries: BTreeMap<Principal, ReputationSummary> = payload
             .reputation_summaries
             .into_iter()
-            .map(|summary| (summary.user, summary))
+            .map(|summary| (summary.id, summary))
             .collect();
 
         let reputation_events: BTreeMap<u64, ReputationEvent> = payload
@@ -97,12 +111,23 @@ impl From<DaoDataStorage> for DaoContext {
             .map(|event| (event.id, event))
             .collect();
 
+        let governance_proposals: BTreeMap<u64, GovernanceProposal> = payload
+            .governance_proposals
+            .into_iter()
+            .map(|gp| (gp.id, gp))
+            .collect();
+        let governance_members: BTreeMap<Principal, GovernanceMember> = payload
+            .governance_members
+            .into_iter()
+            .map(|gm| (gm.id, gm))
+            .collect();
         Self {
             env: Box::new(CanisterEnvironment {}),
             id: payload.id,
             user_service: UserService { users },
             post_service: PostService { posts },
             reputation_service: ReputationService { summaries: reputation_summaries, events: reputation_events },
+            governance_service: GovernanceService { proposals: governance_proposals, members: governance_members },
         }
     }
 }

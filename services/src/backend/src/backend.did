@@ -156,7 +156,7 @@ type PostEvent = record {
     created_at: nat64;
 };
 
-type PostPageQuery = record {
+type PageQuery = record {
     page_num: nat64;
     page_size: nat64;
     querystring: text;
@@ -308,7 +308,7 @@ type CommentSummaryPageResult = variant {
 
 
 type ReputationSummary = record {
-    user: principal;
+    id: principal;
     amount: nat64;
 };
 
@@ -323,6 +323,111 @@ type ReputationSummaryResult = variant {
 
 type ReputationGetQuery = record {
     user: text;
+};
+
+type Weights = record {
+    amount: nat64;
+};
+
+type ProposalState = variant {
+    // The proposal is open for voting
+    Open;
+
+    // Enough "yes" votes have been cast to accept the proposal, and it will soon be executed
+    Accepted;
+
+    // Enough "no" votes have been cast to reject the proposal, and it will not be executed
+    Rejected;
+
+    // The proposal is currently being executed
+    Executing;
+
+    // The proposal has been successfully executed
+    Succeeded;
+
+    // A failure occurred while executing the proposal
+    Failed: text;
+};
+
+type GovernanceProposal = record {
+    id: nat64;
+    proposer: principal;
+    payload: ProposalPayload;
+    state: ProposalState;
+    votes_yes: Weights;
+    votes_no: Weights;
+    voters: vec principal;
+    vote_threshold: Weights;
+    created_at: nat64;
+};
+
+type ProposalPayload = record {
+    canister_id: principal;
+    method: text;
+    message: blob;
+};
+
+type Vote = variant {
+    Yes;
+    No;
+};
+
+type VoteArgs = record {
+    proposal_id: nat64;
+    vote: Vote;
+};
+
+type VoteResult = variant {
+    Ok: ProposalState;
+    Err: text;
+};
+
+type GovernanceProposalGetQuery = record {
+    id: nat64;
+};
+
+type GovernanceProposalResult = variant {
+    Ok: GovernanceProposal;
+    Err: GovernanceError;
+};
+
+type ProposalSubmitResult = variant {
+    Ok: nat64;
+    Err: GovernanceError;
+};
+
+type GovernanceError = variant {
+    ProposalNotFound;
+    ProposalAlreadyExists;
+    ProposalStateNotOpen;
+    ProposalUnAuthorized;
+    VoterAlreadyVoted;
+    VoterNotFound;
+    MemberPrincipalWrongFormat;
+    MemberNotFound;
+};
+
+type GovernanceProposalPage = record {
+   data: vec GovernanceProposal;
+   page_num: nat64;
+   page_size: nat64;
+   total_count: nat64
+};
+
+type GovernanceProposalPageResult = variant {
+    Ok: GovernanceProposalPage;
+    Err: GovernanceError;
+};
+
+type GovernanceMember = record {
+    id: principal;
+    weights: Weights;
+    created_at: nat64;
+};
+
+type GovernanceMemberResult = variant {
+    Ok: GovernanceMember;
+    Err: GovernanceError;
 };
 
 service : {
@@ -344,11 +449,11 @@ service : {
     "get_post_info" : (PostIdCommand) -> (PostInfoResult);
     "get_post_comments" : (PostIdCommand) -> (PostCommentResult);
     "get_post_events" : (PostIdCommand) -> (PostEventResult);
-    "page_posts" : (PostPageQuery) -> (PostPageResult);
+    "page_posts" : (PageQuery) -> (PostPageResult);
 
-    "my_posts" : (PostPageQuery) -> (PostInfoPageResult);
-    "my_post_comments" : (PostPageQuery) -> (PostPageResult);
-    "my_comments" : (PostPageQuery) -> (CommentSummaryPageResult);
+    "my_posts" : (PageQuery) -> (PostInfoPageResult);
+    "my_post_comments" : (PageQuery) -> (PostPageResult);
+    "my_comments" : (PageQuery) -> (CommentSummaryPageResult);
 
     "other_posts" : (PostPageOtherQuery) -> (PostInfoPageResult);
     "other_post_comments" : (PostPageOtherQuery) -> (PostPageResult);
@@ -361,4 +466,10 @@ service : {
 
     "my_reputation" : () -> (ReputationSummaryResult);
     "get_reputation" : (ReputationGetQuery) -> (ReputationSummaryResult);
+
+    "submit_governance_proposal" : (ProposalPayload) -> (ProposalSubmitResult);
+    "vote_governance_proposal" : (VoteArgs) -> (VoteResult);
+    "get_governance_proposal" : (GovernanceProposalGetQuery) -> (GovernanceProposalResult);
+    "page_governance_proposals" : (PageQuery) -> (GovernanceProposalPageResult);
+    "get_governance_member" : (text) -> (GovernanceMemberResult);
 }

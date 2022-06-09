@@ -6,7 +6,10 @@ use candid::Principal;
 
 use crate::domain::{CommentSummaryPage, CommentSummary, PostInfoPage, PostAnswerCommand};
 
-use super::{domain::{PostProfile, PostId, PostCreateCommand, Timestamp, PostStatus, PostEditCommand, PostPage, PostPageQuery, PostCommentCommand, PostEventCommand, CommentCommentCommand, PostChangeStatusCommand, PostEvent, }, error::PostError};
+use super::{
+    domain::*, 
+    error::PostError
+};
 
 
 #[derive(Debug, Default)]
@@ -15,18 +18,14 @@ pub struct PostService {
 }
 
 impl PostService {
-    pub fn create_post(&mut self, cmd: PostCreateCommand, id: u64, caller: Principal, now: Timestamp) -> Option<u64> {
+    pub fn create_post(&mut self, post: PostProfile) -> Option<u64> {
+        let id = post.id;
         match self.posts.get(&id) {
             Some(_) => None,
             None => {
                 self.posts.insert(
-                    id.into(),
-                    cmd.build_profile(
-                        id,
-                        caller,
-                        PostStatus::Enable,
-                        now
-                    )
+                    id,
+                    post,
                 );                
                 Some(id)
             }
@@ -58,6 +57,7 @@ impl PostService {
         }
     }
 
+    // 更新帖子的答案，返回答案的 author 和 
     pub fn update_post_answer(&mut self, cmd: PostAnswerCommand, now: Timestamp) -> Result<bool, PostError> {
         if let Some(profile) = self.posts.get_mut(&cmd.post_id) {
             
@@ -268,8 +268,8 @@ mod tests {
             participants: vec!["Layer".to_string()],
             end_time: None,
         };
-
-        let res1 = svc.create_post(create_cmd, id, caller, now);
+        let post = create_cmd.build_profile(id, caller, PostStatus::Enable, now);
+        let res1 = svc.create_post(post);
 
         assert_eq!(res1.unwrap(), 10001u64);
 

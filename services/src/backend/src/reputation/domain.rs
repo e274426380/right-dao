@@ -7,14 +7,14 @@ use candid::{CandidType, Deserialize, Principal};
 /// 发贴时，用户会获取 2 点 声望；回帖时，回帖人和帖子的 owner 各获取 1 声望
 #[derive(Debug, Clone, CandidType, Deserialize, PartialEq, Eq)]
 pub struct ReputationSummary {
-    pub user: Principal,
+    pub id: Principal,
     pub amount: u64,
 
 }
 
 impl ReputationSummary {
     pub fn new(user: Principal) -> Self {
-        Self { user, amount: 0 }
+        Self { id: user, amount: 0 }
     }
 }
 
@@ -32,7 +32,7 @@ impl Add<u64> for ReputationSummary {
 impl AddAssign<u64> for ReputationSummary {
     fn add_assign(&mut self, other: u64) {
         *self = Self { 
-            user: self.user, 
+            id: self.id, 
             amount: self.amount + other }
     }
 }
@@ -65,6 +65,8 @@ pub enum ReputationAction {
     RegisterUser,
     PublishPost,
     ReplyPost,
+    PassiveReplied,
+    SelectedPostAnswer,
     ReplyComment,
 }
 
@@ -83,13 +85,13 @@ mod tests {
         let user = Principal::anonymous();
         let amount = 20u64;
         let mut rm = ReputationSummary {
-            user,
+            id: user,
             amount,
         };
 
         rm += amount;
 
-        assert_eq!(rm, ReputationSummary { user, amount: amount * 2 });
+        assert_eq!(rm, ReputationSummary { id: user, amount: amount * 2 });
 
     }
 }

@@ -1,6 +1,6 @@
 
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use candid::Principal;
 
@@ -16,8 +16,21 @@ pub struct ReputationService {
 }
 
 impl ReputationService {
+
+    pub fn insert_reputation(&mut self, rs: ReputationSummary) {
+        self.summaries.insert(rs.id, rs);
+    }
+    
     pub fn get_reputation(&self, user: &Principal) -> Option<ReputationSummary> {
         self.summaries.get(user).cloned()
+    }
+
+    pub fn get_reputations(&self, users: &BTreeSet<Principal>) -> Vec<ReputationSummary> {
+        self.summaries
+            .values()
+            .filter(|r| users.contains(&r.id))
+            .cloned()
+            .collect()
     }
 
     pub fn handle_reputation_event(&mut self, event: ReputationEvent) -> bool {

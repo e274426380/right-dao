@@ -4,8 +4,8 @@ use std::collections::VecDeque;
 use candid::Principal;
 use ic_cdk_macros::{update, query};
 
-use crate::reputation::domain::ReputationEvent;
-use crate::{CONTEXT, reputation::domain::ReputationAction};
+use crate::reputation::domain::{ReputationAction, ReputationEvent};
+use crate::CONTEXT;
 use crate::common::guard::has_user_guard;
 
 use super::{domain::*, error::PostError};
@@ -17,7 +17,13 @@ fn create_post(cmd: PostCreateCommand) -> Result<u64, PostError> {
         let id = ctx.id;
         let caller = ctx.env.caller();
         let now = ctx.env.now();
-        match ctx.post_service.create_post(cmd, id, caller, now) {
+        let post = cmd.build_profile(
+            id,
+            caller,
+            PostStatus::Enable,
+            now
+        );
+        match ctx.post_service.create_post(post) {
             Some(_) => {
                 ctx.id += 1;    // id addOne
 
@@ -88,7 +94,18 @@ fn submit_post_answer(cmd: PostAnswerCommand) -> Result<bool, PostError> {
                     return Err(PostError::PostUnAuthorizedOperation);
                 }
                 
-                ctx.post_service.update_post_answer(cmd, now)
+                let res = ctx.post_service.update_post_answer(cmd.clone(), now);
+
+                if res.is_ok() {
+                    if let Some(comment) = p.comments.iter().find(|c| c.id == cmd.comment_id) {
+                        if comment.author != p.author {
+                            let re = ReputationEvent::new(ctx.id, comment.author, ReputationAction::SelectedPostAnswer, 1, now);
+                            ctx.reputation_service.handle_reputation_event(re);
+                        }                   
+                    }
+                }
+
+                res
             },
             None => Err(PostError::PostNotFound),
         }
@@ -129,12 +146,14 @@ fn add_post_comment(cmd: PostCommentCommand) -> Result<bool, PostError> {
             Ok(_) => {
                 ctx.id += 1;    // id addOne
                 
-                if let Some(post) =  ctx.post_service.get_post(post_id) {
-                    let re = ReputationEvent::new(ctx.id, post.author, ReputationAction::ReplyPost, 1, now);
+                let post = ctx.post_service.get_post(post_id).ok_or(PostError::PostNotFound)?;
+                // 回帖人与发帖人不是同一人才能获得被回帖的声望积分
+                if post.author != caller {
+                    let re = ReputationEvent::new(ctx.id, post.author, ReputationAction::PassiveReplied, 1, now);
                     ctx.reputation_service.handle_reputation_event(re);
                     ctx.id += 1;
                 }
-
+                // 回帖人获取声望积分
                 let re = ReputationEvent::new(ctx.id, caller, ReputationAction::ReplyPost, 1, now);
                 ctx.reputation_service.handle_reputation_event(re);
                 ctx.id += 1;

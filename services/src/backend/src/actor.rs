@@ -7,8 +7,12 @@ use ic_cdk::storage;
 
 use crate::context::{DaoContext, DaoDataStorage};
 
-use crate::CONTEXT;
+use crate::{CONTEXT, GOVERNANACE_LSHOO, GOVERNANACE_CREATOR_REPUTATION};
 use crate::env::CanisterEnvironment;
+use crate::governance::domain::{Weights, GovernanceMember};
+use crate::reputation::domain::ReputationSummary;
+
+
 
 #[query]
 fn next_id() -> u64 {
@@ -33,8 +37,25 @@ fn init_canister() {
         env: Box::new(CanisterEnvironment {}),
         ..DaoContext::default()
     };
-
-    CONTEXT.with(|c| *c.borrow_mut() = context);
+    
+    let now = context.env.now();
+    let creator1 = GOVERNANACE_LSHOO.with(|g| g.clone());
+    let creator_reputation = GOVERNANACE_CREATOR_REPUTATION.with(|cr| cr.clone());
+    
+    CONTEXT.with(|c| { 
+        *c.borrow_mut() = context;
+        
+        // 初始化创始人数据（治理委员会成员和声望值）
+        c.borrow_mut().governance_service.insert_member(GovernanceMember {
+            id: creator1,
+            weights: Weights { amount: creator_reputation },
+            created_at: now,
+        });
+        c.borrow_mut().reputation_service.insert_reputation(ReputationSummary {
+            id: creator1,
+            amount: creator_reputation,
+        })
+    });
 }
 
 #[pre_upgrade]
@@ -61,8 +82,14 @@ fn pre_upgrade() {
             .iter()
             .map(|(_, event)| event.clone())
         );
+        let governance_proposals = Vec::from_iter(context.governance_service.proposals
+            .iter()
+            .map(|(_k, v)| (v.clone())));
+        let governance_members = Vec::from_iter(context.governance_service.members
+            .iter()
+            .map(|(_k, v)| (v.clone())));
         let payload: DaoDataStorage = DaoDataStorage {
-            id, users, posts, reputation_summaries, reputation_events
+            id, users, posts, reputation_summaries, reputation_events, governance_proposals, governance_members,
         };
         
         storage::stable_save((payload,))
