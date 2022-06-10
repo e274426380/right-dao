@@ -11,4 +11,7 @@ pub enum GovernanceError {
     VoterNotFound,
     MemberPrincipalWrongFormat,
     MemberNotFound,
+    ExecutingProposalUnAuthorized,
+    MemberAlreadyExists,
+    UserNotFound, // 提案不存在的用户成为 Governance member
 }

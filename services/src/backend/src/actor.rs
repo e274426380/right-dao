@@ -9,7 +9,7 @@ use crate::context::{DaoContext, DaoDataStorage};
 
 use crate::{CONTEXT, GOVERNANACE_LSHOO, GOVERNANACE_CREATOR_REPUTATION};
 use crate::env::CanisterEnvironment;
-use crate::governance::domain::{Weights, GovernanceMember};
+use crate::governance::domain::GovernanceMember;
 use crate::reputation::domain::ReputationSummary;
 
 
@@ -48,7 +48,6 @@ fn init_canister() {
         // 初始化创始人数据（治理委员会成员和声望值）
         c.borrow_mut().governance_service.insert_member(GovernanceMember {
             id: creator1,
-            weights: Weights { amount: creator_reputation },
             created_at: now,
         });
         c.borrow_mut().reputation_service.insert_reputation(ReputationSummary {

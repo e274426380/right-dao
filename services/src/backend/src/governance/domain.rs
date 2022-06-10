@@ -11,8 +11,28 @@ pub type Timestamp = u64;
 #[derive(Debug, Clone, CandidType, Deserialize)]
 pub struct GovernanceMember {
     pub id: Principal,
-    pub weights: Weights,
     pub created_at: u64,
+}
+
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct GovernanceMemberAddCommand {
+    pub id: String,
+}
+
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct GovernanceMemberAddArgs {
+    pub id: Principal,
+}
+
+
+impl ProposalPayloadBuilder for GovernanceMemberAddArgs {
+    fn build_proposal_payload(self) -> ProposalPayload {
+        ProposalPayload { 
+            // canister_id, 
+            // method,
+            execute_args: ProposalExecuteArgs::AddGovernanceMember(self)
+        }
+    }
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize)]
@@ -49,10 +69,19 @@ impl GovernanceProposal {
 /// The data needed to call a given method on a given canister with given args
 #[derive(Clone, Debug, CandidType, Deserialize)]
 pub struct ProposalPayload {
-    pub project_id: u64,
-    pub canister_id: Principal,
-    pub method: String,
-    pub message: Vec<u8>,
+    // pub canister_id: Principal,
+    // pub method: String,
+    // pub message: Vec<u8>,
+    pub execute_args: ProposalExecuteArgs,
+}
+
+#[derive(Clone, Debug, CandidType, Deserialize)]
+pub enum ProposalExecuteArgs {
+    AddGovernanceMember(GovernanceMemberAddArgs),
+}
+
+pub trait ProposalPayloadBuilder {
+    fn build_proposal_payload(self) -> ProposalPayload;
 }
 
 impl ProposalPayload {

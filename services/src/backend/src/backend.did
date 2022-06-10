@@ -362,9 +362,15 @@ type GovernanceProposal = record {
 };
 
 type ProposalPayload = record {
-    canister_id: principal;
-    method: text;
-    message: blob;
+    execute_args: ProposalExecuteArgs;
+};
+
+type ProposalExecuteArgs = variant {
+    AddGovernanceMember : GovernanceMemberAddArgs;
+};
+
+type GovernanceMemberAddArgs = record {
+    id: principal;
 };
 
 type Vote = variant {
@@ -379,7 +385,7 @@ type VoteArgs = record {
 
 type VoteResult = variant {
     Ok: ProposalState;
-    Err: text;
+    Err: GovernanceError;
 };
 
 type GovernanceProposalGetQuery = record {
@@ -389,6 +395,10 @@ type GovernanceProposalGetQuery = record {
 type GovernanceProposalResult = variant {
     Ok: GovernanceProposal;
     Err: GovernanceError;
+};
+
+type GovernanceMemberAddCommand = record {
+    id: text;
 };
 
 type ProposalSubmitResult = variant {
@@ -405,6 +415,9 @@ type GovernanceError = variant {
     VoterNotFound;
     MemberPrincipalWrongFormat;
     MemberNotFound;
+    ExecutingProposalUnAuthorized;
+    MemberAlreadyExists;
+    UserNotFound;
 };
 
 type GovernanceProposalPage = record {
@@ -421,7 +434,6 @@ type GovernanceProposalPageResult = variant {
 
 type GovernanceMember = record {
     id: principal;
-    weights: Weights;
     created_at: nat64;
 };
 
@@ -467,7 +479,7 @@ service : {
     "my_reputation" : () -> (ReputationSummaryResult);
     "get_reputation" : (ReputationGetQuery) -> (ReputationSummaryResult);
 
-    "submit_governance_proposal" : (ProposalPayload) -> (ProposalSubmitResult);
+    "submit_add_governance_member_proposal" : (GovernanceMemberAddCommand) -> (ProposalSubmitResult);
     "vote_governance_proposal" : (VoteArgs) -> (VoteResult);
     "get_governance_proposal" : (GovernanceProposalGetQuery) -> (GovernanceProposalResult);
     "page_governance_proposals" : (PageQuery) -> (GovernanceProposalPageResult);
