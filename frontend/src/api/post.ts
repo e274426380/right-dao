@@ -17,6 +17,11 @@ export async function getPost(id: number): Promise<ApiResult<ApiPost>> {
     return getBackend().get_post({id: id});
 }
 
+// 删除贴子，只有用户自己可以操作
+export async function deletePost(id: number): Promise<ApiResult<boolean>> {
+    return getBackend().delete_post({id: id});
+}
+
 // 获取贴子详情，不获取时间线和回贴
 export async function getPostInfo(id: number): Promise<ApiResult<ApiPost>> {
     return getBackend().get_post_info({id: id});

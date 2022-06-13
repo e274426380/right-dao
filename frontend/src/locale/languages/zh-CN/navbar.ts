@@ -1,6 +1,7 @@
 export default {
     tabs: {
         home: '首页',
+        dao: 'DAO',
     },
     user: {
         profile: '个人中心'

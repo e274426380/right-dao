@@ -196,6 +196,7 @@
     const pageIndex = ref(0);
     const pages = ref<{ text: string; action: string }[]>([
         { text: 'navbar.tabs.home', action: '/' },
+        { text: 'navbar.tabs.dao', action: '/' },
     ]);
 
     // 多语言设置
@@ -451,11 +452,11 @@
                             justify-content: flex-end;
                             > li {
                                 display: inline-block;
-                                margin-right: 80px;
+                                margin-right: 30px;
                                 text-align: center;
                                 align-items: center;
                                 > span {
-                                    font-size: 26px;
+                                    font-size: 24px;
                                     line-height: 26px;
                                     user-select: none;
                                     cursor: pointer;

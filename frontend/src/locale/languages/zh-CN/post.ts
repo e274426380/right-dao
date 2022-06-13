@@ -3,7 +3,8 @@ export default {
     reply: "回复",
     adopt: {
         text: "采纳答案",
-        confirm: "你确定要采纳这个回答吗",
+        down: "已采纳",
+        confirm: "你确定要采纳这个回答吗，一旦采纳不能修改",
     },
     cancelReply: "取消回复",
     writeAnswer: "写回答",

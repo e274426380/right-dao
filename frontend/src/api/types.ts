@@ -69,6 +69,7 @@ export type ApiPost = {
     content: RichText;
     category: PostCategory;
     photos: number[];
+    answer: number[];
     participants: string[];//期待参与的人
     end_time: [number]; //结束时间  opt格式，类似于[1000]，数组中只有一个数据。
     events?: ApiPostTimeline[];

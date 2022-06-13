@@ -9,10 +9,14 @@ export default {
         },
         post: {
             alreadyCompleted: "Timeline cannot be after posting close time."
-        }
+        },
+        notFound: "Sorry, the page you are visiting does not exist",
     },
     update: {
         success: "Information update successful."
+    },
+    delete: {
+        success: "Delete Successful."
     },
     post: {
         create: "Create help request successfully",

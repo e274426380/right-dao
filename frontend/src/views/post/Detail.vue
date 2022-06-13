@@ -1,11 +1,12 @@
 <template>
     <div class="post-detail-container">
         <Navigator/>
-        <Head :post="post" @showWrite="showWriteReply()" v-if="post!==undefined"/>
+        <Head :post="post" :isOwner="isOwner" @showWrite="showWriteReply()" v-if="post!==undefined"/>
         <WriteReply @foldWrite="foldWrite(false)" @replySuccess="replyInit" v-show="showWrite"/>
-        <div v-show="post!==undefined" style="min-height: 70vh">
+        <div v-if="post!==undefined" style="min-height: 70vh">
             <TimeLine :postId="postId" @changeStatusSuccess="init" :isOwner="isOwner"/>
-            <Reply :postId="postId" ref="reply" :isOwner="isOwner"/>
+            <Reply :postId="postId" :answerId="post.answer.length>0 ? Number(post.answer[0]) : undefined" ref="reply"
+                   :isOwner="isOwner"/>
         </div>
     </div>
 </template>
@@ -16,6 +17,7 @@
     import TimeLine from './modules/TimeLine.vue';
     import WriteReply from './modules/WriteReply.vue';
     import Reply from './modules/Reply.vue';
+    import {ElLoading} from 'element-plus/es';
     import {useRoute, useRouter} from 'vue-router';
     import {getPostInfo} from "@/api/post";
     import {ApiPost} from "@/api/types";
@@ -51,13 +53,16 @@
     }
 
     const init = () => {
+        const fullLoading = ElLoading.service({
+            lock: true
+        });
         loading.value = true;
-        getPostInfo(postId).then(res=>{
-            console.log("getPostInfo",res)
+        getPostInfo(postId).then(res => {
+            console.log("getPostInfo", res)
             if (res.Ok) {
                 post.value = res.Ok
-                console.log("detail",isOwner.value)
-            } else if(res.Err && res.Err.PostNotFound!==undefined){
+                console.log("detail", isOwner.value)
+            } else if (res.Err && res.Err.PostNotFound !== undefined) {
                 showMessageError(t('message.error.noPost'));
                 setTimeout(() => {
                     //等用户看清了错误提示再弹
@@ -65,6 +70,7 @@
                 }, 1500);
             }
         }).finally(() => {
+            fullLoading.close();
             loading.value = false
         })
     }
@@ -73,7 +79,7 @@
         showWrite.value = !showWrite.value
     }
 
-    const foldWrite = (show:boolean) => {
+    const foldWrite = (show: boolean) => {
         showWrite.value = show
     }
 

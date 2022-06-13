@@ -9,10 +9,14 @@ export default {
         },
         post: {
             alreadyCompleted: "贴子已经完成，不能进行操作。"
-        }
+        },
+        notFound: "抱歉，您访问的页面不存在",
     },
     update: {
         success: "信息更新成功。"
+    },
+    delete: {
+        success: "删除操作成功。"
     },
     post: {
         create: "创建求助成功",

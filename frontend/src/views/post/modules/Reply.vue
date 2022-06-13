@@ -11,6 +11,12 @@
                             <b v-else>{{list.length+ " " + t('post.size') + t('post.answers')}}</b>
                         </div>
                         <div class="reply" v-for="(item,index) in showList">
+                            <div v-if="props.answerId === Number(item.id)" style="margin-bottom: 5px">
+                                <el-tag type="success">
+                                    <el-icon><Flag /></el-icon>
+                                    {{t('post.adopt.down')}}
+                                </el-tag>
+                            </div>
                             <div class="author">
                                 <div class="flex">
                                     <Avatar :username="item.authorData && item.authorData.name!=='' ?
@@ -49,7 +55,8 @@
                                         {{item.comments.length+ " " + t('post.item') + t('post.comments')}}
                                     </span>
                                     <span @click="share(item.id)">{{t('common.share')}}</span>
-                                    <el-popconfirm :title="t('post.adopt.confirm')"
+                                    <el-popconfirm v-if="isOwner && props.answerId===undefined"
+                                                   :title="t('post.adopt.confirm')"
                                                    :confirmButtonText="t('common.confirm')"
                                                    :cancelButtonText="t('common.cancel')"
                                                    @confirm="submitAnswer(Number(item.post_id),Number(item.id))"
@@ -84,8 +91,8 @@
 </template>
 <script lang="ts" setup>
     import {ref, onMounted, defineProps, defineExpose} from 'vue';
-    import {ElRow, ElCol, ElButton, ElCard, ElIcon, ElPopconfirm} from 'element-plus/es';
-    import {Medal} from '@element-plus/icons-vue';
+    import {ElRow, ElCol, ElButton, ElCard, ElIcon, ElPopconfirm, ElTag} from 'element-plus/es';
+    import {Medal, Flag} from '@element-plus/icons-vue';
     import Avatar from '@/components/common/Avatar.vue';
     import ReplyReply from './ReplyReply.vue';
     import {ApiPostComments} from "@/api/types";
@@ -101,6 +108,9 @@
             type: Number,
             required: true,
         },
+        answerId: {
+            type: Number,
+        },
         isOwner: {
             type: Boolean,
             required: true,
@@ -108,6 +118,7 @@
     });
     const list = ref<ApiPostComments[]>([]);
     const showList = ref<ApiPostComments[]>([]);
+    const answer = ref<ApiPostComments>();
     const showReplyReply = ref(false);
     const pageLoading = ref(false);
     const foldIndex = ref([false]);
@@ -152,10 +163,22 @@
     const submitAnswer = (postId: number, commentId: number) => {
         submitPostAnswer(postId, commentId).then(res => {
             console.log("res", res)
-            if(res.Ok){
+            if (res.Ok) {
                 showMessageSuccess(t('message.post.adopt'))
+                //采纳完成后，重新加载页面
+                init();
+                pageNum.value=0;
+                paging();
+            } else {
+                console.error("submitPostAnswerFailed", res);
             }
         })
+    }
+    //将指定的回答id置顶
+    const onTop = (commentId:number) => {
+        const index = list.value.findIndex(item => Number(item.id) === commentId)
+        //将查到的答案移到数组第一位，得到置顶的效果。
+        list.value.unshift(list.value.splice(index,1)[0])
     }
 
     const paging = () => {
@@ -181,8 +204,13 @@
         await getPostComments(props.postId).then(res => {
             if (res.Ok) {
                 console.log("getPostComments", res)
+                //由于按时间顺排序问题，需要倒序
                 list.value = res.Ok.reverse();
                 totalCount.value = list.value.length;
+                if (props.answerId) {
+                    console.log("props.answerId",props.answerId)
+                    onTop(props.answerId);
+                }
             }
         })
         if (list.value.length > 0 && replyIndex.value !== -1 && showReplyReply.value) {
@@ -197,6 +225,7 @@
     }
 
     onMounted(() => {
+        console.log("props",props.answerId)
         init();
     });
 
