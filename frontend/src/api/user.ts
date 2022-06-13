@@ -42,9 +42,9 @@ export async function getUserInfo(): Promise<ApiResult<ApiUserInfo>> {
 export async function getTargetUser(principal: string): Promise<ApiResult<any | ApiUserInfo>> {
     return await getCache({
         key: 'USER_INFO_' + getCurrentPrincipal().toUpperCase(),
-        // execute: () => getBackend().get_user(Principal.fromText(principal)),
+        execute: () => getBackend().get_user(Principal.fromText(principal)),
         // TODO 记得部署之前改成方法参数
-        execute: () => getBackend().get_user(Principal.fromText("2vxsx-fae")),
+        // execute: () => getBackend().get_user(Principal.fromText("2vxsx-fae")),
         ttl: TTL.minute10,
         isLocal: true, // 需要本地存储
     });
@@ -90,7 +90,7 @@ export async function editUserSelf(user: any | ApiUserInfo): Promise<ApiResult<b
 export async function getUserReputation(principalId: string): Promise<ApiResult<UserReputation>> {
     return getBackend().get_reputation({
         // TODO
-        user: "2vxsx-fae"
-        // user: principalId
+        // user: "2vxsx-fae"
+        user: principalId
     })
 }
