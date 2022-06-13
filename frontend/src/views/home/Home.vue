@@ -1,7 +1,7 @@
 <template>
     <div class="home-container">
         <Navigator/>
-        <!--<Public/>-->
+        <Public/>
         <PostList/>
     </div>
 </template>
@@ -15,7 +15,8 @@ import PostList from './modules/PostList.vue';
 
 <style lang="scss">
 .home-container {
-    background-color: white;
+    background-color: rgb(246, 246, 246);
+    min-height: 100vh;
     color: black;
     width: 100%;
     height: 100%;

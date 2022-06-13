@@ -164,10 +164,11 @@
 <style lang="scss">
     .post-list-container {
         width: 100%;
+        background-color: rgb(246, 246, 246);
         display: flex;
         justify-content: center;
         position: relative;
-        margin-top: 24px;
+        padding-top: 24px;
         .empty{
             margin-top: 200px;
         }

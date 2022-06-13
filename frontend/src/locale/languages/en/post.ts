@@ -20,6 +20,10 @@ export default {
     submitComment: "Submit Comment",
     item: " ",
     joined: "Joined",
+    public: {
+        hello: "欢迎来到RightsDao",
+        text: "RightsDao是建立在Internet Computer上的社交媒体应用程序，去中心化且无需许可",
+    },
     help: {
         search: "Search Title and Content",
         create: "Create Help",
