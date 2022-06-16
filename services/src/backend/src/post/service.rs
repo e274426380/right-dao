@@ -238,13 +238,14 @@ fn paging(ps: &BTreeMap<u64, PostProfile>, page_size: usize, page_num: usize,
               -> PostPage {
     let mut ps: Vec<PostProfile> = ps
         .values()
+        .filter(ff)
         .cloned()
         .collect();
 
     ps.sort_by(compare);
 
     let total_count = ps.len();
-    let data = ps.iter().filter(ff).skip(page_num * page_size).take(page_size).cloned().collect();
+    let data = ps.iter().skip(page_num * page_size).take(page_size).cloned().collect();
     PostPage { page_num, page_size, total_count, data }
 }
 
