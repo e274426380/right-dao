@@ -128,7 +128,7 @@
     const isEditorErr = ref(false);
     //限制输入长度10000个字
     const limitLength = 10000;
-    const ruleFormRef = ('');
+    const ruleFormRef = (null);
     // 直接取出，没有额外逻辑，用 computed 变成响应式值
     const myTextEditor = ref<{ setHTML: Function; getText: Function } | null>(null);
     const form = ref({
