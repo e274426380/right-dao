@@ -21,8 +21,8 @@ export default {
     item: " ",
     joined: "Joined",
     public: {
-        hello: "欢迎来到RightsDao",
-        text: "RightsDao是建立在Internet Computer上的社交媒体应用程序，去中心化且无需许可",
+        hello: "Welcome to RightsDao",
+        text: "RightsDao is built on Internet Computer (IC), a decentralized application platform based on the IC network with knowledge as the core, and created through a social approach. Users interact on RightsDao without any threshold, including but not limited to spreading knowledge, camaraderie, etc. without paying any fees, and if needed, they can get professional assistance and financial support from the platform through the Governance Committee (DAO)."
     },
     help: {
         search: "Search Title and Content",

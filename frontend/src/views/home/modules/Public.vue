@@ -1,8 +1,10 @@
 <template>
     <div class="home-public-container">
         <div class="container">
-            <h2 class="hello">{{t('post.public.hello')}}✍</h2>
-            <span>{{t('post.public.text')}}</span>
+            <div style="max-width: 800px;line-height: 1.8;">
+                <h2 class="hello">{{t('post.public.hello')}}✍</h2>
+                <span>{{t('post.public.text')}}</span>
+            </div>
         </div>
     </div>
 </template>

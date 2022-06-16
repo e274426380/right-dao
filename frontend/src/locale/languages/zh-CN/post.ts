@@ -22,7 +22,7 @@ export default {
     joined: "加入于",
     public: {
         hello: "欢迎来到RightsDao",
-        text: "RightsDao是建立在Internet Computer上的社交媒体应用程序，去中心化且无需许可",
+        text: "RightsDao构建在Internet Computer（简称IC）上，基于IC网络以知识为核心，通过社交的方式打造的去中心化应用平台。用户在RightsDao上进行无门槛互动，包括但不限于传播知识，友爱等，不需要支付任何费用，如果有需要，可以通过治理委员会（DAO）从平台中获取专业人士的协助和资金支持。",
     },
     help: {
         search: "搜索标题和内容",
