@@ -105,7 +105,7 @@
 
     const getPost = () => {
         getTargetUserPost(pageNum.value, pageSize.value, query.value, targetPrincipal.value).then(res => {
-            console.log("getTargetUserPost", res)
+            console.log("getPost", res)
             if (res.Ok) {
                 totalCount.value = Number(res.Ok.total_count);
                 list.value.push(...res.Ok.data.map(item => {

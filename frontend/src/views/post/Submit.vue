@@ -103,6 +103,7 @@
         ElRow, ElCol, ElButton, ElSelect, ElOption, ElForm, ElFormItem, ElInput, ElMessage, ElConfigProvider,
         ElDatePicker, ElLoading
     } from 'element-plus/es';
+    import type {FormInstance, FormRules} from 'element-plus'
     import {SupportedLocale, t} from '@/locale';
     import {QuillEditor} from '@vueup/vue-quill';
     import {useRoute, useRouter} from 'vue-router';
@@ -128,7 +129,7 @@
     const isEditorErr = ref(false);
     //限制输入长度10000个字
     const limitLength = 10000;
-    const ruleFormRef = (null);
+    const ruleFormRef = ref<FormInstance>();
     // 直接取出，没有额外逻辑，用 computed 变成响应式值
     const myTextEditor = ref<{ setHTML: Function; getText: Function } | null>(null);
     const form = ref({
@@ -196,8 +197,8 @@
         return length;
     });
 
-    const submit = async (formEl) => {
-        console.log("submit",formEl)
+    const submit = async (formEl: FormInstance | undefined) => {
+        console.log("submit", formEl)
         if (!formEl) return;
         console.log("formEl")
         await formEl.validate((valid, fields) => {
