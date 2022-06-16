@@ -91,31 +91,34 @@ impl PostService {
         paging(ps, page_size, page_num, filter, compare)
     }
 
+    // 分页查询 post 内容，没有 comment
     pub fn my_posts(&self, caller: Principal, q: &PostPageQuery) -> PostInfoPage {
         
-        let page_size= q.page_size;
-        let page_num = q.page_num;
-        let filter = |p: &&PostProfile| p.author == caller && 
-            (q.querystring.is_empty() || (p.title.contains(&q.querystring) || p.content.content.contains(&q.querystring)));
-        let ps = &self.posts;
+        // let page_size= q.page_size;
+        // let page_num = q.page_num;
+        // let filter = |p: &&PostProfile| p.author == caller && 
+        //     (q.querystring.is_empty() || (p.title.contains(&q.querystring) || p.content.content.contains(&q.querystring)));
+        // let ps = &self.posts;
 
-        let compare = |p1:&PostProfile, p2: &PostProfile| p2.created_at.cmp(&p1.created_at);
-        let profiles = paging(ps, page_size, page_num, filter, compare);
+        // let compare = |p1:&PostProfile, p2: &PostProfile| p2.created_at.cmp(&p1.created_at);
+        // let profiles = paging(ps, page_size, page_num, filter, compare);
+        let pages = self.my_post_comments(caller, q);
 
         PostInfoPage {
-            page_size,
-            page_num,
-            total_count: profiles.total_count,
-            data: profiles.data.into_iter().map(|p| p.into()).collect()
+            page_size: pages.page_size,
+            page_num: pages.page_num,
+            total_count: pages.total_count,
+            data: pages.data.into_iter().map(|p| p.into()).collect()
         }
 
     }
 
+    // 分页查询 post and comment 内容
     pub fn my_post_comments(&self, caller: Principal, q: &PostPageQuery)-> PostPage {
 
         let page_size= q.page_size;
         let page_num = q.page_num;
-        let filter = |p: && PostProfile| p.comments.iter().any(|c| c.author == caller) && 
+        let filter = |p: && PostProfile| p.author == caller && 
             (q.querystring.is_empty() || (p.title.contains(&q.querystring) || p.content.content.contains(&q.querystring)));
         let ps = &self.posts;
 
@@ -124,6 +127,7 @@ impl PostService {
  
     }
 
+    // 分页查询 comment 内容，没有 post
     pub fn my_comments(&self, caller: Principal, q: &PostPageQuery) -> CommentSummaryPage {
         let mut data = Vec::new();
         let mut total_count = 0;
