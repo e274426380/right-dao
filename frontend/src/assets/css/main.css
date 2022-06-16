@@ -134,6 +134,7 @@ body {
     padding: 2px 12px;
     border-radius: 14px;
     color: white;
+    white-space: nowrap;
 }
 .post-status.enable{
     background-color: rgb(103,194,58);

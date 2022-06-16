@@ -21,7 +21,7 @@
                                         trigger: 'blur'}]"
                         >
                             <el-input v-model="form.title"
-                                      maxlength="40"
+                                      maxlength="50"
                                       show-word-limit
                                       :placeholder="$t('post.help.title.placeholder')"/>
                         </el-form-item>
@@ -101,7 +101,7 @@
     import Navigator from '@/components/navigator/Navigator.vue';
     import {
         ElRow, ElCol, ElButton, ElSelect, ElOption, ElForm, ElFormItem, ElInput, ElMessage, ElConfigProvider,
-        ElDatePicker,ElLoading
+        ElDatePicker, ElLoading
     } from 'element-plus/es';
     import {SupportedLocale, t} from '@/locale';
     import {QuillEditor} from '@vueup/vue-quill';
@@ -197,17 +197,20 @@
     });
 
     const submit = async (formEl) => {
+        console.log("submit",formEl)
         if (!formEl) return;
+        console.log("formEl")
         await formEl.validate((valid, fields) => {
             if (valid && !isEditorErr.value) {
                 const fullLoading = ElLoading.service({
-                    target:".container",
-                    lock:true
+                    target: ".container",
+                    lock: true
                 });
                 loading.value = true;
                 console.log("form", form.value);
                 let post = {...form.value};
                 if (post.end_time[0]) {
+                    //结束时间，暂时没用了
                     post.end_time[0] *= 1000 * 1000;
                 }
                 submitPost(post).then(res => {
@@ -229,15 +232,17 @@
     const init = () => {
         console.log("currentUserPrincipal.value", currentUserPrincipal.value)
         //验证是否登录
-        nextTick(() => {
-            if (!currentUserPrincipal.value) {
-                showMessageError(t('message.error.noLogin'));
-                setTimeout(() => {
+        setTimeout(() => {
+            nextTick(() => {
+                if (!currentUserPrincipal.value) {
+                    showMessageError(t('message.error.noLogin'));
+                    // setTimeout(() => {
                     //等用户看清了错误提示再弹
                     goBack(router);
-                }, 1500);
-            }
-        });
+                    // }, 1500);
+                }
+            });
+        }, 1500);
     }
 
     // const  filterEditorImg = async (html:string) =>{
@@ -267,8 +272,8 @@
 <style lang="scss">
     .post-submit-container {
         .container {
-            .is-error,.isEditorError {
-                .ql-toolbar{
+            .is-error, .isEditorError {
+                .ql-toolbar {
                     border: 1px solid var(--el-color-danger);
                     border-bottom: 0;
                 }
