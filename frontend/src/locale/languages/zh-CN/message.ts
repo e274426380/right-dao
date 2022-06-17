@@ -19,7 +19,7 @@ export default {
         success: "删除操作成功。"
     },
     post: {
-        create: "创建求助成功",
+        create: "创建提问成功",
         reply: "回复成功",
         error: "发布格式存在问题",
         adopt: "采纳答案成功",

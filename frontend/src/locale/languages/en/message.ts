@@ -19,7 +19,7 @@ export default {
         success: "Delete Successful."
     },
     post: {
-        create: "Create help request successfully",
+        create: "Create question successfully",
         reply: "Reply Success",
         error: "There Is A Problem With The Publishing Format",
         adopt: "Adopted Successfully",

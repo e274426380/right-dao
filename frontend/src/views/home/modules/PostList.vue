@@ -1,22 +1,19 @@
 <template>
     <div class="post-list-container" v-infinite-scroll="onScroll">
         <div class="container">
-            <el-row justify="space-between">
-                <el-col :span="16" style="display: flex">
-                    <el-input
-                        v-model="search"
-                        class="search"
-                        :placeholder="t('post.help.search')"
-                        :prefix-icon="Search"
-                    />
-                </el-col>
-                <el-col :span="8" class="flex-right">
-                    <el-button type="primary" @click="router.push('/post/submit')">{{t('post.help.create')}}</el-button>
-                </el-col>
-            </el-row>
             <div class="post-list">
-                <el-row>
-                    <el-col :span="18" :offset="3">
+                <el-row :gutter="20">
+                    <el-col :span="18">
+                        <div style="display: flex">
+                            <el-input
+                                v-model="search"
+                                class="search"
+                                :placeholder="t('post.help.search')"
+                                :prefix-icon="Search"
+                                clearable
+                            />
+                            <el-button type="primary" @click="searchPage()">{{t('common.search')}}</el-button>
+                        </div>
                         <el-card class="post-card" v-for="(item,inex) in showList"
                                  @click="onClick(Number(item.id))">
                             <el-row justify="space-between">
@@ -69,6 +66,27 @@
                             </div>
                         </el-card>
                     </el-col>
+                    <el-col :span="6">
+                        <el-card shadow="never">
+                            <el-button type="primary" class="create-button" @click="router.push('/post/submit')">
+                                {{t('post.help.create')}}
+                            </el-button>
+                            <div class="beta">
+                                <b class="flex-y-center">
+                                    <el-icon>
+                                        <Opportunity/>
+                                    </el-icon>
+                                    Beta Warning!</b>
+                                <span class="text">RightsDao is in the Beta phase, there may be issues.</span>
+                            </div>
+                            <el-divider/>
+                            <div class="public-item">
+                                <a href="https://dfinity.org/">
+                                    More about the Internet Computer
+                                </a>
+                            </div>
+                        </el-card>
+                    </el-col>
                 </el-row>
                 <el-row :class="{ empty: list.length === 0 }" justify="center" class="loading-tip">
                     <div class="note" v-if="pageLoading">
@@ -85,8 +103,8 @@
 <script lang="ts" setup>
     import {ref, onMounted, computed} from 'vue';
     import {t} from '@/locale';
-    import {ElRow, ElCol, ElInput, ElButton, ElCard, ElTag} from 'element-plus/es';
-    import {Search} from '@element-plus/icons-vue'
+    import {ElRow, ElCol, ElInput, ElButton, ElCard, ElTag, ElIcon, ElDivider} from 'element-plus/es';
+    import {Search, Opportunity} from '@element-plus/icons-vue'
     import Avatar from '@/components/common/Avatar.vue';
     import {useRoute, useRouter} from 'vue-router';
     import {getTimeF} from "@/utils/dates";
@@ -131,10 +149,16 @@
         }
     };
 
+    const searchPage = () => {
+        pageNum.value = 0;
+        list.value = [];
+        init();
+    }
+
     const init = () => {
         pageLoading.value = true;
         getPostPage(pageNum.value, pageSize.value, search.value).then(res => {
-            console.log("page",pageNum.value, res)
+            console.log("page", pageNum.value, res)
             if (res.Ok) {
                 totalCount.value = Number(res.Ok.total_count);
                 const length = list.value.length;
@@ -169,12 +193,38 @@
         justify-content: center;
         position: relative;
         padding-top: 24px;
-        .empty{
+        .beta {
+            margin-top: 10px;
+            padding: 8px 16px;
+            color: #e6a23c;
+            background-color: #faecd8;
+            border-color: #faecd8;
+            border-radius: 10px;
+            .text {
+                font-size: 14px;
+            }
+        }
+        .public-item {
+            font-size: 14px;
+            a {
+                color: black;
+                text-decoration: none;
+                &:hover {
+                    opacity: 0.8;
+                    text-decoration: underline;
+                }
+            }
+        }
+        .empty {
             margin-top: 200px;
         }
-        .loading-tip{
+        .loading-tip {
             margin-top: 30px;
             margin-bottom: 30px;
+        }
+        .create-button {
+            width: 100%;
+            min-height: 40px;
         }
         .container {
             .flex-right {
@@ -185,7 +235,7 @@
             .post-card {
                 text-align: left;
                 margin-top: 20px;
-                &:hover{
+                &:hover {
                     cursor: pointer;
                 }
                 .el-card__body {
@@ -232,7 +282,7 @@
                     justify-content: space-between;
                     align-items: center;
                     margin-top: 25px;
-                    .reply{
+                    .reply {
                         color: rgb(133, 144, 166);
                     }
                 }

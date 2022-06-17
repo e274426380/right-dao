@@ -198,9 +198,8 @@
     });
 
     const submit = async (formEl: FormInstance | undefined) => {
-        console.log("submit", formEl)
+        console.log("submit formEl", formEl)
         if (!formEl) return;
-        console.log("formEl")
         await formEl.validate((valid, fields) => {
             if (valid && !isEditorErr.value) {
                 const fullLoading = ElLoading.service({

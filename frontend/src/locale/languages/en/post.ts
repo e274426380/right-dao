@@ -26,18 +26,18 @@ export default {
     },
     help: {
         search: "Search Title and Content",
-        create: "Create Help",
+        create: "Create Question",
         title: {
-            label: "Help Title：",
-            placeholder: "Please Enter Help Title"
+            label: "Question Title：",
+            placeholder: "Please Enter Question Title"
         },
         content: {
-            label: "Help Content：",
-            placeholder: "Please Enter Help Content",
+            label: "Question Content：",
+            placeholder: "Please Enter Question Content",
         },
         category: {
-            label: "Help Category：",
-            placeholder: "Please select Help Category",
+            label: "Question Category：",
+            placeholder: "Please select Question Category",
             tech: "Technology Field",
             law: "Law Field",
             other: "Other Field",
@@ -62,8 +62,8 @@ export default {
         success: "Add Timeline Success."
     },
     status: {
-        title: "Change Help Status",
-        status: "Help Status",
+        title: "Change Question Status",
+        status: "Question Status",
         success: "Change Status Successfully。"
     }
 };

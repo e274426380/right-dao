@@ -3,6 +3,7 @@ export default {
     confirm: "确认",
     cancel: "取消",
     edit: "编辑",
+    search: "搜索",
     delete: {
         title: "删除",
         text: "你确认要删除吗？一经删除，无法找回。"

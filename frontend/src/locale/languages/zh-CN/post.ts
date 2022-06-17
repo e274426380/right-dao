@@ -22,22 +22,22 @@ export default {
     joined: "加入于",
     public: {
         hello: "欢迎来到RightsDao",
-        text: "RightsDao构建在Internet Computer（简称IC）上，基于IC网络以知识为核心，通过社交的方式打造的去中心化应用平台。用户在RightsDao上进行无门槛互动，包括但不限于传播知识，友爱等，不需要支付任何费用，如果有需要，可以通过治理委员会（DAO）从平台中获取专业人士的协助和资金支持。",
+        text: "RightsDao构建在 Internet Computer（简称IC）上，基于IC网络以知识为核心，通过社交的方式打造的去中心化应用平台。用户在RightsDao上进行无门槛互动，包括但不限于传播知识，友爱等，不需要支付任何费用，如果有需要，可以通过治理委员会（DAO）从平台中获取专业人士的协助和资金支持。",
     },
     help: {
         search: "搜索标题和内容",
-        create: "创建求助",
+        create: "创建提问",
         title: {
-            label: "求助标题：",
-            placeholder: "请输入求助标题",
+            label: "提问标题：",
+            placeholder: "请输入提问标题",
         },
         content: {
-            label: "求助内容：",
-            placeholder: "请输入求助内容",
+            label: "提问内容：",
+            placeholder: "请输入提问内容",
         },
         category: {
-            label: "求助分类：",
-            placeholder: "请选择求助分类",
+            label: "提问分类：",
+            placeholder: "请选择提问分类",
             tech: "技术领域",
             law: "法律领域",
             other: "其他领域",
