@@ -20,6 +20,7 @@
     }
 
     const refreshUser = () => {
+        //@ts-ignore
         childRef.value.getUserInfoFromServices();// 调用子组件的方法
     }
 
