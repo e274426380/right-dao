@@ -104,6 +104,7 @@ body {
 }
 .ql-container{
     width: 100%;
+    font-size: 16px!important;
     /*设置height100%会导致编辑器和其他内容挤在一起*/
     height: inherit!important;
     min-height:200px!important;

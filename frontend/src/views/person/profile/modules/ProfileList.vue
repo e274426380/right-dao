@@ -195,7 +195,7 @@
                 &:hover {
                     cursor: pointer;
                 }
-                div + div {
+                .el-card__body >div + div {
                     margin-top: 10px;
                 }
                 .title {

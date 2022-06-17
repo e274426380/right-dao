@@ -247,7 +247,7 @@
         }
     }
 
-    const emit = defineEmits(['username']);
+    const emit = defineEmits(['username','editProfile']);
 
     const initUser = () => {
         getTargetUser(targetPrincipal.value).then(res => {
@@ -277,6 +277,7 @@
                 editUserSelf(form.value).then(res => {
                     // console.log("edit", res)
                     if (res.Ok) {
+                        emit('editProfile');
                         initUser();
                         showMessageSuccess(t('message.update.success'));
                         dialogFormVisible.value = false;

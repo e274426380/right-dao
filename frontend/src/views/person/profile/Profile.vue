@@ -1,7 +1,7 @@
 <template>
     <div class="person-profile-container">
-        <Navigator/>
-        <ProfileUser @username="getName"/>
+        <Navigator ref="childRef"/>
+        <ProfileUser @username="getName" @editProfile="refreshUser"/>
         <ProfileList :username="username"/>
     </div>
 </template>
@@ -11,10 +11,16 @@
     import ProfileUser from './modules/ProfileUser.vue';
     import ProfileList from './modules/ProfileList.vue';
 
-    const username = ref('')
+    const username = ref('');
+    // 获取子组件
+    const childRef = ref(null);
 
     const getName = (value) => {
         username.value = value;
+    }
+
+    const refreshUser = () => {
+        childRef.value.getUserInfoFromServices();// 调用子组件的方法
     }
 
 </script>

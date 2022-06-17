@@ -123,7 +123,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-    import { ref, watch, computed, onMounted, defineProps } from 'vue';
+    import { ref, watch, computed, onMounted, defineProps, defineExpose } from 'vue';
     import { languages, SupportedLocale, t } from '@/locale';
     import { ElBacktop, ElMessage, ElDropdown, ElDropdownItem, ElDropdownMenu } from 'element-plus/es';
     import {
@@ -382,6 +382,10 @@
     };
 
     const onHome = () => router.push('/');
+
+    defineExpose({
+        getUserInfoFromServices
+    })
 
 </script>
 <style lang="scss" scoped>

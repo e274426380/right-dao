@@ -39,9 +39,9 @@ export default {
         category: {
             label: "Question Category：",
             placeholder: "Please select Question Category",
-            tech: "Technology Field",
-            law: "Law Field",
-            other: "Other Field",
+            tech: "Technology",
+            law: "Law",
+            other: "Other",
         },
         participants: {
             label: "Desired Participant：",

@@ -16,8 +16,8 @@
         border-bottom: 1px solid rgb(228, 228, 231);
         background-color: rgb(255,255,255);
         .container{
-            padding-top: 100px;
-            padding-bottom: 100px;
+            padding-top: 80px;
+            padding-bottom: 80px;
             .hello{
                 font-weight: 800;
             }

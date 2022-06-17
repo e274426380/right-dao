@@ -21,7 +21,7 @@
                                         trigger: 'blur'}]"
                         >
                             <el-input v-model="form.title"
-                                      maxlength="50"
+                                      maxlength="200"
                                       show-word-limit
                                       :placeholder="$t('post.help.title.placeholder')"/>
                         </el-form-item>

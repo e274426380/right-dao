@@ -39,9 +39,9 @@ export default {
         category: {
             label: "提问分类：",
             placeholder: "请选择提问分类",
-            tech: "技术领域",
-            law: "法律领域",
-            other: "其他领域",
+            tech: "技术",
+            law: "法律",
+            other: "其他",
         },
         participants: {
             label: "期望的参与者：",
