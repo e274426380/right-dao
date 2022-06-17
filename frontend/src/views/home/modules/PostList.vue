@@ -12,7 +12,7 @@
                                 :prefix-icon="Search"
                                 clearable
                             />
-                            <el-button type="primary" @click="searchPage()">{{t('common.search')}}</el-button>
+                            <el-button type="primary" @click="searchPage()" style="margin-left: 10px">{{t('common.search')}}</el-button>
                         </div>
                         <el-card class="post-card" v-for="(item,inex) in showList"
                                  @click="onClick(Number(item.id))">
