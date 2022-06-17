@@ -5,6 +5,7 @@ export default {
         text: "采纳答案",
         down: "已采纳",
         confirm: "你确定要采纳这个回答吗，一旦采纳不能修改",
+        already: "已有采纳的答案"
     },
     cancelReply: "取消回复",
     writeAnswer: "写回答",

@@ -17,7 +17,7 @@
                         <el-card class="post-card" v-for="(item,inex) in showList"
                                  @click="onClick(Number(item.id))">
                             <el-row justify="space-between">
-                                <el-col :span="16" class="card-info">
+                                <el-col :span="20" class="card-info">
                                     <Avatar :username="item.authorData && item.authorData.name!=='' ?
                                                 item.authorData.name : item.author.toString()"
                                             :principalId=item.author.toString()
@@ -44,7 +44,7 @@
                                         </div>
                                     </div>
                                 </el-col>
-                                <el-col :span="8" class="flex-right">
+                                <el-col :span="4" class="flex-right">
                                     <el-button type="primary" v-if="item.category.Tech!==undefined">
                                         {{t('post.help.category.tech')}}
                                     </el-button>
@@ -65,6 +65,14 @@
                                 </div>
                             </div>
                         </el-card>
+                        <el-row :class="{ empty: list.length === 0 }" justify="center" class="loading-tip">
+                            <div class="note" v-if="pageLoading">
+                                {{ $t('common.loading') }}
+                            </div>
+                            <div class="note" v-else-if="totalCount === 0 || totalCount === list.length">
+                                {{ $t('common.noMore') }}
+                            </div>
+                        </el-row>
                     </el-col>
                     <el-col :span="6">
                         <el-card shadow="never">
@@ -87,14 +95,6 @@
                             </div>
                         </el-card>
                     </el-col>
-                </el-row>
-                <el-row :class="{ empty: list.length === 0 }" justify="center" class="loading-tip">
-                    <div class="note" v-if="pageLoading">
-                        {{ $t('common.loading') }}
-                    </div>
-                    <div class="note" v-else-if="totalCount === 0 || totalCount === list.length">
-                        {{ $t('common.noMore') }}
-                    </div>
                 </el-row>
             </div>
         </div>
@@ -194,7 +194,7 @@
         position: relative;
         padding-top: 24px;
         .beta {
-            margin-top: 10px;
+            margin-top: 24px;
             padding: 8px 16px;
             color: #e6a23c;
             background-color: #faecd8;

@@ -5,7 +5,7 @@
                 <el-col :span="16" :offset="4">
                     <div class="post-title">
                         <el-row justify="space-between">
-                            <el-col :span="16" class="card-info">
+                            <el-col :span="20" class="card-info">
                                 <Avatar :username="author && author.name ? author?.name : ''"
                                         :principal-id=post.author.toString()
                                         :avatar-id="Number(author?.avatar_id)"
@@ -31,7 +31,7 @@
                                     </div>
                                 </div>
                             </el-col>
-                            <el-col :span="8" class="flex-right">
+                            <el-col :span="4" class="flex-right">
                                 <el-button type="primary" v-if="post.category.Tech!==undefined">
                                     {{t('post.help.category.tech')}}
                                 </el-button>
@@ -57,7 +57,7 @@
                             <el-icon>
                                 <Flag/>
                             </el-icon>
-                            已有采纳的答案
+                            {{t('post.adopt.already')}}
                         </div>
                         <div class="footer">
                             <div>

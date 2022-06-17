@@ -5,6 +5,7 @@ export default {
         text: "Adopt answer",
         down: "Adopted",
         confirm: "Are you sure you want to take this answer?",
+        already: "Adopted Answer"
     },
     cancelReply: "Cancel Reply",
     writeAnswer: "Write Comment",
