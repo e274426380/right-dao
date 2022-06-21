@@ -149,6 +149,9 @@
     }, {
         value: "Law",
         label: t('post.help.category.law')
+    }, {
+        value: "Other",
+        label: t('post.help.category.other')
     }])
     const editorOption = {
         modules: {

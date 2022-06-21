@@ -1,5 +1,5 @@
 <template>
-    <div class="post-detail-timeline-container">
+    <div class="post-detail-timeline-container" v-if="showList.length!==0 || isOwner">
         <div class="container">
             <el-row>
                 <el-col :span="16" :offset="4">

@@ -42,7 +42,8 @@ export type RichText = {
 
 export type PostCategory = {
     Tech?: null,
-    Law?: null
+    Law?: null,
+    Other?: null
 };
 
 export type ApiUserInfo = {

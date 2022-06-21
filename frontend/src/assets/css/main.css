@@ -117,13 +117,15 @@ body {
 .content.ql-snow .ql-editor{
     padding: 10px 0!important;
 }
-/*隐藏富文本编辑器的行数*/
+/*隐藏富文本实际显示时的行数*/
 .content.ql-snow .ql-editor.hidden{
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
+    -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent);
+    mask-image: linear-gradient(180deg, #000 55%, transparent);
 }
 
 /*自定义时间选择器*/

@@ -9,11 +9,11 @@ export default {
     },
     cancelReply: "Cancel Reply",
     writeAnswer: "Write Comment",
-    answer: "Comment", // answer 全改成 comment
-    answers: "Comments",
-    answerFold: "Fold Comment",
-    answerSubmit: "Submit Comment",
-    noAnswer: "No one else has comment yet",
+    answer: "Answer", // answer 全改成 comment
+    answers: "Answers",
+    answerFold: "Fold Answer",
+    answerSubmit: "Submit Answer",
+    noAnswer: "No one else has answer yet",
     size: " ",
     comment: "Comment",
     comments: "Comments",
@@ -23,7 +23,9 @@ export default {
     joined: "Joined",
     public: {
         hello: "Welcome to RightsDao",
-        text: "RightsDao is built on Internet Computer (IC), a decentralized application platform based on the IC network with knowledge as the core, and created through a social approach. Users interact on RightsDao without any threshold, including but not limited to spreading knowledge, camaraderie, etc. without paying any fees, and if needed, they can get professional assistance and financial support from the platform through the Governance Committee (DAO)."
+        text: "RightsDao is a decentralized application platform built on the Internet Computer (IC), based on the IC network, with knowledge as the core, and through a social approach." +
+            "Users interact on RightsDao without any threshold, including but not limited to spreading knowledge, asking questions, " +
+            "solving others' problems, etc. Because of the special nature of IC, users do not need to pay any fees. If needed, professional assistance and financial support can be obtained from the platform through the Decentralized Autonomous Organization (DAO) proposal."
     },
     help: {
         search: "Search Title and Content",
