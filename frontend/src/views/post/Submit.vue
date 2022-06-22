@@ -62,16 +62,27 @@
                                 />
                             </el-select>
                         </el-form-item>
-                        <el-form-item :label="$t('post.help.participants.label')"
+                        <el-form-item v-for="(item, index) in form.participants"
+                                      :key="index"
+                                      label-width="145px"
+                                      :prop="'participants.' + index"
                                       :rules="[{
                                         required: true,
                                         message: $t('post.help.participants.placeholder'),
                                         trigger: 'blur'}]"
                                       prop="participants[0]">
-                            <el-input v-model="form.participants[0]"
+                            <template #label>
+                                <span v-if="index===0">{{$t('post.help.participants.label')}}</span>
+                                <span v-else></span>
+                            </template>
+                            <el-input v-model="form.participants[index]"
                                       maxlength="30"
                                       show-word-limit
-                                      :placeholder="$t('post.help.participants.placeholder')"/>
+                                      :placeholder="$t('post.help.participants.placeholder')">
+                                <template #append>
+                                    <el-button :icon="Close" @click.prevent="removeItem(index)"></el-button>
+                                </template>
+                            </el-input>
                         </el-form-item>
                         <!--<el-form-item :label="$t('post.help.endTime.label')">-->
                         <!--<el-config-provider :locale="elementPlusLocale">-->
@@ -86,6 +97,9 @@
                         <!--</el-config-provider>-->
                         <!--</el-form-item>-->
                     </el-form>
+                    <div style="display: flex;justify-content: space-between">
+                        <el-button @click="addParticipants">{{t('post.help.participants.add')}}</el-button>
+                    </div>
                 </el-col>
             </el-row>
             <div style="text-align: center" class="form-footer">
@@ -103,6 +117,7 @@
         ElRow, ElCol, ElButton, ElSelect, ElOption, ElForm, ElFormItem, ElInput, ElMessage, ElConfigProvider,
         ElDatePicker, ElLoading
     } from 'element-plus/es';
+    import {Close} from '@element-plus/icons-vue';
     import type {FormInstance, FormRules} from 'element-plus'
     import {SupportedLocale, t} from '@/locale';
     import {QuillEditor} from '@vueup/vue-quill';
@@ -140,7 +155,7 @@
         },
         photos: [],
         category: "",
-        participants: [""],//期待参与者
+        participants: [] as string[],//期待参与者
         end_time: [] as number[],
     });
     const category = ref([{
@@ -193,12 +208,22 @@
         init()
     });
 
-
     const showEditorLength = computed(() => {
         const length = calculatedICPIdLength(form.value.content.content);
         length > limitLength ? (isEditorErr.value = true) : (isEditorErr.value = false);
         return length;
     });
+
+    const addParticipants = () =>{
+        form.value.participants.push("");
+    }
+
+
+    const removeItem = (index) => {
+        if (index !== -1) {
+            form.value.participants.splice(index, 1)
+        }
+    }
 
     const submit = async (formEl: FormInstance | undefined) => {
         console.log("submit formEl", formEl)

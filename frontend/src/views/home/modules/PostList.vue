@@ -38,7 +38,7 @@
                                             <span>|</span>
                                             <span class="createTime">{{getTimeF(Number(item.created_at))}}</span>
                                         </div>
-                                        <div class="need-type">
+                                        <div class="need-type" v-if="item.participants.length>0">
                                             {{t('post.help.participants.label')}}
                                             <el-tag v-for="(item,index) in item.participants">{{item}}</el-tag>
                                         </div>

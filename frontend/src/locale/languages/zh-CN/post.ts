@@ -23,7 +23,7 @@ export default {
     joined: "加入于",
     public: {
         hello: "欢迎来到RightsDao",
-        text: "RightsDao构建在 Internet Computer（简称IC）上，基于IC网络以知识为核心，通过社交的方式打造的去中心化应用平台。用户在RightsDao上进行无门槛互动，包括但不限于传播知识，提出问题，解决他人问题等，不需要支付任何费用，如果有需要，可以通过去中心化治理组织（DAO）从平台中获取专业人士的协助和资金支持。",
+        text: "RightsDao构建在 Internet Computer（简称IC）上，基于IC网络以知识为核心，通过社交的方式打造的去中心化应用平台。用户在RightsDao上进行无门槛互动，包括但不限于传播知识，提出问题，解决他人问题等，不需要支付任何费用，如果有需要，可以通过去中心化自治组织（DAO）从平台中获取专业人士的协助和资金支持。",
     },
     help: {
         search: "搜索标题和内容",
@@ -45,7 +45,8 @@ export default {
         },
         participants: {
             label: "期望的参与者：",
-            placeholder: "请输入期望的参与者"
+            placeholder: "请输入期望的参与者",
+            add: "添加期望参与者"
         },
         endTime: {
             label: "结束时间：",

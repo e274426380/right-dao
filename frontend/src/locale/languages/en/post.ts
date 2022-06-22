@@ -47,7 +47,8 @@ export default {
         },
         participants: {
             label: "Desired Participant：",
-            placeholder: "Please Enter Desired Participant"
+            placeholder: "Please Enter Desired Participant",
+            add: "add Desired Participant"
         },
         endTime: {
             label: "End Time：",

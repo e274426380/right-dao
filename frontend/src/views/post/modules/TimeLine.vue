@@ -267,7 +267,7 @@
     const changeStatus = () => {
         statusLoading.value = true;
         let status = {...statusForm.value};
-        status.description = "Post status change to '" + status.status + "' : " + status.description;
+        status.description = "'" + status.status + "' : " + status.description;
         changePostStatus(status).then(res => {
             if (res.Ok) {
                 emit('changeStatusSuccess')
