@@ -18,4 +18,6 @@ pub enum UserError {
     UserBiographyTooLong,
     #[error("User location is too long")]
     UserLocationTooLong,
+    #[error("Anonymous not allow registering")]
+    AnonymousNotAllowRegistering,
 }

@@ -22,6 +22,7 @@ type UserError = variant {
     UserEmailInvalid;
     UserBiographyTooLong;
     UserLocationTooLong;
+    AnonymousNotAllowRegistering;
 };
 
 type UserProfile = record {
@@ -447,6 +448,7 @@ service : {
     "greet": (text) -> (text) query;
 
     "register_user": (UserRegisterCommand) -> (RegisterUserResult);
+    "auto_register_user" : () -> (UserResult);
     "edit_user" : (UserEditCommand) -> (BoolUserResult);
     "enable_user" : (principal) -> (BoolUserResult);
     "disable_user" : (principal) -> (BoolUserResult);
