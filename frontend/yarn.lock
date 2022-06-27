@@ -990,10 +990,10 @@
   resolved "https://registry.npmmirror.com/@ctrl/tinycolor/-/tinycolor-3.4.0.tgz#c3c5ae543c897caa9c2a68630bed355be5f9990f"
   integrity sha512-JZButFdZ1+/xAfpguQHoabIXkcqRRKpMrWKBkpEZZyxfY9C1DpADFB8PEqGSTeFr135SaTRfKqGKx5xSCLI7ZQ==
 
-"@dfinity/agent@0.10.2":
-  version "0.10.2"
-  resolved "https://registry.npmmirror.com/@dfinity/agent/-/agent-0.10.2.tgz#1c591e9f5d0b3acaeea767d402f53c8732f754ac"
-  integrity sha512-ipzw+UYSUJWgwq5IM8PwHLXlfViFJWX+ZPvMD4vclDjwxiLf/nDZNk2sgLfYAi/2o2MpG6wUTUYriX/gmYrbkg==
+"@dfinity/agent@0.11.3":
+  version "0.11.3"
+  resolved "https://registry.npmmirror.com/@dfinity/agent/-/agent-0.11.3.tgz#3363b1dbaa10a6e5cfe25e269316e2416fd3d11d"
+  integrity sha512-pqiogLey6S83SG5BS93hBCtXfGRW6tkxa8Y0c9HwxOP/wRoVEuKHdTcOn7rL/HN4mDTwxkdqK4EC1Kv24S1q4Q==
   dependencies:
     base64-arraybuffer "^0.2.0"
     bignumber.js "^9.0.0"
@@ -1001,35 +1001,36 @@
     js-sha256 "0.9.0"
     simple-cbor "^0.4.1"
 
-"@dfinity/auth-client@0.10.2":
-  version "0.10.2"
-  resolved "https://registry.npmmirror.com/@dfinity/auth-client/-/auth-client-0.10.2.tgz#36079df982ffc73ba99fa18ebc4800953616d704"
-  integrity sha512-u9RThzTvsrKb85PhnEUXgZ3KwdSJCeNwHBZ3zVCZ7XQEkDhwNZK87JD00Mh2Z5kCbN3+A+OdGZtYXloFlgENew==
+"@dfinity/auth-client@0.11.3":
+  version "0.11.3"
+  resolved "https://registry.npmmirror.com/@dfinity/auth-client/-/auth-client-0.11.3.tgz#f337f5b4249a09f00092ed0ad8bd3e76bfbed196"
+  integrity sha512-+wwjoucE8ZIjcA1IG+OQ8OxFoAajYfnELbSMZE1p3FGlbC0X3gpab0bbXqh8VKou8Ng1eRU+sAwItruCLiIBHg==
 
-"@dfinity/authentication@0.10.2":
-  version "0.10.2"
-  resolved "https://registry.npmmirror.com/@dfinity/authentication/-/authentication-0.10.2.tgz#fcc4e82e13f18e66556e40807190709dbbde92d7"
-  integrity sha512-+fNuknjSl1SI4f0e+KQdCnJy3vuSTeGFriLXstjYDCO2ez432lMiyqoF9eC4Gvp6AX9RZifRt2BXuWnhzwZwEQ==
+"@dfinity/authentication@0.11.3":
+  version "0.11.3"
+  resolved "https://registry.npmmirror.com/@dfinity/authentication/-/authentication-0.11.3.tgz#521bbde16d19d65e125577a8bb0ed475a147de7b"
+  integrity sha512-11VaXRMlz9iS0sWzP7eeEShl5r6rqb57XzlorwdcqmSchWEdw3+Gm0INqFWrQ382FSEDmZ7qDbMfJ/S9P6fddA==
 
-"@dfinity/candid@0.10.2":
-  version "0.10.2"
-  resolved "https://registry.npmmirror.com/@dfinity/candid/-/candid-0.10.2.tgz#545692c4f9a954b2133436049a707434d5c6c7c9"
-  integrity sha512-vHRw6G5N6Nj8PlGl+Dx8pRGNCA/OQJ5v5ktj+t4ZL/4UIaebDZYzRZyrtBC0Vs1iG9BA5l48b7ByMH26UKLC6w==
+"@dfinity/candid@0.11.3":
+  version "0.11.3"
+  resolved "https://registry.npmmirror.com/@dfinity/candid/-/candid-0.11.3.tgz#aed66124751545522acf9bde7cdc22b5d9ce31df"
+  integrity sha512-xX7xNj2lLt7SIlvy0sqNp4fpcTD/xnwEu9APj0tnIF64cnsxIiS12T1Z8jl9g80jCQ1CbRPQf4cfsOfS3Cd2OA==
 
-"@dfinity/identity@0.10.2":
-  version "0.10.2"
-  resolved "https://registry.npmmirror.com/@dfinity/identity/-/identity-0.10.2.tgz#653336e20bbae0d279c0551bdddb198e8dad194e"
-  integrity sha512-ltAqR813Rm8pZjD5qCXAdBa4S/W9Afo7u6ue2m9UDHmOryiq4VR295hl1Mn4Svb2itgOE1omWl0oA3VDoQ1B1A==
+"@dfinity/identity@0.11.3":
+  version "0.11.3"
+  resolved "https://registry.npmmirror.com/@dfinity/identity/-/identity-0.11.3.tgz#b7ae0d049159f98bb3b693683824b7315124c4bb"
+  integrity sha512-AXgrG6a7PxJmiZOC12ooKvPeOfh4+v3dR7D6jynLlN4qMy0ry+BMZhWkyjWrlRR3p8oMznzfjoMuKN5pOrBKDg==
   dependencies:
+    "@types/webappsec-credential-management" "^0.6.2"
     borc "^2.1.1"
     js-sha256 "^0.9.0"
     secp256k1 "^4.0.2"
     tweetnacl "^1.0.1"
 
-"@dfinity/principal@0.10.2":
-  version "0.10.2"
-  resolved "https://registry.npmmirror.com/@dfinity/principal/-/principal-0.10.2.tgz#26123490bac2de6987d20715eda5efb8812a68d5"
-  integrity sha512-CueU9ByIG2ifGDN8YnTPKbLJ6+ZDkoOLVmelaIcueTwqvHMIIvWNme76GwjbcbZ6/XgFd+I7cIKPMX0qQgbGCw==
+"@dfinity/principal@0.11.3":
+  version "0.11.3"
+  resolved "https://registry.npmmirror.com/@dfinity/principal/-/principal-0.11.3.tgz#2130a7673bb8c2d404bc9842136547a91cb3edd2"
+  integrity sha512-+AJGDJ+RsveybSdxuTQFr2DPNZFpPfXnyixAOFWWdElVniSwnO/SwqQChR0AWvJdy/fKqoAXK+ZzyLG0uqSetA==
 
 "@element-plus/icons-vue@^1.1.3", "@element-plus/icons-vue@^1.1.4":
   version "1.1.4"
@@ -1419,6 +1420,11 @@
   version "2.0.2"
   resolved "https://registry.npmmirror.com/@types/trusted-types/-/trusted-types-2.0.2.tgz#fc25ad9943bcac11cceb8168db4f275e0e72e756"
   integrity sha512-F5DIZ36YVLE+PN+Zwws4kJogq47hNgX3Nx6WyDJ3kcplxyke3XIzB8uK5n/Lpm1HBsbGzd6nmGehL8cPekP+Tg==
+
+"@types/webappsec-credential-management@^0.6.2":
+  version "0.6.2"
+  resolved "https://registry.npmmirror.com/@types/webappsec-credential-management/-/webappsec-credential-management-0.6.2.tgz#93491de1ffcf57f6558c78949cc8e6c5d826b94e"
+  integrity sha512-/6w8wmKQOFh+1CL99fcFhH7lli1/ExBdAawXsVPXFC5MBOS6ww/4cmK4crpCw51RaG6sTr477N17Y84l0G69IA==
 
 "@typescript-eslint/eslint-plugin@^5.7.0":
   version "5.17.0"

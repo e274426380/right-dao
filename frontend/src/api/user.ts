@@ -32,7 +32,18 @@ export async function getUserInfo(): Promise<ApiResult<ApiUserInfo>> {
     return await getCache({
         key: 'USER_INFO_' + getCurrentPrincipal().toUpperCase(),
         execute: () => getBackend().get_self(),
-        ttl: TTL.minute10,
+        ttl: TTL.minute30,
+        // ttl: 60 * 60, // 目前开发阶段先设置短的时间
+        isLocal: true, // 需要本地存储
+    });
+}
+
+// （后端方法）自动注册，如果有注册，就获取当前登录用户信息，如果没注册，就注册完了再获取信息
+export async function getUserAutoRegister(): Promise<ApiResult<ApiUserInfo>> {
+    return await getCache({
+        key: 'USER_INFO_' + getCurrentPrincipal().toUpperCase(),
+        execute: () => getBackend().auto_register_user(),
+        ttl: TTL.minute30,
         // ttl: 60 * 60, // 目前开发阶段先设置短的时间
         isLocal: true, // 需要本地存储
     });
@@ -41,11 +52,11 @@ export async function getUserInfo(): Promise<ApiResult<ApiUserInfo>> {
 // 获取目标用户信息
 export async function getTargetUser(principal: string): Promise<ApiResult<any | ApiUserInfo>> {
     return await getCache({
-        key: 'USER_INFO_' + getCurrentPrincipal().toUpperCase(),
+        key: 'USER_INFO_' + principal.toUpperCase(),
         execute: () => getBackend().get_user(Principal.fromText(principal)),
-        // TODO 记得部署之前改成方法参数
+        // 记得部署之前改成方法参数
         // execute: () => getBackend().get_user(Principal.fromText("2vxsx-fae")),
-        ttl: TTL.minute10,
+        ttl: TTL.minute30,
         isLocal: true, // 需要本地存储
     });
 }
@@ -89,7 +100,6 @@ export async function editUserSelf(user: any | ApiUserInfo): Promise<ApiResult<b
 // 获取目标用户声望值（积分）
 export async function getUserReputation(principalId: string): Promise<ApiResult<UserReputation>> {
     return getBackend().get_reputation({
-        // TODO
         // user: "2vxsx-fae"
         user: principalId
     })

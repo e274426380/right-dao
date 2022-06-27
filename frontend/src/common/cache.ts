@@ -31,7 +31,7 @@ export async function getCache(info: {
     ttl?: number;
     isLocal?: boolean;
     timeout?: number; // 超时限制，如果网络请求时间实在太长，就提示错误吧
-    cache?: boolean; // 是否开启缓存
+    // cache?: boolean; // 是否开启缓存，感觉这个功能挺多余的，先注释了
     notice?: (_fromCaching: boolean) => void; // 万一上级需要判断是否从缓存中读取，因此需要额外通知数据
     update?: boolean; // 是否需要异步跟新
     updatedCallback?: (_data: any) => void; // 异步更新成功是否需要回调
@@ -39,16 +39,16 @@ export async function getCache(info: {
     // 给key增加前缀，以防被覆盖
     const key = 'CACHE_' + info.key;
     let data = getExpiredData(key, info.isLocal || false);
-    if (info.cache == false) {
-        data = null; // 如果主动设置了 cache 是 false，那么表明不使用缓存
-    }
+    // if (info.cache == false) {
+    //     data = null; // 如果主动设置了 cache 是 false，那么表明不使用缓存
+    // }
     // data = null; // TODO 测试阶段，关闭缓存
     if (data) {
         if (info.notice) info.notice(true);
         if (info.update === true) {
             setTimeout(async () => {
                 const d = await info.execute();
-                if (data.ok !== undefined) {
+                if (data.Ok !== undefined) {
                     setExpiredData(key, d, info.ttl || 60 * 60, info.isLocal || false);
                     if (info.updatedCallback) info.updatedCallback(d);
                 }
@@ -81,7 +81,7 @@ export async function getCache(info: {
         // 缓存中没有就执行方法产生最新的值
         data = await info.execute();
         // console.log('execute result for ' + key, data);
-        if (data.ok === undefined) {
+        if (data.Ok === undefined) {
             if (info.notice) info.notice(false);
             // 如果没有正常返回，就不缓存了
             return data;
@@ -108,14 +108,13 @@ const CACHE_DATA = {};
 // isLocal: true为LocalStorage，false为非LocalStorage
 const setExpiredData = (key: string, value: any, ttl: number, isLocal: boolean): void => {
     const now = new Date().getTime();
-    // 1. 加上过期时间和使用次数
+    // 1. 加上过期时间
     const item: CacheItem = {
         value: value,
         expired: now + ttl * 1000,
     };
     // 2. 将数据存在内存变量里，以便不用每次从 localStorage 中读取
     CACHE_DATA[key] = item;
-
     // 3. 如果需要存储至 localStorage
     if (isLocal) {
         localStorage.setItem(
