@@ -177,7 +177,7 @@
     import Avatar from '@/components/common/Avatar.vue';
     import Navigator from '@/components/navigator/Navigator.vue';
     import {formatDate} from '@/utils/dates';
-    import {editUserSelf, getTargetUser, getUserReputation} from "@/api/user";
+    import {editUserSelf, getTargetUser, getTargetUserNewCache, getUserReputation} from "@/api/user";
     import {showMessageError, showMessageSuccess} from "@/utils/message";
 
     const store = useStore();
@@ -268,6 +268,18 @@
         })
     }
 
+    const updateAfter = () => {
+        //修改用户信息后，重新刷新下缓存信息
+        getTargetUserNewCache(targetPrincipal.value).then(res => {
+            if (res.Ok) {
+                user.value = res.Ok;
+            } else if (res.Err && res.Err.UserNotFound !== undefined) {
+                showMessageError(t('message.user.notFound'));
+                router.push('/');
+            }
+        })
+    }
+
     const updateSelf = async (formEl) => {
         if (!formEl) return
         //校验规则
@@ -278,7 +290,7 @@
                     // console.log("edit", res)
                     if (res.Ok) {
                         emit('editProfile');
-                        initUser();
+                        updateAfter();
                         showMessageSuccess(t('message.update.success'));
                         dialogFormVisible.value = false;
                     } else if (res.Err && res.Err.UserEmailInvalid !== undefined) {

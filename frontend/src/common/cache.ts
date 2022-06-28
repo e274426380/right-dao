@@ -1,5 +1,5 @@
-import { ElMessage } from 'element-plus/es';
-import { t } from '@/locale';
+import {ElMessage} from 'element-plus/es';
+import {t} from '@/locale';
 
 // 指定一些缓存时间
 export class TTL {
@@ -20,6 +20,7 @@ export class TTL {
     static hour = (hour: number) => 60 * 60 * hour;
     static day = (day: number) => 60 * 60 * 24 * day;
 }
+
 // 直接获取本地储存的带过期时间的数据进行验证，如果没有才发出网络请求
 // key: 设置storage里的key，注意：key 里面应当包含执行方法的参数信息，不同的参数不能共用一个 key
 // execute: 传入执行方法
@@ -31,7 +32,7 @@ export async function getCache(info: {
     ttl?: number;
     isLocal?: boolean;
     timeout?: number; // 超时限制，如果网络请求时间实在太长，就提示错误吧
-    // cache?: boolean; // 是否开启缓存，感觉这个功能挺多余的，先注释了
+    cache?: boolean; // 是否不读取旧缓存，而是加载新的数据，再将新的数据缓存
     notice?: (_fromCaching: boolean) => void; // 万一上级需要判断是否从缓存中读取，因此需要额外通知数据
     update?: boolean; // 是否需要异步跟新
     updatedCallback?: (_data: any) => void; // 异步更新成功是否需要回调
@@ -39,9 +40,9 @@ export async function getCache(info: {
     // 给key增加前缀，以防被覆盖
     const key = 'CACHE_' + info.key;
     let data = getExpiredData(key, info.isLocal || false);
-    // if (info.cache == false) {
-    //     data = null; // 如果主动设置了 cache 是 false，那么表明不使用缓存
-    // }
+    if (info.cache == false) {
+        data = null; // 如果主动设置了 cache 是 false，那么表明不使用缓存
+    }
     // data = null; // TODO 测试阶段，关闭缓存
     if (data) {
         if (info.notice) info.notice(true);

@@ -127,8 +127,7 @@
     import { languages, SupportedLocale, t } from '@/locale';
     import { ElBacktop, ElMessage, ElDropdown, ElDropdownItem, ElDropdownMenu } from 'element-plus/es';
     import {
-        getUserInfo,
-        registerUser,
+        getUserAutoRegister,
     } from '@/api/user';
     import {
         getLocaleText,
@@ -175,9 +174,9 @@
         });
 
     // 与 II 认证相关的信息
-    let auth = new Auth(); // 不能被 vue 代理，只能放到外面了
-    const clientReady = ref(auth.clientReady);
-    const signedIn = ref(auth.signedIn); // 是否登录
+    // let auth = new Auth(); // 不能被 vue 代理，只能放到外面了
+    const clientReady = ref(false);
+    const signedIn = ref(false); // 是否登录
     const principal= computed(() => store.state.user.principal);
     const userInfo = computed(() => store.state.user.user);
     const setUserInfo = (userInfo: UserInfoElement) =>
@@ -265,7 +264,7 @@
     };
     //从后台获取用户信息，并且设置
     const getUserInfoFromServices = () => {
-        getUserInfo()
+        getUserAutoRegister()
             .then((info) => {
                 console.log('get user info', info);
                 if (info.Ok) {
@@ -277,7 +276,7 @@
                         avatarId: Number(user.avatar_id),
                     });
                 } else if (info.Err && info.Err.unauthorized === null) {
-                    console.info('no information for unregister user: ', info);
+                    console.error('no information for unregister user: ', info);
                 } else {
                     throw new Error("info not ok & info not err") ;
                 }
@@ -299,59 +298,35 @@
         });
     }
 
-    const doInitAuth = () =>{
-        if (!clientReady.value) {
-            // 如果没有连接对象 尝试获取
-            initAuth() // 该方法不调用网络，可以每次执行
-                .then((ai) => {
-                    auth.client = ai.client;
-                    clientReady.value = true;
-                    //info一般都是undefined，意义不明
-                    if (ai.info) {
-                        signedIn.value = true;
-                        const principal = ai.info.principal;
-                        setCurrentIdentity(ai.info.identity, ai.info.principal);
-                        // 保存 principal 到用户信息状态
-                        setPrincipal(principal).then(() =>
-                            // 获取用户信息
-                            getUserInfoFromServices(),
-                        );
-                        // 每次成功获取到登录信息后就调用一次注册 TODO 感觉没啥用
-                        // registerUser(ai.info.principal).then(() => {
-                        //     // 保存 principal 到用户信息状态
-                        //     setPrincipal(principal).then(() =>
-                        //         // 获取用户信息
-                        //         getUserInfoFromServices(),
-                        //     );
-                        // });
-                    }
-                    // console.log("auth", auth)
-                })
-                .catch((e) => {
-                    console.error('init auth failed', e);
-                    onLogOut();
-                });
-        }
+    const doInitAuth = () => {
+        initAuth().then((ai) => {
+            clientReady.value = true;
+            if (ai.info) {
+                signedIn.value = true;
+                setCurrentIdentity(ai.info.identity, ai.info.principal);
+                // 保存 principal 到用户信息状态
+                setPrincipal(ai.info.principal).then(() =>
+                    // 获取用户信息
+                    getUserInfoFromServices(),
+                );
+            }
+        });
     };
 
-    const onLogin = () => {
+    const onLogin = async () => {
+        const auth = await initAuth();
         signIn(auth.client) // 理论上有链接对象才会进入这个方法
             .then((ii) => {
-                signedIn.value = true;
+                signedIn.value=true;
+                auth.info = ii
                 // 每次成功获取到登录信息后就调用一次注册
                 setCurrentIdentity(ii.identity, ii.principal);
-                registerUser(ii.principal).then((d) => {
-                    console.log("registerUser",d)
-                    if (d.Ok && typeof d.Ok == 'string') {
-                        showMessageSuccess(t('message.welcome'));
-                    }
                     // 保存 principal 到状态
                     setPrincipal(ii.principal).then(() => {
                         // 尝试获取用户信息
                         getUserInfoFromServices();
                         props.loginInCallback?.call(props.loginInCallback);
                     });
-                });
             })
             .catch((e) => {
                 console.log("e",e)
@@ -359,10 +334,11 @@
             });
     };
 
-    const onLogOut = () => {
+    const onLogOut = async () => {
+        const auth = await initAuth();
         signedIn.value = false;
         clearCurrentIdentity();
-        signOut(auth.client);
+        await signOut(auth.client);
         props.loginOutCallback?.call(props.loginOutCallback);
     };
 

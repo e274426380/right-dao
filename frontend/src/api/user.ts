@@ -38,7 +38,7 @@ export async function getUserInfo(): Promise<ApiResult<ApiUserInfo>> {
     });
 }
 
-// （后端方法）自动注册，如果有注册，就获取当前登录用户信息，如果没注册，就注册完了再获取信息
+// （后端方法）自动注册并登录，如果有注册，就获取当前登录用户信息，如果没注册，就注册完了再获取信息
 export async function getUserAutoRegister(): Promise<ApiResult<ApiUserInfo>> {
     return await getCache({
         key: 'USER_INFO_' + getCurrentPrincipal().toUpperCase(),
@@ -56,6 +56,17 @@ export async function getTargetUser(principal: string): Promise<ApiResult<any | 
         execute: () => getBackend().get_user(Principal.fromText(principal)),
         // 记得部署之前改成方法参数
         // execute: () => getBackend().get_user(Principal.fromText("2vxsx-fae")),
+        ttl: TTL.minute30,
+        isLocal: true, // 需要本地存储
+    });
+}
+
+// 获取目标用户信息，刷新已缓存的内容
+export async function getTargetUserNewCache(principal: string): Promise<ApiResult<any | ApiUserInfo>> {
+    return await getCache({
+        key: 'USER_INFO_' + principal.toUpperCase(),
+        execute: () => getBackend().get_user(Principal.fromText(principal)),
+        cache: false,
         ttl: TTL.minute30,
         isLocal: true, // 需要本地存储
     });
