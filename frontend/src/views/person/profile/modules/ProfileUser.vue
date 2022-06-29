@@ -213,14 +213,13 @@
     const loading = ref(false);
 
     onMounted(() => {
-        initReputation();
         initPrincipal();
         initUser();
+        initReputation();
     });
 
     const initReputation = () => {
         getUserReputation(targetPrincipal.value).then(res => {
-            console.log("initReputation", res)
             if (res.Ok) {
                 reputation.value = Number(res.Ok.amount);
             }
