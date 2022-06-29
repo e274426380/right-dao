@@ -315,6 +315,7 @@ type ReputationSummary = record {
 
 type ReputationError = variant {
     ReputationNotFound;
+    UserPrincipalInvalid;
 };
 
 type ReputationSummaryResult = variant {
@@ -414,6 +415,7 @@ type GovernanceError = variant {
     ProposalUnAuthorized;
     VoterAlreadyVoted;
     VoterNotFound;
+    VotingUnAuthorized;
     MemberPrincipalWrongFormat;
     MemberNotFound;
     ExecutingProposalUnAuthorized;

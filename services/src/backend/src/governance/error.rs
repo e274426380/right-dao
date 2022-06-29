@@ -9,6 +9,7 @@ pub enum GovernanceError {
     ProposalUnAuthorized,
     VoterAlreadyVoted,
     VoterNotFound,
+    VotingUnAuthorized,
     MemberPrincipalWrongFormat,
     MemberNotFound,
     ExecutingProposalUnAuthorized,

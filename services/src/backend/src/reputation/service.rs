@@ -21,8 +21,8 @@ impl ReputationService {
         self.summaries.insert(rs.id, rs);
     }
     
-    pub fn get_reputation(&self, user: &Principal) -> Option<ReputationSummary> {
-        self.summaries.get(user).cloned()
+    pub fn get_reputation(&self, user: &Principal) -> ReputationSummary {
+        self.summaries.get(user).cloned().unwrap_or(ReputationSummary::new(*user))
     }
 
     pub fn get_reputations(&self, users: &BTreeSet<Principal>) -> Vec<ReputationSummary> {

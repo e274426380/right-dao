@@ -61,8 +61,12 @@ fn vote_governance_proposal(args: VoteArgs) -> Result<ProposalState, GovernanceE
 
         let vote_amount = ctx.reputation_service
             .get_reputation(&voter)
-            .map(|rs| rs.amount)
-            .ok_or(GovernanceError::VoterNotFound)?;
+            .amount;
+
+        if vote_amount == 0 {
+            return Err(GovernanceError::VotingUnAuthorized);
+        }
+
         let vote_weights = Weights { amount: vote_amount };
         let cmd = GovernanceVoteCommand {
             proposal_id: args.proposal_id,
